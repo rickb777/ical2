@@ -123,6 +123,7 @@ type VEvent struct {
 	DTSTAMP     time.Time
 	DTSTART     time.Time
 	DTEND       time.Time
+	ORGANIZER	string
 	SUMMARY     string
 	DESCRIPTION string
 	TZID        string
@@ -162,6 +163,12 @@ func (e *VEvent) EncodeIcal(w io.Writer) error {
 
 	if len(e.TZID) != 0 && e.TZID != "UTC" {
 		if _, err := b.WriteString("TZID:" + e.TZID + "\r\n"); err != nil {
+			return err
+		}
+	}
+	
+	if e.ORGANIZER != "" {
+		if _, err := b.WriteString("ORGANIZER:" + e.DESCRIPTION + "\r\n"); err != nil {
 			return err
 		}
 	}
