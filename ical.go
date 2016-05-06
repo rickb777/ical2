@@ -128,6 +128,7 @@ type VEvent struct {
 	DESCRIPTION string
 	TZID        string
 	SEQUENCE	string
+	METHOD		string
 
 	AllDay bool
 }
@@ -170,6 +171,12 @@ func (e *VEvent) EncodeIcal(w io.Writer) error {
 	
 	if e.ORGANIZER != "" {
 		if _, err := b.WriteString("ORGANIZER;" + e.ORGANIZER + "\r\n"); err != nil {
+			return err
+		}
+	}
+	
+	if e.METHOD != "" {
+		if _, err := b.WriteString("METHOD:" + e.METHOD + "\r\n"); err != nil {
 			return err
 		}
 	}
