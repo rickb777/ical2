@@ -124,10 +124,12 @@ type VEvent struct {
 	DTSTART     time.Time
 	DTEND       time.Time
 	ORGANIZER	string
+	ATTENDEE	string
 	SUMMARY     string
 	DESCRIPTION string
 	TZID        string
 	SEQUENCE	string
+	STATUS		string
 
 	AllDay bool
 }
@@ -174,8 +176,20 @@ func (e *VEvent) EncodeIcal(w io.Writer) error {
 		}
 	}
 	
+	if e.ATTENDEE != "" {
+		if _, err := b.WriteString("ATTENDEE;" + e.ATTENDEE + "\r\n"); err != nil {
+			return err
+		}
+	}
+	
 	if e.SEQUENCE != "" {
 		if _, err := b.WriteString("SEQUENCE:" + e.SEQUENCE + "\r\n"); err != nil {
+			return err
+		}
+	}
+	
+	if e.STATUS != "" {
+		if _, err := b.WriteString("STATUS:" + e.STATUS + "\r\n"); err != nil {
 			return err
 		}
 	}
