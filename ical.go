@@ -124,7 +124,7 @@ type VEvent struct {
 	DTSTART     time.Time
 	DTEND       time.Time
 	ORGANIZER	string
-	ATTENDEE	string
+	ATTENDEE	[]string
 	SUMMARY     string
 	DESCRIPTION string
 	TZID        string
@@ -176,9 +176,11 @@ func (e *VEvent) EncodeIcal(w io.Writer) error {
 		}
 	}
 	
-	if e.ATTENDEE != "" {
-		if _, err := b.WriteString("ATTENDEE" + e.ATTENDEE + "\r\n"); err != nil {
-			return err
+	if len(e.ATTENDEE) > 0 {
+		for _, attendee := range e.ATTENDEE {
+		  if _, err := b.WriteString("ATTENDEE;CN=" + attendee + ":MAILTO:" + attendee + "\r\n"); err != nil {
+				return err
+			}
 		}
 	}
 	
