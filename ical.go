@@ -130,6 +130,7 @@ type VEvent struct {
 	TZID        string
 	SEQUENCE	string
 	STATUS		string
+	ALARM		string
 
 	AllDay bool
 }
@@ -210,6 +211,12 @@ func (e *VEvent) EncodeIcal(w io.Writer) error {
 
 	if _, err := b.WriteString("DTEND;" + tzidTxt + "VALUE=" + timeStampType + ":" + e.DTEND.Format(timeStampLayout) + "\r\n"); err != nil {
 		return err
+	}
+	
+	if e.ALARM != "" {
+		if _, err := b.WriteString("BEGIN:VALARM\r\nTRIGGER:" + e.ALARM + "\r\nACTION:DISPLAY\r\nEND:VALARM\r\n"); err != nil {
+			return err
+		}
 	}
 
 	if _, err := b.WriteString("END:VEVENT\r\n"); err != nil {
