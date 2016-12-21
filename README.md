@@ -1,3 +1,6 @@
+[![Build Status](https://travis-ci.org/ajcollins/ical.svg?branch=master)](https://travis-ci.org/ajcollins/ical)
+[![Go Report Card](https://goreportcard.com/badge/github.com/ajcollins/ical)](https://goreportcard.com/report/github.com/ajcollins/ical)
+
 # ical
 
 Simple ical encoder for golang. From github.com/soh335/ical.
