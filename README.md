@@ -1,10 +1,8 @@
-[![wercker status](https://app.wercker.com/status/0afe06d721f5f4a6988a367667e14425/s/master "wercker status")](https://app.wercker.com/project/bykey/0afe06d721f5f4a6988a367667e14425)
-
 # ical
 
-my simple ical encoder for golang.
+Simple ical encoder for golang. From github.com/soh335/ical.
 
-## Support Extenstions
+## Support Extensions
 
 * X-WR-CALNAME
 * X-WR-CALDESC
@@ -18,6 +16,11 @@ my simple ical encoder for golang.
 * [ ] Free/Busy Component
 * [ ] Time Zone Component
 * [ ] Alarm Component
+
+## VEVENT additions
+
+* Free / Busy using time transparency (TRANSP)
+* Location (from github.com/colm2/ical)
 
 ## TODO
 
