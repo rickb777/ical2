@@ -3,7 +3,7 @@
 
 # ical
 
-Simple ical encoder for golang. From github.com/soh335/ical.
+Simple ical (https://www.ietf.org/rfc/rfc2445.txt) encoder for golang. From github.com/soh335/ical.
 
 ## Support Extensions
 
