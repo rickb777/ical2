@@ -20,6 +20,8 @@ func TestEncode(t *testing.T) {
 			SUMMARY:     "summary",
 			DESCRIPTION: "description",
 			TZID:        "Asia/Tokyo",
+			LOCATION:    "Tokyo",
+			TRANSP:      "TRANSPARENT",
 		},
 	}
 
@@ -41,6 +43,8 @@ UID:123
 TZID:Asia/Tokyo
 SUMMARY:summary
 DESCRIPTION:description
+LOCATION:Tokyo
+TRANSP:TRANSPARENT
 DTSTART;TZID=Asia/Tokyo;VALUE=DATE-TIME:20140101T000000
 DTEND;TZID=Asia/Tokyo;VALUE=DATE-TIME:20140101T000000
 END:VEVENT
@@ -67,6 +71,7 @@ func TestEncodeAllDayTrue(t *testing.T) {
 			TZID:    "Asia/Tokyo",
 
 			AllDay: true,
+			TRANSP: "OPAQUE",
 		},
 	}
 
@@ -87,6 +92,7 @@ DTSTAMP:20131231T150000Z
 UID:123
 TZID:Asia/Tokyo
 SUMMARY:summary
+TRANSP:OPAQUE
 DTSTART;TZID=Asia/Tokyo;VALUE=DATE:20140101
 DTEND;TZID=Asia/Tokyo;VALUE=DATE:20140101
 END:VEVENT

@@ -132,6 +132,7 @@ type VEvent struct {
 	STATUS      string
 	ALARM       string
 	LOCATION    string
+	TRANSP      string
 
 	AllDay bool
 }
@@ -208,6 +209,11 @@ func (e *VEvent) EncodeIcal(w io.Writer) error {
 	}
 	if e.LOCATION != "" {
 		if _, err := b.WriteString("LOCATION:" + e.LOCATION + "\r\n"); err != nil {
+			return err
+		}
+	}
+	if e.TRANSP != "" {
+		if _, err := b.WriteString("TRANSP:" + e.TRANSP + "\r\n"); err != nil {
 			return err
 		}
 	}
