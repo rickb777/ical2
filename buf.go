@@ -1,8 +1,8 @@
 package ical
 
 import (
-	"io"
 	"bufio"
+	"io"
 )
 
 // buffer wraps bufio.Writer with some ical-specific helper methods.

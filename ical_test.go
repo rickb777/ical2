@@ -12,7 +12,7 @@ func TestEncode(t *testing.T) {
 	zone := time.FixedZone(tz, 60*60*1)
 	dt := time.Date(2014, time.Month(1), 1, 7, 0, 0, 0, zone)
 	ds := dt.Add(time.Hour)
-	de := ds.Add(5*time.Hour)
+	de := ds.Add(5 * time.Hour)
 
 	vComponents := []VComponent{
 		&VEvent{
