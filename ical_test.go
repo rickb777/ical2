@@ -8,8 +8,9 @@ import (
 )
 
 func TestEncode(t *testing.T) {
-	zone := time.FixedZone("Asia/Tokyo", 60*60*9)
-	d := time.Date(2014, time.Month(1), 1, 0, 0, 0, 0, zone)
+	const tz = "Europe/Paris"
+	zone := time.FixedZone(tz, 60*60*1)
+	d := time.Date(2014, time.Month(1), 1, 8, 0, 0, 0, zone)
 
 	vComponents := []VComponent{
 		&VEvent{
@@ -17,48 +18,53 @@ func TestEncode(t *testing.T) {
 			DTSTAMP:     d,
 			DTSTART:     d,
 			DTEND:       d,
+			ORGANIZER:   Party{"H.Tudwr", "ht@throne.com"},
+			ATTENDEE:    []Party{{"Ann Blin", "ann.blin@exmaple.com"}},
 			SUMMARY:     "summary",
 			DESCRIPTION: "description",
-			TZID:        "Asia/Tokyo",
-			LOCATION:    "Tokyo",
+			TZID:        tz,
+			LOCATION:    "Paris",
 			TRANSP:      "TRANSPARENT",
 		},
 	}
 
-	b, err := testSetup(vComponents)
+	b, err := testSetup(tz, vComponents)
 	if err != nil {
 		t.Error("got err:", err)
 	}
 
 	expect := `BEGIN:VCALENDAR
 VERSION:2.0
-PRODID:proid
+PRODID:prodid
 X-WR-CALNAME:name
 X-WR-CALDESC:desc
-X-WR-TIMEZONE:Asia/Tokyo
+X-WR-TIMEZONE:Europe/Paris
 CALSCALE:GREGORIAN
 BEGIN:VEVENT
-DTSTAMP:20131231T150000Z
+DTSTAMP:20140101T070000Z
 UID:123
-TZID:Asia/Tokyo
+TZID:Europe/Paris
+ORGANIZER;CN=H.Tudwr:MAILTO=ht@throne.com
+ATTENDEE;CN=Ann Blin:MAILTO=ann.blin@exmaple.com
 SUMMARY:summary
 DESCRIPTION:description
-LOCATION:Tokyo
+LOCATION:Paris
 TRANSP:TRANSPARENT
-DTSTART;TZID=Asia/Tokyo;VALUE=DATE-TIME:20140101T000000
-DTEND;TZID=Asia/Tokyo;VALUE=DATE-TIME:20140101T000000
+DTSTART;TZID=Europe/Paris;VALUE=DATE-TIME:20140101T080000
+DTEND;TZID=Europe/Paris;VALUE=DATE-TIME:20140101T080000
 END:VEVENT
 END:VCALENDAR
 `
 	expect = unixToDOSLineEndings(expect)
 
 	if s := b.String(); s != expect {
-		t.Errorf("should %v. but got %v", expect, s)
+		t.Errorf("got %v", s)
 	}
 }
 
 func TestEncodeAllDayTrue(t *testing.T) {
-	zone := time.FixedZone("Asia/Tokyo", 60*60*9)
+	const tz = "Asia/Tokyo"
+	zone := time.FixedZone(tz, 60*60*9)
 	d := time.Date(2014, time.Month(1), 1, 0, 0, 0, 0, zone)
 
 	vComponents := []VComponent{
@@ -75,14 +81,14 @@ func TestEncodeAllDayTrue(t *testing.T) {
 		},
 	}
 
-	b, err := testSetup(vComponents)
+	b, err := testSetup(tz, vComponents)
 	if err != nil {
 		t.Error("got err:", err)
 	}
 
 	expect := `BEGIN:VCALENDAR
 VERSION:2.0
-PRODID:proid
+PRODID:prodid
 X-WR-CALNAME:name
 X-WR-CALDESC:desc
 X-WR-TIMEZONE:Asia/Tokyo
@@ -106,7 +112,8 @@ END:VCALENDAR
 }
 
 func TestEncodeDraftProperties(t *testing.T) {
-	zone := time.FixedZone("Asia/Tokyo", 60*60*9)
+	const tz = "Asia/Tokyo"
+	zone := time.FixedZone(tz, 60*60*9)
 	d := time.Date(2014, time.Month(1), 1, 0, 0, 0, 0, zone)
 
 	vComponents := []VComponent{
@@ -120,14 +127,14 @@ func TestEncodeDraftProperties(t *testing.T) {
 		},
 	}
 
-	b, err := testSetupWithDraft(vComponents)
+	b, err := testSetupWithDraft(tz, vComponents)
 	if err != nil {
 		t.Error("got err:", err)
 	}
 
 	expect := `BEGIN:VCALENDAR
 VERSION:2.0
-PRODID:proid
+PRODID:prodid
 URL:http://my.calendar/url
 NAME:name
 X-WR-CALNAME:name
@@ -158,7 +165,8 @@ END:VCALENDAR
 }
 
 func TestEncodeNoTzid(t *testing.T) {
-	zone := time.FixedZone("Asia/Tokyo", 60*60*9)
+	const tz = "Asia/Tokyo"
+	zone := time.FixedZone(tz, 60*60*9)
 	d := time.Date(2014, time.Month(1), 1, 0, 0, 0, 0, zone)
 
 	vComponents := []VComponent{
@@ -171,14 +179,14 @@ func TestEncodeNoTzid(t *testing.T) {
 		},
 	}
 
-	b, err := testSetup(vComponents)
+	b, err := testSetup(tz, vComponents)
 	if err != nil {
 		t.Error("got err:", err)
 	}
 
 	expect := `BEGIN:VCALENDAR
 VERSION:2.0
-PRODID:proid
+PRODID:prodid
 X-WR-CALNAME:name
 X-WR-CALDESC:desc
 X-WR-TIMEZONE:Asia/Tokyo
@@ -200,7 +208,8 @@ END:VCALENDAR
 }
 
 func TestEncodeUtcTzid(t *testing.T) {
-	zone := time.FixedZone("Asia/Tokyo", 60*60*9)
+	const tz = "Asia/Tokyo"
+	zone := time.FixedZone(tz, 60*60*9)
 	d := time.Date(2014, time.Month(1), 1, 0, 0, 0, 0, zone)
 
 	vComponents := []VComponent{
@@ -214,14 +223,14 @@ func TestEncodeUtcTzid(t *testing.T) {
 		},
 	}
 
-	b, err := testSetup(vComponents)
+	b, err := testSetup(tz, vComponents)
 	if err != nil {
 		t.Error("got err:", err)
 	}
 
 	expect := `BEGIN:VCALENDAR
 VERSION:2.0
-PRODID:proid
+PRODID:prodid
 X-WR-CALNAME:name
 X-WR-CALDESC:desc
 X-WR-TIMEZONE:Asia/Tokyo
@@ -243,7 +252,8 @@ END:VCALENDAR
 }
 
 func TestEncodeNoTzidAllDay(t *testing.T) {
-	zone := time.FixedZone("Asia/Tokyo", 60*60*9)
+	const tz = "Asia/Tokyo"
+	zone := time.FixedZone(tz, 60*60*9)
 	d := time.Date(2014, time.Month(1), 1, 0, 0, 0, 0, zone)
 
 	vComponents := []VComponent{
@@ -257,14 +267,14 @@ func TestEncodeNoTzidAllDay(t *testing.T) {
 		},
 	}
 
-	b, err := testSetup(vComponents)
+	b, err := testSetup(tz, vComponents)
 	if err != nil {
 		t.Error("got err:", err)
 	}
 
 	expect := `BEGIN:VCALENDAR
 VERSION:2.0
-PRODID:proid
+PRODID:prodid
 X-WR-CALNAME:name
 X-WR-CALDESC:desc
 X-WR-TIMEZONE:Asia/Tokyo
@@ -286,7 +296,8 @@ END:VCALENDAR
 }
 
 func TestEncodeUtcTzidAllDay(t *testing.T) {
-	zone := time.FixedZone("Asia/Tokyo", 60*60*9)
+	const tz = "Asia/Tokyo"
+	zone := time.FixedZone(tz, 60*60*9)
 	d := time.Date(2014, time.Month(1), 1, 0, 0, 0, 0, zone)
 
 	vComponents := []VComponent{
@@ -301,14 +312,14 @@ func TestEncodeUtcTzidAllDay(t *testing.T) {
 		},
 	}
 
-	b, err := testSetup(vComponents)
+	b, err := testSetup(tz, vComponents)
 	if err != nil {
 		t.Error("got err:", err)
 	}
 
 	expect := `BEGIN:VCALENDAR
 VERSION:2.0
-PRODID:proid
+PRODID:prodid
 X-WR-CALNAME:name
 X-WR-CALDESC:desc
 X-WR-TIMEZONE:Asia/Tokyo
@@ -333,10 +344,10 @@ func unixToDOSLineEndings(input string) string {
 	return strings.Replace(input, "\n", "\r\n", -1)
 }
 
-func testSetup(vComponents []VComponent) (bytes.Buffer, error) {
+func testSetup(tz string, vComponents []VComponent) (bytes.Buffer, error) {
 	c := NewBasicVCalendar()
-	c.PRODID = "proid"
-	c.X_WR_TIMEZONE = "Asia/Tokyo"
+	c.PRODID = "prodid"
+	c.X_WR_TIMEZONE = tz
 	c.X_WR_CALNAME = "name"
 	c.X_WR_CALDESC = "desc"
 
@@ -350,16 +361,16 @@ func testSetup(vComponents []VComponent) (bytes.Buffer, error) {
 	return b, nil
 }
 
-func testSetupWithDraft(vComponents []VComponent) (bytes.Buffer, error) {
+func testSetupWithDraft(tz string, vComponents []VComponent) (bytes.Buffer, error) {
 	c := NewBasicVCalendar()
-	c.PRODID = "proid"
+	c.PRODID = "prodid"
 	c.URL = "http://my.calendar/url"
 	c.NAME = "name"
 	c.X_WR_CALNAME = "name"
 	c.DESCRIPTION = "desc"
 	c.X_WR_CALDESC = "desc"
-	c.TIMEZONE_ID = "Asia/Tokyo"
-	c.X_WR_TIMEZONE = "Asia/Tokyo"
+	c.TIMEZONE_ID = tz
+	c.X_WR_TIMEZONE = tz
 	c.REFRESH_INTERVAL = "PT12H"
 	c.X_PUBLISHED_TTL = "PT12H"
 	c.COLOR = "34:50:105"

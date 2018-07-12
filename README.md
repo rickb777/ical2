@@ -1,9 +1,11 @@
-[![Build Status](https://travis-ci.org/ajcollins/ical.svg?branch=master)](https://travis-ci.org/ajcollins/ical)
-[![Go Report Card](https://goreportcard.com/badge/github.com/ajcollins/ical)](https://goreportcard.com/report/github.com/ajcollins/ical)
+[![Build Status](https://travis-ci.org/rickb777/ical.svg?branch=master)](https://travis-ci.org/rickb777/ical)
+[![Go Report Card](https://goreportcard.com/badge/github.com/rickb777/ical)](https://goreportcard.com/report/github.com/rickb777/ical)
 
 # ical
 
-Simple ical (https://www.ietf.org/rfc/rfc2445.txt) encoder for golang. From github.com/soh335/ical.
+Simple ical (https://tools.ietf.org/html/rfc5545) encoder for golang.
+
+This repo is forked from github.com/soh335/ical via github.com/ajcollins/ical.
 
 ## Support Extensions
 

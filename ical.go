@@ -1,17 +1,10 @@
 package ical
 
-// https://www.ietf.org/rfc/rfc2445.txt
+// https://tools.ietf.org/html/rfc5545
 
 import (
 	"bufio"
 	"io"
-	"time"
-)
-
-const (
-	stampLayout    = "20060102T150405Z"
-	dateLayout     = "20060102"
-	dateTimeLayout = "20060102T150405"
 )
 
 /*
@@ -35,6 +28,7 @@ const (
   METHOD:PUBLISH
 */
 
+// VCalendar is a calendar as per RFC-5545 https://tools.ietf.org/html/rfc5545.
 type VCalendar struct {
 	VERSION string // 2.0
 	PRODID  string // -//My Company//NONSGML Event Calendar//EN
@@ -114,126 +108,7 @@ func (c *VCalendar) Encode(w io.Writer) error {
 	return b.Flush()
 }
 
+// VComponent is an item that belongs to a calendar.
 type VComponent interface {
 	EncodeIcal(w io.Writer) error
-}
-
-type VEvent struct {
-	UID         string
-	DTSTAMP     time.Time
-	DTSTART     time.Time
-	DTEND       time.Time
-	ORGANIZER   string
-	ATTENDEE    []string
-	SUMMARY     string
-	DESCRIPTION string
-	TZID        string
-	SEQUENCE    string
-	STATUS      string
-	ALARM       string
-	LOCATION    string
-	TRANSP      string
-
-	AllDay bool
-}
-
-func (e *VEvent) EncodeIcal(w io.Writer) error {
-
-	var timeStampLayout, timeStampType, tzidTxt string
-
-	if e.AllDay {
-		timeStampLayout = dateLayout
-		timeStampType = "DATE"
-	} else {
-		timeStampLayout = dateTimeLayout
-		timeStampType = "DATE-TIME"
-		if len(e.TZID) == 0 || e.TZID == "UTC" {
-			timeStampLayout = timeStampLayout + "Z"
-		}
-	}
-
-	if len(e.TZID) != 0 && e.TZID != "UTC" {
-		tzidTxt = "TZID=" + e.TZID + ";"
-	}
-
-	b := bufio.NewWriter(w)
-	if _, err := b.WriteString("BEGIN:VEVENT\r\n"); err != nil {
-		return err
-	}
-	if _, err := b.WriteString("DTSTAMP:" + e.DTSTAMP.UTC().Format(stampLayout) + "\r\n"); err != nil {
-		return err
-	}
-	if _, err := b.WriteString("UID:" + e.UID + "\r\n"); err != nil {
-		return err
-	}
-
-	if len(e.TZID) != 0 && e.TZID != "UTC" {
-		if _, err := b.WriteString("TZID:" + e.TZID + "\r\n"); err != nil {
-			return err
-		}
-	}
-
-	if e.ORGANIZER != "" {
-		if _, err := b.WriteString("ORGANIZER" + e.ORGANIZER + "\r\n"); err != nil {
-			return err
-		}
-	}
-
-	if len(e.ATTENDEE) > 0 {
-		for _, attendee := range e.ATTENDEE {
-			if _, err := b.WriteString("ATTENDEE;CN=" + attendee + ":MAILTO:" + attendee + "\r\n"); err != nil {
-				return err
-			}
-		}
-	}
-
-	if e.SEQUENCE != "" {
-		if _, err := b.WriteString("SEQUENCE:" + e.SEQUENCE + "\r\n"); err != nil {
-			return err
-		}
-	}
-
-	if e.STATUS != "" {
-		if _, err := b.WriteString("STATUS:" + e.STATUS + "\r\n"); err != nil {
-			return err
-		}
-	}
-
-	if _, err := b.WriteString("SUMMARY:" + e.SUMMARY + "\r\n"); err != nil {
-		return err
-	}
-	if e.DESCRIPTION != "" {
-		if _, err := b.WriteString("DESCRIPTION:" + e.DESCRIPTION + "\r\n"); err != nil {
-			return err
-		}
-	}
-	if e.LOCATION != "" {
-		if _, err := b.WriteString("LOCATION:" + e.LOCATION + "\r\n"); err != nil {
-			return err
-		}
-	}
-	if e.TRANSP != "" {
-		if _, err := b.WriteString("TRANSP:" + e.TRANSP + "\r\n"); err != nil {
-			return err
-		}
-	}
-	if _, err := b.WriteString("DTSTART;" + tzidTxt + "VALUE=" + timeStampType + ":" + e.DTSTART.Format(timeStampLayout) + "\r\n"); err != nil {
-		return err
-	}
-
-	if _, err := b.WriteString("DTEND;" + tzidTxt + "VALUE=" + timeStampType + ":" + e.DTEND.Format(timeStampLayout) + "\r\n"); err != nil {
-		return err
-	}
-
-	if e.ALARM != "" {
-		if _, err := b.WriteString("BEGIN:VALARM\r\nTRIGGER:" + e.ALARM + "\r\nACTION:DISPLAY\r\nEND:VALARM\r\n"); err != nil {
-			return err
-		}
-	}
-
-	if _, err := b.WriteString("END:VEVENT\r\n"); err != nil {
-		return err
-	}
-
-	return b.Flush()
 }
