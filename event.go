@@ -3,7 +3,6 @@ package ical
 import (
 	"io"
 	"time"
-	"fmt"
 )
 
 const (
@@ -12,18 +11,66 @@ const (
 	dateTimeLayout = "20060102T150405"
 )
 
-// Party is a person, typically an organiser or attendee.
-type Party struct {
+type Individual struct {
 	Name  string
+	Dir   string
 	Email string
 }
 
-func (p Party) String() string {
-	if p.Name == "" {
-		return fmt.Sprintf(":MAILTO=%s", p.Email)
+func (p Individual) WriteParams(b *buffer) (err error) {
+	if _, err = b.IfWriteString(p.Name != "", ";CN=", p.Name); err != nil {
+		return err
 	}
-	return fmt.Sprintf(";CN=%s:MAILTO=%s", p.Name, p.Email)
+	if _, err = b.IfWriteString(p.Dir != "", ";DIR=", p.Dir); err != nil {
+		return err
+	}
+	return nil
 }
+
+func (p Individual) WriteLine(b *buffer, property string) (err error) {
+	if p.Email == "" {
+		return nil
+	}
+	if _, err = b.WriteString(property); err != nil {
+		return err
+	}
+	if err = p.WriteParams(b); err != nil {
+		return err
+	}
+	return b.WriteLine(":mailto=", p.Email)
+}
+
+//-------------------------------------------------------------------------------------------------
+
+type Attendee struct {
+	Individual
+	Role string // CHAIR, REQ-PARTICIPANT, OPT-PARTICIPANT, NON-PARTICIPANT etc
+}
+
+func (p Attendee) WriteParams(b *buffer) (err error) {
+	if _, err = b.IfWriteString(p.Role != "", ";ROLE=", p.Role); err != nil {
+		return err
+	}
+	if err = p.Individual.WriteParams(b); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (p Attendee) WriteLine(b *buffer, property string) (err error) {
+	if p.Email == "" {
+		return nil
+	}
+	if _, err = b.WriteString(property); err != nil {
+		return err
+	}
+	if err = p.WriteParams(b); err != nil {
+		return err
+	}
+	return b.WriteLine(":mailto=", p.Email)
+}
+
+//-------------------------------------------------------------------------------------------------
 
 // VEvent captures a calendar event
 type VEvent struct {
@@ -31,8 +78,9 @@ type VEvent struct {
 	DTSTAMP     time.Time
 	DTSTART     time.Time
 	DTEND       time.Time
-	ORGANIZER   Party
-	ATTENDEE    []Party
+	ORGANIZER   Individual
+	ATTENDEE    []Attendee
+	CONTACT     string
 	SUMMARY     string
 	DESCRIPTION string
 	TZID        string
@@ -77,58 +125,46 @@ func (e *VEvent) EncodeIcal(w io.Writer) error {
 		return err
 	}
 
-	if len(e.TZID) != 0 && e.TZID != "UTC" {
-		if err := b.WriteLine("TZID:", e.TZID); err != nil {
+	if err := b.IfWriteLine(len(e.TZID) != 0 && e.TZID != "UTC", "TZID:", e.TZID); err != nil {
+		return err
+	}
+
+	if err := e.ORGANIZER.WriteLine(b, "ORGANIZER"); err != nil {
+		return err
+	}
+
+	for _, attendee := range e.ATTENDEE {
+		if err := attendee.WriteLine(b, "ATTENDEE"); err != nil {
 			return err
 		}
 	}
 
-	if e.ORGANIZER.Email != "" {
-		if err := b.WriteLine("ORGANIZER", e.ORGANIZER.String()); err != nil {
-			return err
-		}
+	if err := b.IfWriteLine(e.CONTACT != "", "CONTACT:", e.CONTACT); err != nil {
+		return err
 	}
 
-	if len(e.ATTENDEE) > 0 {
-		for _, attendee := range e.ATTENDEE {
-			if err := b.WriteLine("ATTENDEE", attendee.String()); err != nil {
-				return err
-			}
-		}
+	if err := b.IfWriteLine(e.SEQUENCE != "", "SEQUENCE:", e.SEQUENCE); err != nil {
+		return err
 	}
 
-	if e.SEQUENCE != "" {
-		if err := b.WriteLine("SEQUENCE:", e.SEQUENCE); err != nil {
-			return err
-		}
-	}
-
-	if e.STATUS != "" {
-		if err := b.WriteLine("STATUS:", e.STATUS); err != nil {
-			return err
-		}
+	if err := b.IfWriteLine(e.STATUS != "", "STATUS:", e.STATUS); err != nil {
+		return err
 	}
 
 	if err := b.WriteLine("SUMMARY:", e.SUMMARY); err != nil {
 		return err
 	}
 
-	if e.DESCRIPTION != "" {
-		if err := b.WriteLine("DESCRIPTION:", e.DESCRIPTION); err != nil {
-			return err
-		}
+	if err := b.IfWriteLine(e.DESCRIPTION != "", "DESCRIPTION:", e.DESCRIPTION); err != nil {
+		return err
 	}
 
-	if e.LOCATION != "" {
-		if err := b.WriteLine("LOCATION:", e.LOCATION); err != nil {
-			return err
-		}
+	if err := b.IfWriteLine(e.LOCATION != "", "LOCATION:", e.LOCATION); err != nil {
+		return err
 	}
 
-	if e.TRANSP != "" {
-		if err := b.WriteLine("TRANSP:", e.TRANSP); err != nil {
-			return err
-		}
+	if err := b.IfWriteLine(e.TRANSP != "", "TRANSP:", e.TRANSP); err != nil {
+		return err
 	}
 
 	if err := b.WriteLine("DTSTART;", tzidTxt, "VALUE=", timeStampType, ":", e.DTSTART.Format(timeStampLayout)); err != nil {

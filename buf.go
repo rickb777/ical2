@@ -14,18 +14,34 @@ func newBuffer(w io.Writer) *buffer {
 
 const crnl = "\r\n"
 
-func (b *buffer) WriteString(s string) (int, error) {
-	return (*bufio.Writer)(b).WriteString(s)
-}
-
-func (b *buffer) WriteLine(ss ...string) error {
-	var err error
+func (b *buffer) WriteString(ss ...string) (n int, err error) {
 	for _, s := range ss {
-		if _, err = b.WriteString(s); err != nil {
-			return err
+		if n, err = (*bufio.Writer)(b).WriteString(s); err != nil {
+			return n, err
 		}
 	}
+	return n, err
+}
+
+func (b *buffer) IfWriteString(predicate bool, ss ...string) (n int, err error) {
+	if predicate {
+		n, err = b.WriteString(ss...)
+	}
+	return
+}
+
+func (b *buffer) WriteLine(ss ...string) (err error) {
+	if _, err = b.WriteString(ss...); err != nil {
+		return err
+	}
 	_, err = b.WriteString(crnl)
+	return err
+}
+
+func (b *buffer) IfWriteLine(predicate bool, ss ...string) (err error) {
+	if predicate {
+		err = b.WriteLine(ss...)
+	}
 	return err
 }
 

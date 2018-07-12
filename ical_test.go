@@ -10,16 +10,19 @@ import (
 func TestEncode(t *testing.T) {
 	const tz = "Europe/Paris"
 	zone := time.FixedZone(tz, 60*60*1)
-	d := time.Date(2014, time.Month(1), 1, 8, 0, 0, 0, zone)
+	dt := time.Date(2014, time.Month(1), 1, 7, 0, 0, 0, zone)
+	ds := dt.Add(time.Hour)
+	de := ds.Add(5*time.Hour)
 
 	vComponents := []VComponent{
 		&VEvent{
 			UID:         "123",
-			DTSTAMP:     d,
-			DTSTART:     d,
-			DTEND:       d,
-			ORGANIZER:   Party{"H.Tudwr", "ht@throne.com"},
-			ATTENDEE:    []Party{{"Ann Blin", "ann.blin@exmaple.com"}},
+			DTSTAMP:     dt,
+			DTSTART:     ds,
+			DTEND:       de,
+			ORGANIZER:   Individual{"H.Tudwr", "", "ht@throne.com"},
+			ATTENDEE:    []Attendee{{Individual{"Ann Blin", "", "ann.blin@example.com"}, "REQ-PARTICIPANT"}},
+			CONTACT:     "T.Moore",
 			SUMMARY:     "summary",
 			DESCRIPTION: "description",
 			TZID:        tz,
@@ -41,17 +44,18 @@ X-WR-CALDESC:desc
 X-WR-TIMEZONE:Europe/Paris
 CALSCALE:GREGORIAN
 BEGIN:VEVENT
-DTSTAMP:20140101T070000Z
+DTSTAMP:20140101T060000Z
 UID:123
 TZID:Europe/Paris
-ORGANIZER;CN=H.Tudwr:MAILTO=ht@throne.com
-ATTENDEE;CN=Ann Blin:MAILTO=ann.blin@exmaple.com
+ORGANIZER;CN=H.Tudwr:mailto=ht@throne.com
+ATTENDEE;ROLE=REQ-PARTICIPANT;CN=Ann Blin:mailto=ann.blin@example.com
+CONTACT:T.Moore
 SUMMARY:summary
 DESCRIPTION:description
 LOCATION:Paris
 TRANSP:TRANSPARENT
 DTSTART;TZID=Europe/Paris;VALUE=DATE-TIME:20140101T080000
-DTEND;TZID=Europe/Paris;VALUE=DATE-TIME:20140101T080000
+DTEND;TZID=Europe/Paris;VALUE=DATE-TIME:20140101T130000
 END:VEVENT
 END:VCALENDAR
 `
