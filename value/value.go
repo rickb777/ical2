@@ -13,6 +13,7 @@ type simpleValue struct {
 	Value      string
 }
 
+// IsDefined tests whether the value has been explicitly defined or is default.
 func (v simpleValue) IsDefined() bool {
 	return v.Value != ""
 }
@@ -29,11 +30,14 @@ func CalAddress(mailto string) CalAddressValue {
 	return CalAddressValue{simpleValue{Value: mailto}}
 }
 
+// With appends parameters to the value.
 func (v CalAddressValue) With(params ...parameter.Parameter) CalAddressValue {
 	v.Parameters = v.Parameters.Append(params...)
 	return v
 }
 
+// WriteTo writes the value to the writer.
+// This is part of the Valuer interface.
 func (v CalAddressValue) WriteTo(w ics.StringWriter) error {
 	v.Parameters.WriteTo(w)
 	w.WriteString(":mailto:")
@@ -55,11 +59,14 @@ func Duration(d string) DurationValue {
 	return DurationValue{simpleValue{Value: d}}.With(parameter.Type("DURATION"))
 }
 
+// With appends parameters to the value.
 func (v DurationValue) With(params ...parameter.Parameter) DurationValue {
 	v.Parameters = v.Parameters.Append(params...)
 	return v
 }
 
+// WriteTo writes the value to the writer.
+// This is part of the Valuer interface.
 func (v DurationValue) WriteTo(w ics.StringWriter) error {
 	v.Parameters.WriteTo(w)
 	w.WriteByte(':')
@@ -78,18 +85,22 @@ type IntegerValue struct {
 
 // Integer returns a new IntegerValue.
 func Integer(d int) IntegerValue {
-	return IntegerValue{Value: d}
+	return IntegerValue{Value: d, defined: true}
 }
 
+// IsDefined tests whether the value has been explicitly defined or is default.
 func (v IntegerValue) IsDefined() bool {
 	return v.defined
 }
 
+// With appends parameters to the value.
 func (v IntegerValue) With(params ...parameter.Parameter) IntegerValue {
 	v.Parameters = v.Parameters.Append(params...)
 	return v
 }
 
+// WriteTo writes the value to the writer.
+// This is part of the Valuer interface.
 func (v IntegerValue) WriteTo(w ics.StringWriter) error {
 	v.Parameters.WriteTo(w)
 	w.WriteByte(':')
@@ -125,19 +136,25 @@ const (
 	IN_PROCESS = "IN-PROCESS"
 )
 
+// TextValue holds a value that is a string and which will be escaped
+// when written out.
 type TextValue struct {
 	simpleValue
 }
 
+// Text constructs a new text value.
 func Text(v string) TextValue {
 	return TextValue{simpleValue{Value: v}}
 }
 
+// With appends parameters to the value.
 func (v TextValue) With(params ...parameter.Parameter) TextValue {
 	v.Parameters = v.Parameters.Append(params...)
 	return v
 }
 
+// WriteTo writes the value to the writer.
+// This is part of the Valuer interface.
 func (v TextValue) WriteTo(w ics.StringWriter) error {
 	v.Parameters.WriteTo(w)
 	w.WriteByte(':')
@@ -190,23 +207,29 @@ type DateTimeValue struct {
 	format     string
 }
 
+// Date constructs a new date value, i.e. without time.
 func Date(t time.Time) DateTimeValue {
 	return DateTimeValue{Value: t, format: dateLayout}.With(parameter.Type(parameter.DATE))
 }
 
+// DateTime constructs a new date+time value.
 func DateTime(t time.Time) DateTimeValue {
 	return DateTimeValue{Value: t, format: dateTimeLayout}.With(parameter.Type(parameter.DATE_TIME))
 }
 
+// TStamp constructs a date-time value using UTC.
 func TStamp(t time.Time) DateTimeValue {
 	return DateTimeValue{Value: t.UTC(), format: dateTimeLayout + "Z"}
 }
 
+// AsDate converts a date+time value to a date-only value.
 func (v DateTimeValue) AsDate() DateTimeValue {
 	v.format = dateLayout
 	return v.With(parameter.Type(parameter.DATE))
 }
 
+// UTC converts a date+time value to be shown as UTC ('zulu'). It does not alter the
+// time value, which should already be UTC.
 func (v DateTimeValue) UTC() DateTimeValue {
 	if v.format == dateTimeLayout {
 		v.format = dateTimeLayout + "Z"
@@ -214,15 +237,19 @@ func (v DateTimeValue) UTC() DateTimeValue {
 	return v
 }
 
+// IsDefined tests whether the value has been explicitly defined or is default.
 func (v DateTimeValue) IsDefined() bool {
 	return !v.Value.IsZero()
 }
 
+// With appends parameters to the value.
 func (v DateTimeValue) With(params ...parameter.Parameter) DateTimeValue {
 	v.Parameters = v.Parameters.Append(params...)
 	return v
 }
 
+// WriteTo writes the value to the writer.
+// This is part of the Valuer interface.
 func (v DateTimeValue) WriteTo(w ics.StringWriter) error {
 	v.Parameters.WriteTo(w)
 	w.WriteByte(':')

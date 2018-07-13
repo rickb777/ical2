@@ -121,8 +121,8 @@ type Buffer struct {
 	fw *foldWriter
 }
 
-// NewBuffer constructs a Buffer that wraps some Writer. The lineEnding can be "" or "\r\n" for
-// normal iCal formatting, or "\n" in other cases.
+// NewBuffer constructs a Buffer that wraps some Writer. The lineEnding can be
+// "" or "\r\n" for normal iCal formatting, or "\n" in other cases.
 func NewBuffer(w io.Writer, lineEnding string) *Buffer {
 	return &Buffer{newFoldWriter(w, lineEnding)}
 }
@@ -133,11 +133,16 @@ func (b *Buffer) WriteString(s string) error {
 	return b.fw.err
 }
 
+// WriteLine writes a string and a newline to the buffer. In order to comply with
+// the line folding rules, you should use this method and not write strings
+// containing additional newline '\n' or carriage return '\r' characters.
 func (b *Buffer) WriteLine(s string) error {
 	b.WriteString(s)
 	return b.fw.newline()
 }
 
+// WriteValuerLine conditionally writes a valuer along with its property name. If
+// the predicate is false, nothing is written.
 func (b *Buffer) WriteValuerLine(predicate bool, label string, v Valuer) error {
 	if !predicate {
 		return b.fw.err // skip
@@ -148,6 +153,8 @@ func (b *Buffer) WriteValuerLine(predicate bool, label string, v Valuer) error {
 	return b.fw.newline()
 }
 
+// Flush flushes the buffered data through to the underlying writer. This must be
+// called at least once, at the end.
 func (b *Buffer) Flush() error {
 	return b.fw.flush()
 }
