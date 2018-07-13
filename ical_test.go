@@ -17,15 +17,15 @@ func TestEncode(t *testing.T) {
 	de := ds.Add(5 * time.Hour)
 
 	event := &VEvent{
-		UID:          Text("123"),
-		DTStamp:      TStamp(dt),
-		DTStart:      DateTime(ds),
-		DTEnd:        DateTime(de),
-		Organizer:    CalAddress("ht@throne.com").With(CommonName("H.Tudwr")),
-		Attendee:     []CalAddressValue{CalAddress("ann.blin@example.com").With(Role("REQ-PARTICIPANT"), CommonName("Ann Blin"))},
-		Contact:      Text("T.Moore, Esq."),
-		Summary:      Text("summary, with punctuation"),
-		Description:  Text("Lorem ipsum dolor sit amet, consectetµr adipiscing elit, sed do eiusmod tempor incididµnt µt labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."),
+		UID:         Text("123"),
+		DTStamp:     TStamp(dt),
+		Start:       DateTime(ds),
+		End:         DateTime(de),
+		Organizer:   CalAddress("ht@throne.com").With(CommonName("H.Tudwr")),
+		Attendee:    []CalAddressValue{CalAddress("ann.blin@example.com").With(Role("REQ-PARTICIPANT"), CommonName("Ann Blin"))},
+		Contact:     Text("T.Moore, Esq."),
+		Summary:     Text("summary, with punctuation"),
+		Description: Text("Lorem ipsum dolor sit amet, consectetµr adipiscing elit, sed do eiusmod tempor incididµnt µt labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."),
 		RelatedTo:    Text("19960401-080045-4000F192713-0052@example.com"),
 		TZID:         Text(tz),
 		Location:     Text("South Bank, London SE1 9PX"),
@@ -82,8 +82,8 @@ func TestEncodeAllDayTrue(t *testing.T) {
 	event := (&VEvent{
 		UID:          Text("123"),
 		DTStamp:      TStamp(d),
-		DTStart:      DateTime(d),
-		DTEnd:        DateTime(d),
+		Start:        DateTime(d),
+		End:          DateTime(d),
 		Summary:      Text("summary"),
 		TZID:         Text("Asia/Tokyo"),
 		Transparency: Text(OPAQUE),
@@ -127,8 +127,8 @@ func TestEncodeDraftProperties(t *testing.T) {
 	event := &VEvent{
 		UID:     Text("123"),
 		DTStamp: TStamp(d),
-		DTStart: DateTime(d),
-		DTEnd:   DateTime(d),
+		Start:   DateTime(d),
+		End:     DateTime(d),
 		Summary: Text("summary"),
 		TZID:    Text("Asia/Tokyo"),
 	}
@@ -177,8 +177,8 @@ func TestEncodeNoTzid(t *testing.T) {
 	event := &VEvent{
 		UID:     Text("123"),
 		DTStamp: TStamp(d),
-		DTStart: DateTime(d),
-		DTEnd:   DateTime(d),
+		Start:   DateTime(d),
+		End:     DateTime(d),
 		Summary: Text("summary"),
 	}
 
@@ -218,8 +218,8 @@ func TestEncodeUtcTzid(t *testing.T) {
 	event := &VEvent{
 		UID:     Text("123"),
 		DTStamp: TStamp(d),
-		DTStart: DateTime(d),
-		DTEnd:   DateTime(d),
+		Start:   DateTime(d),
+		End:     DateTime(d),
 		Summary: Text("summary"),
 		TZID:    Text("UTC"),
 	}
@@ -260,8 +260,8 @@ func TestEncodeNoTzidAllDay(t *testing.T) {
 	event := (&VEvent{
 		UID:     Text("123"),
 		DTStamp: TStamp(d),
-		DTStart: DateTime(d),
-		DTEnd:   DateTime(d),
+		Start:   DateTime(d),
+		End:     DateTime(d),
 		Summary: Text("summary"),
 	}).AllDay()
 
@@ -301,8 +301,8 @@ func TestEncodeUtcTzidAllDay(t *testing.T) {
 	event := (&VEvent{
 		UID:     Text("123"),
 		DTStamp: TStamp(d),
-		DTStart: DateTime(d),
-		DTEnd:   DateTime(d),
+		Start:   DateTime(d),
+		End:     DateTime(d),
 		Summary: Text("summary"),
 		TZID:    Text("UTC"),
 	}).AllDay()
@@ -362,7 +362,6 @@ func testSetupWithDraft(tz string, vComponents ...VComponent) (bytes.Buffer, err
 	c.Extend("X-WR-CALNAME", Text("name"))
 	c.Description = Text("desc")
 	c.Extend("X-WR-CALDESC", Text("desc"))
-	c.TimezoneId = tz
 	c.Extend("X-WR-TIMEZONE", Text(tz))
 	c.RefreshInterval = Duration("PT12H")
 	c.Extend("X-PUBLISHED-TTL", Text("PT12H"))

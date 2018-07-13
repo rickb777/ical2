@@ -5,6 +5,7 @@ import (
 	"time"
 	"github.com/rickb777/ical2/parameter"
 	"github.com/rickb777/ical2/ics"
+	"strconv"
 )
 
 type simpleValue struct {
@@ -63,6 +64,36 @@ func (v DurationValue) WriteTo(w ics.StringWriter) error {
 	v.Parameters.WriteTo(w)
 	w.WriteByte(':')
 	_, e := w.WriteString(v.Value)
+	return e
+}
+
+//-------------------------------------------------------------------------------------------------
+
+// IntegerValue holds an integer.
+type IntegerValue struct {
+	Parameters parameter.Parameters
+	Value      int
+	defined    bool
+}
+
+// Integer returns a new IntegerValue.
+func Integer(d int) IntegerValue {
+	return IntegerValue{Value: d}
+}
+
+func (v IntegerValue) IsDefined() bool {
+	return v.defined
+}
+
+func (v IntegerValue) With(params ...parameter.Parameter) IntegerValue {
+	v.Parameters = v.Parameters.Append(params...)
+	return v
+}
+
+func (v IntegerValue) WriteTo(w ics.StringWriter) error {
+	v.Parameters.WriteTo(w)
+	w.WriteByte(':')
+	_, e := w.WriteString(strconv.Itoa(v.Value))
 	return e
 }
 

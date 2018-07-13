@@ -25,12 +25,14 @@ type StringWriter interface {
 	WriteString(s string) (n int, err error)
 }
 
+//-------------------------------------------------------------------------------------------------
+
 // foldWriter implements the max-75 character line folding.
 // It also collapses any i/o errors.
 type foldWriter struct {
-	w   *bufio.Writer
-	n   int
-	err error
+	w          *bufio.Writer
+	n          int
+	err        error
 	lineEnding string // usually "\r\n"
 }
 
@@ -41,26 +43,26 @@ func newFoldWriter(w io.Writer, lineEnding string) *foldWriter {
 	return &foldWriter{w: bufio.NewWriter(w), lineEnding: lineEnding}
 }
 
-func (fw *foldWriter) Write(s []byte) (n int, err error) {
+func (fw *foldWriter) Write(s []byte) (i int, err error) {
 	if fw.err != nil {
 		return
 	}
 
 	remaining := 75 - fw.n
 
-	for i := 0; i < len(s); i++ {
+	for i = 0; i < len(s) && fw.err == nil; i++ {
 		c := s[i]
 		if remaining < 1 {
 			fw.wrapLine()
 			remaining = 75
 		}
 
-		fw.w.WriteByte(c)
+		fw.err = fw.w.WriteByte(c)
 		fw.n++
 		remaining--
 	}
 
-	return len(s), fw.err
+	return i, fw.err
 }
 
 func (fw *foldWriter) WriteByte(c byte) error {
@@ -77,23 +79,22 @@ func (fw *foldWriter) WriteByte(c byte) error {
 	return fw.err
 }
 
-func (fw *foldWriter) WriteString(s string) (n int, err error) {
-	// treat s as a sequence of bytes, not runes
-	return fw.Write([]byte(s))
-}
-
 func (fw *foldWriter) wrapLine() error {
 	if fw.err == nil {
 		fw.newline()
-		fw.w.WriteByte(' ')
+		fw.err = fw.w.WriteByte(' ')
 		fw.n = 1
 	}
 
 	return fw.err
 }
 
-func (fw *foldWriter) newline() error {
+func (fw *foldWriter) WriteString(s string) (n int, err error) {
+	// treat s as a sequence of bytes, not runes
+	return fw.Write([]byte(s))
+}
 
+func (fw *foldWriter) newline() error {
 	if fw.err == nil {
 		_, fw.err = fw.w.WriteString(fw.lineEnding)
 		fw.n = 0
@@ -113,7 +114,9 @@ func (fw *foldWriter) flush() error {
 //-------------------------------------------------------------------------------------------------
 
 // Buffer wraps bufio.Writer with some iCal-specific helper methods.
-// It uses foldWriter to meet the iCal max-75 characters per line limit.
+// It folds long lines to meet the iCal max-75 characters per line limit.
+// If coallesces errors so they don't have to be checked after every method;
+// it is sufficient to check once at the end.
 type Buffer struct {
 	fw *foldWriter
 }
@@ -124,21 +127,20 @@ func NewBuffer(w io.Writer, lineEnding string) *Buffer {
 	return &Buffer{newFoldWriter(w, lineEnding)}
 }
 
-func (b *Buffer) WriteString(ss ...string) error {
-	for _, s := range ss {
-		b.fw.WriteString(s)
-	}
+// WriteString writes the string supplied.
+func (b *Buffer) WriteString(s string) error {
+	b.fw.WriteString(s)
 	return b.fw.err
 }
 
-func (b *Buffer) WriteLine(ss ...string) error {
-	b.WriteString(ss...)
+func (b *Buffer) WriteLine(s string) error {
+	b.WriteString(s)
 	return b.fw.newline()
 }
 
-func (b *Buffer) IfWriteValuerLine(predicate bool, label string, v Valuer) error {
+func (b *Buffer) WriteValuerLine(predicate bool, label string, v Valuer) error {
 	if !predicate {
-		return b.fw.err
+		return b.fw.err // skip
 	}
 
 	b.WriteString(label)

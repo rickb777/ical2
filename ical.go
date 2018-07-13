@@ -54,8 +54,6 @@ type VCalendar struct {
 	Color           value.TextValue     // CSS3 color name
 	// TODO CATEGORIES, SOURCE, []IMAGE
 
-	TimezoneId string // Europe/London
-
 	//X_WR_CALNAME string // My Calendar Name
 	//X_WR_CALDESC string // A description of my calendar
 	//X_WR_TIMEZONE string // Europe/London
@@ -90,20 +88,20 @@ func (c *VCalendar) doEncode(w io.Writer, lineEnding string) error {
 
 	b.WriteLine("BEGIN:VCALENDAR")
 
-	b.IfWriteValuerLine(true, "VERSION", c.Version)
-	b.IfWriteValuerLine(true, "PRODID", c.ProdId)
-	b.IfWriteValuerLine(ics.IsDefined(c.CalScale), "CALSCALE", c.CalScale)
-	b.IfWriteValuerLine(ics.IsDefined(c.Method), "METHOD", c.Method)
-	b.IfWriteValuerLine(ics.IsDefined(c.Name), "NAME", c.Name)
-	b.IfWriteValuerLine(ics.IsDefined(c.Description), "DESCRIPTION", c.Description)
-	b.IfWriteValuerLine(ics.IsDefined(c.UID), "UID", c.UID)
-	b.IfWriteValuerLine(ics.IsDefined(c.URL), "URL", c.URL)
-	b.IfWriteValuerLine(ics.IsDefined(c.LastModified), "LAST-MODIFIED", c.LastModified)
-	b.IfWriteValuerLine(ics.IsDefined(c.Color), "COLOR", c.Color)
-	b.IfWriteValuerLine(ics.IsDefined(c.RefreshInterval), "REFRESH-INTERVAL", c.RefreshInterval)
+	b.WriteValuerLine(true, "VERSION", c.Version)
+	b.WriteValuerLine(true, "PRODID", c.ProdId)
+	b.WriteValuerLine(ics.IsDefined(c.CalScale), "CALSCALE", c.CalScale)
+	b.WriteValuerLine(ics.IsDefined(c.Method), "METHOD", c.Method)
+	b.WriteValuerLine(ics.IsDefined(c.Name), "NAME", c.Name)
+	b.WriteValuerLine(ics.IsDefined(c.Description), "DESCRIPTION", c.Description)
+	b.WriteValuerLine(ics.IsDefined(c.UID), "UID", c.UID)
+	b.WriteValuerLine(ics.IsDefined(c.URL), "URL", c.URL)
+	b.WriteValuerLine(ics.IsDefined(c.LastModified), "LAST-MODIFIED", c.LastModified)
+	b.WriteValuerLine(ics.IsDefined(c.Color), "COLOR", c.Color)
+	b.WriteValuerLine(ics.IsDefined(c.RefreshInterval), "REFRESH-INTERVAL", c.RefreshInterval)
 
 	for _, extension := range c.Extensions {
-		b.IfWriteValuerLine(true, extension.Key, extension.Value)
+		b.WriteValuerLine(true, extension.Key, extension.Value)
 	}
 
 	for _, component := range c.VComponent {

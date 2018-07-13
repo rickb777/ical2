@@ -11,8 +11,8 @@ import (
 type VEvent struct {
 	UID          value.TextValue
 	DTStamp      value.DateTimeValue
-	DTStart      value.DateTimeValue
-	DTEnd        value.DateTimeValue
+	Start        value.DateTimeValue
+	End          value.DateTimeValue
 	LastModified value.DateTimeValue
 	Organizer    value.CalAddressValue
 	Attendee     []value.CalAddressValue
@@ -23,7 +23,7 @@ type VEvent struct {
 	Comment      value.TextValue
 	RelatedTo    value.TextValue
 	TZID         value.TextValue
-	Sequence     ics.Valuer
+	Sequence     value.IntegerValue
 	Status       value.TextValue
 	ALARM        value.TextValue
 	Location     value.TextValue
@@ -34,9 +34,11 @@ type VEvent struct {
 	// TODO (RFC7986) []CONFERENCE
 }
 
+// AllDay changes the start and end to represent dates without time.
+// If they are already configured as dates only, this has no effect.
 func (e *VEvent) AllDay() *VEvent {
-	e.DTStart = e.DTStart.AsDate()
-	e.DTEnd = e.DTEnd.AsDate()
+	e.Start = e.Start.AsDate()
+	e.End = e.End.AsDate()
 	return e
 }
 
@@ -53,41 +55,41 @@ func (e *VEvent) EncodeIcal(b *ics.Buffer) error {
 	tzIsDefined := ics.IsDefined(e.TZID) && e.TZID.Value != "UTC"
 
 	if tzIsDefined {
-		e.DTStart.Parameters = e.DTStart.Parameters.Prepend(parameter.TZID(e.TZID.Value))
-		e.DTEnd.Parameters = e.DTEnd.Parameters.Prepend(parameter.TZID(e.TZID.Value))
+		e.Start.Parameters = e.Start.Parameters.Prepend(parameter.TZID(e.TZID.Value))
+		e.End.Parameters = e.End.Parameters.Prepend(parameter.TZID(e.TZID.Value))
 	} else if !ics.IsDefined(e.TZID) || e.TZID.Value == "UTC" {
-		e.DTStart = e.DTStart.UTC()
-		e.DTEnd = e.DTEnd.UTC()
+		e.Start = e.Start.UTC()
+		e.End = e.End.UTC()
 	}
 
 	b.WriteLine("BEGIN:VEVENT")
 
-	b.IfWriteValuerLine(true, "DTSTAMP", e.DTStamp)
-	b.IfWriteValuerLine(ics.IsDefined(e.LastModified), "LAST-MODIFIED", e.LastModified)
-	b.IfWriteValuerLine(true, "UID", e.UID)
-	b.IfWriteValuerLine(tzIsDefined, "TZID", e.TZID)
-	b.IfWriteValuerLine(ics.IsDefined(e.Organizer), "ORGANIZER", e.Organizer)
+	b.WriteValuerLine(true, "DTSTAMP", e.DTStamp)
+	b.WriteValuerLine(ics.IsDefined(e.LastModified), "LAST-MODIFIED", e.LastModified)
+	b.WriteValuerLine(true, "UID", e.UID)
+	b.WriteValuerLine(tzIsDefined, "TZID", e.TZID)
+	b.WriteValuerLine(ics.IsDefined(e.Organizer), "ORGANIZER", e.Organizer)
 
 	for _, attendee := range e.Attendee {
-		b.IfWriteValuerLine(true, "ATTENDEE", attendee)
+		b.WriteValuerLine(true, "ATTENDEE", attendee)
 	}
 
-	b.IfWriteValuerLine(ics.IsDefined(e.Contact), "CONTACT", e.Contact)
-	b.IfWriteValuerLine(ics.IsDefined(e.Sequence), "SEQUENCE", e.Sequence)
-	b.IfWriteValuerLine(ics.IsDefined(e.Status), "STATUS", e.Status)
-	b.IfWriteValuerLine(ics.IsDefined(e.Summary), "SUMMARY", e.Summary)
-	b.IfWriteValuerLine(ics.IsDefined(e.Description), "DESCRIPTION", e.Description)
-	b.IfWriteValuerLine(ics.IsDefined(e.Class), "CLASS", e.Class)
-	b.IfWriteValuerLine(ics.IsDefined(e.Comment), "COMMENT", e.Comment)
-	b.IfWriteValuerLine(ics.IsDefined(e.Location), "LOCATION", e.Location)
-	b.IfWriteValuerLine(ics.IsDefined(e.RelatedTo), "RELATED-TO", e.RelatedTo)
-	b.IfWriteValuerLine(ics.IsDefined(e.Transparency), "TRANSP", e.Transparency)
-	b.IfWriteValuerLine(ics.IsDefined(e.DTStart), "DTSTART", e.DTStart)
-	b.IfWriteValuerLine(ics.IsDefined(e.DTEnd), "DTEND", e.DTEnd)
+	b.WriteValuerLine(ics.IsDefined(e.Contact), "CONTACT", e.Contact)
+	b.WriteValuerLine(ics.IsDefined(e.Sequence), "SEQUENCE", e.Sequence)
+	b.WriteValuerLine(ics.IsDefined(e.Status), "STATUS", e.Status)
+	b.WriteValuerLine(ics.IsDefined(e.Summary), "SUMMARY", e.Summary)
+	b.WriteValuerLine(ics.IsDefined(e.Description), "DESCRIPTION", e.Description)
+	b.WriteValuerLine(ics.IsDefined(e.Class), "CLASS", e.Class)
+	b.WriteValuerLine(ics.IsDefined(e.Comment), "COMMENT", e.Comment)
+	b.WriteValuerLine(ics.IsDefined(e.Location), "LOCATION", e.Location)
+	b.WriteValuerLine(ics.IsDefined(e.RelatedTo), "RELATED-TO", e.RelatedTo)
+	b.WriteValuerLine(ics.IsDefined(e.Transparency), "TRANSP", e.Transparency)
+	b.WriteValuerLine(ics.IsDefined(e.Start), "DTSTART", e.Start)
+	b.WriteValuerLine(ics.IsDefined(e.End), "DTEND", e.End)
 
 	if ics.IsDefined(e.ALARM) {
 		b.WriteLine("BEGIN:VALARM")
-		b.IfWriteValuerLine(true, "TRIGGER", e.ALARM)
+		b.WriteValuerLine(true, "TRIGGER", e.ALARM)
 		b.WriteLine("ACTION:DISPLAY")
 		b.WriteLine("END:VALARM")
 	}
