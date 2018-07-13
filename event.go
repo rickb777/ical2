@@ -1,198 +1,95 @@
-package ical
+package ical2
 
 import (
-	"io"
-	"time"
+	"fmt"
 )
-
-const (
-	tstampLayout   = "20060102T150405Z"
-	dateLayout     = "20060102"
-	dateTimeLayout = "20060102T150405"
-)
-
-type Individual struct {
-	Name  string
-	Dir   string
-	Email string
-}
-
-func (p Individual) WriteParams(b *buffer) (err error) {
-	if _, err = b.IfWriteString(p.Name != "", ";CN=", p.Name); err != nil {
-		return err
-	}
-	if _, err = b.IfWriteString(p.Dir != "", ";DIR=", p.Dir); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (p Individual) WriteLine(b *buffer, property string) (err error) {
-	if p.Email == "" {
-		return nil
-	}
-	if _, err = b.WriteString(property); err != nil {
-		return err
-	}
-	if err = p.WriteParams(b); err != nil {
-		return err
-	}
-	return b.WriteLine(":mailto=", p.Email)
-}
-
-//-------------------------------------------------------------------------------------------------
-
-type Attendee struct {
-	Individual
-	Role string // CHAIR, REQ-PARTICIPANT, OPT-PARTICIPANT, NON-PARTICIPANT etc
-}
-
-func (p Attendee) WriteParams(b *buffer) (err error) {
-	if _, err = b.IfWriteString(p.Role != "", ";ROLE=", p.Role); err != nil {
-		return err
-	}
-	if err = p.Individual.WriteParams(b); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (p Attendee) WriteLine(b *buffer, property string) (err error) {
-	if p.Email == "" {
-		return nil
-	}
-	if _, err = b.WriteString(property); err != nil {
-		return err
-	}
-	if err = p.WriteParams(b); err != nil {
-		return err
-	}
-	return b.WriteLine(":mailto=", p.Email)
-}
-
-//-------------------------------------------------------------------------------------------------
 
 // VEvent captures a calendar event
 type VEvent struct {
-	UID         string
-	DTSTAMP     time.Time
-	DTSTART     time.Time
-	DTEND       time.Time
-	ORGANIZER   Individual
-	ATTENDEE    []Attendee
-	CONTACT     string
-	SUMMARY     string
-	DESCRIPTION string
-	TZID        string
-	SEQUENCE    string
-	STATUS      string
-	ALARM       string
-	LOCATION    string
-	TRANSP      string
+	UID          TextValue
+	DTStamp      DateTimeValue
+	DTStart      DateTimeValue
+	DTEnd        DateTimeValue
+	LastModified DateTimeValue
+	Organizer    CalAddressValue
+	Attendee     []CalAddressValue
+	Contact      TextValue
+	Summary      TextValue
+	Description  TextValue
+	Class        TextValue // PUBLIC, PRIVATE, CONFIDENTIAL
+	Comment      TextValue
+	RelatedTo    TextValue
+	TZID         TextValue
+	Sequence     Valuer
+	Status       TextValue
+	ALARM        TextValue
+	Location     TextValue
+	Transparency TextValue
+	Color        TextValue // CSS3 color name
 
-	AllDay bool
+	// TODO (RFC5545) CREATED GEO PRIORITY RECURRENCE-ID EXDATE RDATE RRULE
+	// TODO (RFC7986) []CONFERENCE
 }
 
-func (e *VEvent) EncodeIcal(w io.Writer) error {
+func (e *VEvent) AllDay() *VEvent {
+	e.DTStart = e.DTStart.AsDate()
+	e.DTEnd = e.DTEnd.AsDate()
+	return e
+}
 
-	var timeStampLayout, timeStampType, tzidTxt string
+func (e *VEvent) EncodeIcal(b *Buffer) error {
 
-	if e.AllDay {
-		timeStampLayout = dateLayout
-		timeStampType = "DATE"
-	} else {
-		timeStampLayout = dateTimeLayout
-		timeStampType = "DATE-TIME"
-		if len(e.TZID) == 0 || e.TZID == "UTC" {
-			timeStampLayout = timeStampLayout + "Z"
-		}
+	if !IsDefined(e.DTStamp) {
+		return fmt.Errorf("DTstamp is required")
 	}
 
-	if len(e.TZID) != 0 && e.TZID != "UTC" {
-		tzidTxt = "TZID=" + e.TZID + ";"
+	if !IsDefined(e.UID) {
+		return fmt.Errorf("UID is required")
 	}
 
-	b := newBuffer(w)
-	if err := b.WriteLine("BEGIN:VEVENT"); err != nil {
-		return err
+	tzIsDefined := IsDefined(e.TZID) && e.TZID.Value != "UTC"
+
+	if tzIsDefined {
+		e.DTStart.Parameters = e.DTStart.Parameters.Prepend(TZID(e.TZID.Value))
+		e.DTEnd.Parameters = e.DTEnd.Parameters.Prepend(TZID(e.TZID.Value))
+	} else if !IsDefined(e.TZID) || e.TZID.Value == "UTC" {
+		e.DTStart = e.DTStart.UTC()
+		e.DTEnd = e.DTEnd.UTC()
 	}
 
-	if err := b.WriteLine("DTSTAMP:", e.DTSTAMP.UTC().Format(tstampLayout)); err != nil {
-		return err
+	b.WriteLine("BEGIN:VEVENT")
+
+	b.IfWriteValuerLine(true, "DTSTAMP", e.DTStamp)
+	b.IfWriteValuerLine(IsDefined(e.LastModified), "LAST-MODIFIED", e.LastModified)
+	b.IfWriteValuerLine(true, "UID", e.UID)
+	b.IfWriteValuerLine(tzIsDefined, "TZID", e.TZID)
+	b.IfWriteValuerLine(IsDefined(e.Organizer), "ORGANIZER", e.Organizer)
+
+	for _, attendee := range e.Attendee {
+		b.IfWriteValuerLine(true, "ATTENDEE", attendee)
 	}
 
-	if err := b.WriteLine("UID:", e.UID); err != nil {
-		return err
+	b.IfWriteValuerLine(IsDefined(e.Contact), "CONTACT", e.Contact)
+	b.IfWriteValuerLine(IsDefined(e.Sequence), "SEQUENCE", e.Sequence)
+	b.IfWriteValuerLine(IsDefined(e.Status), "STATUS", e.Status)
+	b.IfWriteValuerLine(IsDefined(e.Summary), "SUMMARY", e.Summary)
+	b.IfWriteValuerLine(IsDefined(e.Description), "DESCRIPTION", e.Description)
+	b.IfWriteValuerLine(IsDefined(e.Class), "CLASS", e.Class)
+	b.IfWriteValuerLine(IsDefined(e.Comment), "COMMENT", e.Comment)
+	b.IfWriteValuerLine(IsDefined(e.Location), "LOCATION", e.Location)
+	b.IfWriteValuerLine(IsDefined(e.RelatedTo), "RELATED-TO", e.RelatedTo)
+	b.IfWriteValuerLine(IsDefined(e.Transparency), "TRANSP", e.Transparency)
+	b.IfWriteValuerLine(IsDefined(e.DTStart), "DTSTART", e.DTStart)
+	b.IfWriteValuerLine(IsDefined(e.DTEnd), "DTEND", e.DTEnd)
+
+	if IsDefined(e.ALARM) {
+		b.WriteLine("BEGIN:VALARM")
+		b.IfWriteValuerLine(true, "TRIGGER", e.ALARM)
+		b.WriteLine("ACTION:DISPLAY")
+		b.WriteLine("END:VALARM")
 	}
 
-	if err := b.IfWriteLine(len(e.TZID) != 0 && e.TZID != "UTC", "TZID:", e.TZID); err != nil {
-		return err
-	}
-
-	if err := e.ORGANIZER.WriteLine(b, "ORGANIZER"); err != nil {
-		return err
-	}
-
-	for _, attendee := range e.ATTENDEE {
-		if err := attendee.WriteLine(b, "ATTENDEE"); err != nil {
-			return err
-		}
-	}
-
-	if err := b.IfWriteLine(e.CONTACT != "", "CONTACT:", e.CONTACT); err != nil {
-		return err
-	}
-
-	if err := b.IfWriteLine(e.SEQUENCE != "", "SEQUENCE:", e.SEQUENCE); err != nil {
-		return err
-	}
-
-	if err := b.IfWriteLine(e.STATUS != "", "STATUS:", e.STATUS); err != nil {
-		return err
-	}
-
-	if err := b.WriteLine("SUMMARY:", e.SUMMARY); err != nil {
-		return err
-	}
-
-	if err := b.IfWriteLine(e.DESCRIPTION != "", "DESCRIPTION:", e.DESCRIPTION); err != nil {
-		return err
-	}
-
-	if err := b.IfWriteLine(e.LOCATION != "", "LOCATION:", e.LOCATION); err != nil {
-		return err
-	}
-
-	if err := b.IfWriteLine(e.TRANSP != "", "TRANSP:", e.TRANSP); err != nil {
-		return err
-	}
-
-	if err := b.WriteLine("DTSTART;", tzidTxt, "VALUE=", timeStampType, ":", e.DTSTART.Format(timeStampLayout)); err != nil {
-		return err
-	}
-
-	if err := b.WriteLine("DTEND;", tzidTxt, "VALUE=", timeStampType, ":", e.DTEND.Format(timeStampLayout)); err != nil {
-		return err
-	}
-
-	if e.ALARM != "" {
-		if err := b.WriteLine("BEGIN:VALARM"); err != nil {
-			return err
-		}
-		if err := b.WriteLine("TRIGGER:", e.ALARM); err != nil {
-			return err
-		}
-		if err := b.WriteLine("ACTION:DISPLAY"); err != nil {
-			return err
-		}
-		if err := b.WriteLine("END:VALARM"); err != nil {
-			return err
-		}
-	}
-
-	if err := b.WriteLine("END:VEVENT"); err != nil {
-		return err
-	}
+	b.WriteLine("END:VEVENT")
 
 	return b.Flush()
 }
