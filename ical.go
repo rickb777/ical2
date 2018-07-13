@@ -83,9 +83,9 @@ func (c *VCalendar) With(component VComponent) *VCalendar {
 	return c
 }
 
-// DoEncode encodes the calendar in ICS format, writing it to some Writer. The
+// doEncode encodes the calendar in ICS format, writing it to some Writer. The
 // lineEnding can be "" or "\r\n" for normal iCal formatting, or "\n" in other cases.
-func (c *VCalendar) DoEncode(w io.Writer, lineEnding string) error {
+func (c *VCalendar) doEncode(w io.Writer, lineEnding string) error {
 	b := ics.NewBuffer(w, lineEnding)
 
 	b.WriteLine("BEGIN:VCALENDAR")
@@ -120,13 +120,13 @@ func (c *VCalendar) DoEncode(w io.Writer, lineEnding string) error {
 // Encode encodes the calendar in ICS format, writing it to some Writer. The
 // line endings are "\r\n" for normal iCal transmission purposes.
 func (c *VCalendar) Encode(w io.Writer) error {
-	return c.DoEncode(w, "\r\n")
+	return c.doEncode(w, "\r\n")
 }
 
 // EncodePlain encodes the calendar in ICS format, writing it to some Writer. The
 // line ending are "\n" for non-transmission purposes, e.g. for viewing.
 func (c *VCalendar) EncodePlain(w io.Writer) error {
-	return c.DoEncode(w, "\n")
+	return c.doEncode(w, "\n")
 }
 
 // String returns the ICS formatted content, albeit using "\n" line endings.
