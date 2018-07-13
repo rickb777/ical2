@@ -5,6 +5,8 @@ import (
 	"strings"
 	"testing"
 	"time"
+	. "github.com/rickb777/ical2/parameter"
+	. "github.com/rickb777/ical2/value"
 )
 
 func TestEncode(t *testing.T) {

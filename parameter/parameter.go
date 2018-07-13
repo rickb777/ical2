@@ -1,4 +1,4 @@
-package ical2
+package parameter
 
 import (
 	"fmt"

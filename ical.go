@@ -11,6 +11,8 @@ package ical2
 import (
 	"io"
 	"bytes"
+	"github.com/rickb777/ical2/value"
+	"github.com/rickb777/ical2/ics"
 )
 
 /*
@@ -37,19 +39,19 @@ import (
 // VCalendar is a calendar as per RFC-5545 https://tools.ietf.org/html/rfc5545.
 type VCalendar struct {
 	// RFC-5545 properties
-	Version  TextValue // 2.0
-	ProdId   TextValue // -//My Company//NONSGML Event Calendar//EN
-	Method   TextValue // PUBLISH
-	CalScale TextValue // GREGORIAN
+	Version  value.TextValue // 2.0
+	ProdId   value.TextValue // -//My Company//NONSGML Event Calendar//EN
+	Method   value.TextValue // PUBLISH
+	CalScale value.TextValue // GREGORIAN
 
 	// RFC-7986 properties
-	Name            TextValue // My Calendar Name
-	Description     TextValue // A description of my calendar
-	UID             TextValue
-	URL             TextValue // http://my.calendar/url
-	LastModified    DateTimeValue
-	RefreshInterval DurationValue // PT12H
-	Color           TextValue     // CSS3 color name
+	Name            value.TextValue // My Calendar Name
+	Description     value.TextValue // A description of my calendar
+	UID             value.TextValue
+	URL             value.TextValue // http://my.calendar/url
+	LastModified    value.DateTimeValue
+	RefreshInterval value.DurationValue // PT12H
+	Color           value.TextValue     // CSS3 color name
 	// TODO CATEGORIES, SOURCE, []IMAGE
 
 	TimezoneId string // Europe/London
@@ -65,13 +67,13 @@ type VCalendar struct {
 
 func NewBasicVCalendar(prodId string) *VCalendar {
 	return &VCalendar{
-		Version:  Text("2.0"),
-		ProdId:   Text(prodId),
-		CalScale: Text("GREGORIAN"),
+		Version:  value.Text("2.0"),
+		ProdId:   value.Text(prodId),
+		CalScale: value.Text("GREGORIAN"),
 	}
 }
 
-func (c *VCalendar) Extend(key string, value Valuer) *VCalendar {
+func (c *VCalendar) Extend(key string, value ics.Valuer) *VCalendar {
 	c.Extensions = append(c.Extensions, Extension{key, value})
 	return c
 }
@@ -84,21 +86,21 @@ func (c *VCalendar) With(component VComponent) *VCalendar {
 // DoEncode encodes the calendar in ICS format, writing it to some Writer. The
 // lineEnding can be "" or "\r\n" for normal iCal formatting, or "\n" in other cases.
 func (c *VCalendar) DoEncode(w io.Writer, lineEnding string) error {
-	b := NewBuffer(w, lineEnding)
+	b := ics.NewBuffer(w, lineEnding)
 
 	b.WriteLine("BEGIN:VCALENDAR")
 
 	b.IfWriteValuerLine(true, "VERSION", c.Version)
 	b.IfWriteValuerLine(true, "PRODID", c.ProdId)
-	b.IfWriteValuerLine(IsDefined(c.CalScale), "CALSCALE", c.CalScale)
-	b.IfWriteValuerLine(IsDefined(c.Method), "METHOD", c.Method)
-	b.IfWriteValuerLine(IsDefined(c.Name), "NAME", c.Name)
-	b.IfWriteValuerLine(IsDefined(c.Description), "DESCRIPTION", c.Description)
-	b.IfWriteValuerLine(IsDefined(c.UID), "UID", c.UID)
-	b.IfWriteValuerLine(IsDefined(c.URL), "URL", c.URL)
-	b.IfWriteValuerLine(IsDefined(c.LastModified), "LAST-MODIFIED", c.LastModified)
-	b.IfWriteValuerLine(IsDefined(c.Color), "COLOR", c.Color)
-	b.IfWriteValuerLine(IsDefined(c.RefreshInterval), "REFRESH-INTERVAL", c.RefreshInterval)
+	b.IfWriteValuerLine(ics.IsDefined(c.CalScale), "CALSCALE", c.CalScale)
+	b.IfWriteValuerLine(ics.IsDefined(c.Method), "METHOD", c.Method)
+	b.IfWriteValuerLine(ics.IsDefined(c.Name), "NAME", c.Name)
+	b.IfWriteValuerLine(ics.IsDefined(c.Description), "DESCRIPTION", c.Description)
+	b.IfWriteValuerLine(ics.IsDefined(c.UID), "UID", c.UID)
+	b.IfWriteValuerLine(ics.IsDefined(c.URL), "URL", c.URL)
+	b.IfWriteValuerLine(ics.IsDefined(c.LastModified), "LAST-MODIFIED", c.LastModified)
+	b.IfWriteValuerLine(ics.IsDefined(c.Color), "COLOR", c.Color)
+	b.IfWriteValuerLine(ics.IsDefined(c.RefreshInterval), "REFRESH-INTERVAL", c.RefreshInterval)
 
 	for _, extension := range c.Extensions {
 		b.IfWriteValuerLine(true, extension.Key, extension.Value)
@@ -136,10 +138,10 @@ func (c *VCalendar) String() string {
 
 // VComponent is an item that belongs to a calendar.
 type VComponent interface {
-	EncodeIcal(b *Buffer) error
+	EncodeIcal(b *ics.Buffer) error
 }
 
 type Extension struct {
 	Key   string
-	Value Valuer
+	Value ics.Valuer
 }

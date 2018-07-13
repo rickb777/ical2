@@ -1,25 +1,14 @@
-package ical2
+package value
 
 import (
 	"bytes"
 	"time"
+	"github.com/rickb777/ical2/parameter"
+	"github.com/rickb777/ical2/ics"
 )
 
-// Valuer holds an iCal value.
-type Valuer interface {
-	IsDefined() bool
-	WriteTo(w StringWriter) error
-}
-
-// IsDefined tests whether a valuer is defined.
-func IsDefined(v Valuer) bool {
-	return v != nil && v.IsDefined()
-}
-
-//-------------------------------------------------------------------------------------------------
-
 type simpleValue struct {
-	Parameters Parameters
+	Parameters parameter.Parameters
 	Value      string
 }
 
@@ -39,12 +28,12 @@ func CalAddress(mailto string) CalAddressValue {
 	return CalAddressValue{simpleValue{Value: mailto}}
 }
 
-func (v CalAddressValue) With(params ...Parameter) CalAddressValue {
+func (v CalAddressValue) With(params ...parameter.Parameter) CalAddressValue {
 	v.Parameters = v.Parameters.Append(params...)
 	return v
 }
 
-func (v CalAddressValue) WriteTo(w StringWriter) error {
+func (v CalAddressValue) WriteTo(w ics.StringWriter) error {
 	v.Parameters.WriteTo(w)
 	w.WriteString(":mailto:")
 	_, e := w.WriteString(v.Value)
@@ -62,15 +51,15 @@ type DurationValue struct {
 
 // Duration returns a new DurationValue.
 func Duration(d string) DurationValue {
-	return DurationValue{simpleValue{Value: d}}.With(Type("DURATION"))
+	return DurationValue{simpleValue{Value: d}}.With(parameter.Type("DURATION"))
 }
 
-func (v DurationValue) With(params ...Parameter) DurationValue {
+func (v DurationValue) With(params ...parameter.Parameter) DurationValue {
 	v.Parameters = v.Parameters.Append(params...)
 	return v
 }
 
-func (v DurationValue) WriteTo(w StringWriter) error {
+func (v DurationValue) WriteTo(w ics.StringWriter) error {
 	v.Parameters.WriteTo(w)
 	w.WriteByte(':')
 	_, e := w.WriteString(v.Value)
@@ -113,12 +102,12 @@ func Text(v string) TextValue {
 	return TextValue{simpleValue{Value: v}}
 }
 
-func (v TextValue) With(params ...Parameter) TextValue {
+func (v TextValue) With(params ...parameter.Parameter) TextValue {
 	v.Parameters = v.Parameters.Append(params...)
 	return v
 }
 
-func (v TextValue) WriteTo(w StringWriter) error {
+func (v TextValue) WriteTo(w ics.StringWriter) error {
 	v.Parameters.WriteTo(w)
 	w.WriteByte(':')
 	_, e := w.WriteString(escapeText(v.Value))
@@ -165,17 +154,17 @@ const (
 
 // DateTimeValue holds a date/time and its formatting decision.
 type DateTimeValue struct {
-	Parameters Parameters
+	Parameters parameter.Parameters
 	Value      time.Time
 	format     string
 }
 
 func Date(t time.Time) DateTimeValue {
-	return DateTimeValue{Value: t, format: dateLayout}.With(Type(DATE))
+	return DateTimeValue{Value: t, format: dateLayout}.With(parameter.Type(parameter.DATE))
 }
 
 func DateTime(t time.Time) DateTimeValue {
-	return DateTimeValue{Value: t, format: dateTimeLayout}.With(Type(DATE_TIME))
+	return DateTimeValue{Value: t, format: dateTimeLayout}.With(parameter.Type(parameter.DATE_TIME))
 }
 
 func TStamp(t time.Time) DateTimeValue {
@@ -184,7 +173,7 @@ func TStamp(t time.Time) DateTimeValue {
 
 func (v DateTimeValue) AsDate() DateTimeValue {
 	v.format = dateLayout
-	return v.With(Type(DATE))
+	return v.With(parameter.Type(parameter.DATE))
 }
 
 func (v DateTimeValue) UTC() DateTimeValue {
@@ -198,12 +187,12 @@ func (v DateTimeValue) IsDefined() bool {
 	return !v.Value.IsZero()
 }
 
-func (v DateTimeValue) With(params ...Parameter) DateTimeValue {
+func (v DateTimeValue) With(params ...parameter.Parameter) DateTimeValue {
 	v.Parameters = v.Parameters.Append(params...)
 	return v
 }
 
-func (v DateTimeValue) WriteTo(w StringWriter) error {
+func (v DateTimeValue) WriteTo(w ics.StringWriter) error {
 	v.Parameters.WriteTo(w)
 	w.WriteByte(':')
 	_, e := w.WriteString(v.Value.Format(v.format))

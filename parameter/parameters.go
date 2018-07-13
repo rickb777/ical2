@@ -1,9 +1,11 @@
-package ical2
+package parameter
+
+import "github.com/rickb777/ical2/ics"
 
 // Parameters holds a set of key-value parameters.
 type Parameters []Parameter
 
-func (pp Parameters) WriteTo(w StringWriter) error {
+func (pp Parameters) WriteTo(w ics.StringWriter) error {
 	for _, p := range pp {
 		w.WriteByte(';')
 		w.WriteString(p.Key)

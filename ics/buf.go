@@ -1,10 +1,24 @@
-package ical2
+package ics
 
 import (
 	"bufio"
 	"io"
 )
 
+// Valuer holds an iCal value.
+type Valuer interface {
+	IsDefined() bool
+	WriteTo(w StringWriter) error
+}
+
+// IsDefined tests whether a valuer is defined.
+func IsDefined(v Valuer) bool {
+	return v != nil && v.IsDefined()
+}
+
+//-------------------------------------------------------------------------------------------------
+
+// StringWriter provides an iCal writing interface.
 type StringWriter interface {
 	io.Writer
 	WriteByte(c byte) error
