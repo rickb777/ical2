@@ -2,10 +2,10 @@ package value
 
 import (
 	"bytes"
-	"time"
-	"github.com/rickb777/ical2/parameter"
 	"github.com/rickb777/ical2/ics"
+	"github.com/rickb777/ical2/parameter"
 	"strconv"
+	"time"
 )
 
 type simpleValue struct {
@@ -101,28 +101,28 @@ func (v IntegerValue) WriteTo(w ics.StringWriter) error {
 
 const (
 	// Calendar class property
-	PUBLIC = "PUBLIC"
-	PRIVATE = "PRIVATE"
+	PUBLIC       = "PUBLIC"
+	PRIVATE      = "PRIVATE"
 	CONFIDENTIAL = "CONFIDENTIAL"
 
 	// Event Transparency - does not block other events
-	TRANSPARENT  = "TRANSPARENT"
+	TRANSPARENT = "TRANSPARENT"
 	// Event Transparency - blocks other events
-	OPAQUE       = "OPAQUE"
+	OPAQUE = "OPAQUE"
 
 	// Event status
-	TENTATIVE    = "TENTATIVE"
+	TENTATIVE = "TENTATIVE"
 	// Event status
-	CONFIRMED    = "CONFIRMED"
+	CONFIRMED = "CONFIRMED"
 	// Event and To-do status
-	CANCELLED    = "CANCELLED"
+	CANCELLED = "CANCELLED"
 
 	// To-do status
 	NEEDS_ACTION = "NEEDS-ACTION"
 	// To-do status
-	COMPLETED    = "COMPLETED"
+	COMPLETED = "COMPLETED"
 	// To-do status
-	IN_PROCESS   = "IN-PROCESS"
+	IN_PROCESS = "IN-PROCESS"
 )
 
 type TextValue struct {
@@ -229,4 +229,3 @@ func (v DateTimeValue) WriteTo(w ics.StringWriter) error {
 	_, e := w.WriteString(v.Value.Format(v.format))
 	return e
 }
-

@@ -1,4 +1,6 @@
-// package ical provides a data model for the iCal specification.
+// Package ical2 provides a data model for the iCal specification. Marshalling
+// to the textual iCal ics format is implemented. Unmarshalling is not currently
+// supported.
 //
 // See
 // https://tools.ietf.org/html/rfc5545
@@ -9,10 +11,10 @@
 package ical2
 
 import (
-	"io"
 	"bytes"
-	"github.com/rickb777/ical2/value"
 	"github.com/rickb777/ical2/ics"
+	"github.com/rickb777/ical2/value"
+	"io"
 )
 
 /*
@@ -63,7 +65,9 @@ type VCalendar struct {
 	VComponent []VComponent
 }
 
-func NewBasicVCalendar(prodId string) *VCalendar {
+// NewVCalendar constructs a new VCalendar with the required properties set.
+// The version is set to 2.0 and the calendar scale is Gregorian.
+func NewVCalendar(prodId string) *VCalendar {
 	return &VCalendar{
 		Version:  value.Text("2.0"),
 		ProdId:   value.Text(prodId),
@@ -71,11 +75,15 @@ func NewBasicVCalendar(prodId string) *VCalendar {
 	}
 }
 
+// Extend adds an extension property to the calendar.
+// The VCalendar modified and is returned.
 func (c *VCalendar) Extend(key string, value ics.Valuer) *VCalendar {
 	c.Extensions = append(c.Extensions, Extension{key, value})
 	return c
 }
 
+// With associates a component with the calendar.
+// The VCalendar modified and is returned.
 func (c *VCalendar) With(component VComponent) *VCalendar {
 	c.VComponent = append(c.VComponent, component)
 	return c
@@ -139,6 +147,8 @@ type VComponent interface {
 	EncodeIcal(b *ics.Buffer) error
 }
 
+// Extension is a key/value struct for any additional non-standard or unsupported
+// calendar properties.
 type Extension struct {
 	Key   string
 	Value ics.Valuer

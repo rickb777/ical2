@@ -2,11 +2,11 @@ package ical2
 
 import (
 	"bytes"
+	. "github.com/rickb777/ical2/parameter"
+	. "github.com/rickb777/ical2/value"
 	"strings"
 	"testing"
 	"time"
-	. "github.com/rickb777/ical2/parameter"
-	. "github.com/rickb777/ical2/value"
 )
 
 func TestEncode(t *testing.T) {
@@ -17,15 +17,15 @@ func TestEncode(t *testing.T) {
 	de := ds.Add(5 * time.Hour)
 
 	event := &VEvent{
-		UID:         Text("123"),
-		DTStamp:     TStamp(dt),
-		Start:       DateTime(ds),
-		End:         DateTime(de),
-		Organizer:   CalAddress("ht@throne.com").With(CommonName("H.Tudwr")),
-		Attendee:    []CalAddressValue{CalAddress("ann.blin@example.com").With(Role("REQ-PARTICIPANT"), CommonName("Ann Blin"))},
-		Contact:     Text("T.Moore, Esq."),
-		Summary:     Text("summary, with punctuation"),
-		Description: Text("Lorem ipsum dolor sit amet, consectetµr adipiscing elit, sed do eiusmod tempor incididµnt µt labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."),
+		UID:          Text("123"),
+		DTStamp:      TStamp(dt),
+		Start:        DateTime(ds),
+		End:          DateTime(de),
+		Organizer:    CalAddress("ht@throne.com").With(CommonName("H.Tudwr")),
+		Attendee:     []CalAddressValue{CalAddress("ann.blin@example.com").With(Role("REQ-PARTICIPANT"), CommonName("Ann Blin"))},
+		Contact:      Text("T.Moore, Esq."),
+		Summary:      Text("summary, with punctuation"),
+		Description:  Text("Lorem ipsum dolor sit amet, consectetµr adipiscing elit, sed do eiusmod tempor incididµnt µt labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."),
 		RelatedTo:    Text("19960401-080045-4000F192713-0052@example.com"),
 		TZID:         Text(tz),
 		Location:     Text("South Bank, London SE1 9PX"),
@@ -340,7 +340,7 @@ func unixToDOSLineEndings(input string) string {
 }
 
 func testSetup(tz string, vComponents ...VComponent) (bytes.Buffer, error) {
-	c := NewBasicVCalendar("prodid")
+	c := NewVCalendar("prodid")
 	c.Extend("X-WR-CALNAME", Text("name"))
 	c.Extend("X-WR-CALDESC", Text("desc"))
 	c.Extend("X-WR-TIMEZONE", Text(tz))
@@ -356,7 +356,7 @@ func testSetup(tz string, vComponents ...VComponent) (bytes.Buffer, error) {
 }
 
 func testSetupWithDraft(tz string, vComponents ...VComponent) (bytes.Buffer, error) {
-	c := NewBasicVCalendar("prodid")
+	c := NewVCalendar("prodid")
 	c.URL = Text("http://my.calendar/url")
 	c.Name = Text("name")
 	c.Extend("X-WR-CALNAME", Text("name"))

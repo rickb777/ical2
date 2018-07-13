@@ -5,6 +5,7 @@ import "github.com/rickb777/ical2/ics"
 // Parameters holds a set of key-value parameters.
 type Parameters []Parameter
 
+// WriteTo serialises the parameters in iCal ics format to the writer.
 func (pp Parameters) WriteTo(w ics.StringWriter) error {
 	for _, p := range pp {
 		w.WriteByte(';')
@@ -45,4 +46,3 @@ func (pp Parameters) Append(ps ...Parameter) Parameters {
 }
 
 //-------------------------------------------------------------------------------------------------
-
