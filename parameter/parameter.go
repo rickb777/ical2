@@ -1,3 +1,12 @@
+// Package parameter handles iCal parameters. The key is required to be
+// case-insensitive. Here, this this generally implemented by using upper-case
+// keys, a pattern that must be carefully followed if Parameter structs are
+// created on the fly.
+//
+// All the factory functions in this package that return a Parameter will use
+// an upper-case key.
+//
+// See https://tools.ietf.org/html/rfc5545#section-3.2
 package parameter
 
 import (
@@ -5,8 +14,8 @@ import (
 	"strings"
 )
 
-// Parameter holds an iCal parameter.
-// See https://tools.ietf.org/html/rfc5545#section-3.2
+// Parameter holds an iCal parameter. The key must be uppercase, this being a
+// pattern that simplifies the requirement for keys to be case-insensitive.
 type Parameter struct {
 	Key, Value string
 }

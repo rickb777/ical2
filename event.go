@@ -3,7 +3,6 @@ package ical2
 import (
 	"fmt"
 	"github.com/rickb777/ical2/ics"
-	"github.com/rickb777/ical2/parameter"
 	"github.com/rickb777/ical2/value"
 )
 
@@ -22,7 +21,6 @@ type VEvent struct {
 	Class        value.TextValue // PUBLIC, PRIVATE, CONFIDENTIAL
 	Comment      value.TextValue
 	RelatedTo    value.TextValue
-	TZID         value.TextValue
 	Sequence     value.IntegerValue
 	Status       value.TextValue
 	ALARM        value.TextValue
@@ -54,22 +52,11 @@ func (e *VEvent) EncodeIcal(b *ics.Buffer) error {
 		return fmt.Errorf("UID is required")
 	}
 
-	tzIsDefined := ics.IsDefined(e.TZID) && e.TZID.Value != "UTC"
-
-	if tzIsDefined {
-		e.Start.Parameters = e.Start.Parameters.Prepend(parameter.TZID(e.TZID.Value))
-		e.End.Parameters = e.End.Parameters.Prepend(parameter.TZID(e.TZID.Value))
-	} else if !ics.IsDefined(e.TZID) || e.TZID.Value == "UTC" {
-		e.Start = e.Start.UTC()
-		e.End = e.End.UTC()
-	}
-
 	b.WriteLine("BEGIN:VEVENT")
 
 	b.WriteValuerLine(true, "DTSTAMP", e.DTStamp)
 	b.WriteValuerLine(ics.IsDefined(e.LastModified), "LAST-MODIFIED", e.LastModified)
 	b.WriteValuerLine(true, "UID", e.UID)
-	b.WriteValuerLine(tzIsDefined, "TZID", e.TZID)
 	b.WriteValuerLine(ics.IsDefined(e.Organizer), "ORGANIZER", e.Organizer)
 
 	for _, attendee := range e.Attendee {

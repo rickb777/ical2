@@ -1,6 +1,9 @@
 package parameter
 
-import "github.com/rickb777/ical2/ics"
+import (
+	"github.com/rickb777/ical2/ics"
+	"strings"
+)
 
 // Parameters holds a set of key-value parameters.
 type Parameters []Parameter
@@ -21,6 +24,7 @@ func (pp Parameters) WriteTo(w ics.StringWriter) error {
 func (pp Parameters) Remove(key ...string) Parameters {
 	for i := 0; i < len(pp); i++ {
 		for _, k := range key {
+			k = strings.ToUpper(k)
 			if pp[i].Key == k {
 				pp = append(pp[:i], pp[i+1:]...)
 			}
@@ -32,6 +36,7 @@ func (pp Parameters) Remove(key ...string) Parameters {
 // Prepend appends a parameter (or parameters), ensuring that keys remain unique.
 func (pp Parameters) Prepend(ps ...Parameter) Parameters {
 	for _, p := range ps {
+		p.Key = strings.ToUpper(p.Key)
 		pp = append(Parameters{p}, pp.Remove(p.Key)...)
 	}
 	return pp
@@ -40,9 +45,8 @@ func (pp Parameters) Prepend(ps ...Parameter) Parameters {
 // Append appends a parameter (or parameters), ensuring that keys remain unique.
 func (pp Parameters) Append(ps ...Parameter) Parameters {
 	for _, p := range ps {
+		p.Key = strings.ToUpper(p.Key)
 		pp = append(pp.Remove(p.Key), p)
 	}
 	return pp
 }
-
-//-------------------------------------------------------------------------------------------------
