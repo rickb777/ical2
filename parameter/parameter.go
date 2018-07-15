@@ -138,7 +138,23 @@ func Member(v ...string) Parameter {
 	return quotedList("Member", v)
 }
 
-/// TODO PARTSTAT ; Participation status
+// FbtValue provides values for free or busy time.
+type PartStatValue string
+
+const (
+	NEEDS_ACTION PartStatValue = "NEEDS-ACTION"
+	ACCEPTED     PartStatValue = "ACCEPTED"
+	DECLINED     PartStatValue = "DECLINED"
+	TENTATIVE    PartStatValue = "TENTATIVE"
+	DELEGATED    PartStatValue = "DELEGATED"
+)
+
+// PartStat specifies the participation status for the calendar user
+// specified by the property.
+func PartStat(v PartStatValue) Parameter {
+	return plain("PARTSTAT", string(v))
+}
+
 /// TODO RANGE ; Recurrence identifier range
 /// TODO RELATED ; Alarm trigger relationship
 /// TODO RELTYPE ; Relationship type

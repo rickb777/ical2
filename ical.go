@@ -41,10 +41,10 @@ import (
 // VCalendar is a calendar as per RFC-5545 https://tools.ietf.org/html/rfc5545.
 type VCalendar struct {
 	// RFC-5545 properties
-	Version  value.TextValue // 2.0
-	ProdId   value.TextValue // -//My Company//NONSGML Event Calendar//EN
-	Method   value.TextValue // PUBLISH
-	CalScale value.TextValue // GREGORIAN
+	Version  value.TextValue   // 2.0
+	ProdId   value.TextValue   // -//My Company//NONSGML Event Calendar//EN
+	Method   value.MethodValue // PUBLISH, REQUEST,
+	CalScale value.TextValue   // GREGORIAN
 
 	// RFC-7986 properties
 	Name            value.TextValue // My Calendar Name
@@ -113,7 +113,7 @@ func (c *VCalendar) doEncode(w io.Writer, lineEnding string) error {
 	}
 
 	for _, component := range c.VComponent {
-		if err := component.EncodeIcal(b); err != nil {
+		if err := component.EncodeIcal(b, c.Method); err != nil {
 			return err
 		}
 	}
@@ -144,7 +144,7 @@ func (c *VCalendar) String() string {
 
 // VComponent is an item that belongs to a calendar.
 type VComponent interface {
-	EncodeIcal(b *ics.Buffer) error
+	EncodeIcal(b *ics.Buffer, method value.MethodValue) error
 }
 
 // Extension is a key/value struct for any additional non-standard or unsupported

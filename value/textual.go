@@ -51,24 +51,19 @@ const (
 	PRIVATE      = "PRIVATE"
 	CONFIDENTIAL = "CONFIDENTIAL"
 
-	// Event Transparency - does not block other events
-	TRANSPARENT = "TRANSPARENT"
-	// Event Transparency - blocks other events
-	OPAQUE = "OPAQUE"
-
 	// Event status
-	TENTATIVE = "TENTATIVE"
+	//TENTATIVE = "TENTATIVE"
 	// Event status
-	CONFIRMED = "CONFIRMED"
+	//CONFIRMED = "CONFIRMED"
 	// Event and To-do status
-	CANCELLED = "CANCELLED"
+	//CANCELLED = "CANCELLED"
 
 	// To-do status
-	NEEDS_ACTION = "NEEDS-ACTION"
+	//NEEDS_ACTION = "NEEDS-ACTION"
 	// To-do status
-	COMPLETED = "COMPLETED"
+	//COMPLETED = "COMPLETED"
 	// To-do status
-	IN_PROCESS = "IN-PROCESS"
+	//IN_PROCESS = "IN-PROCESS"
 )
 
 // TextValue holds a value that is a string and which will be escaped
@@ -95,6 +90,50 @@ func (v TextValue) WriteTo(w ics.StringWriter) error {
 	w.WriteByte(':')
 	_, e := w.WriteString(escapeText(v.Value))
 	return e
+}
+
+//-------------------------------------------------------------------------------------------------
+
+// MethodValue holds a transparency value.
+type MethodValue struct {
+	TextValue
+}
+
+// Method constructs a new transparency value.
+func Method(v string) MethodValue {
+	return MethodValue{Text(v)}
+}
+
+// Publish specifies a publish event.
+func Publish() MethodValue {
+	return Method("PUBLISH")
+}
+
+// Request specifies an event that is a request to attend.
+func Request() MethodValue {
+	return Method("REQUEST")
+}
+
+//-------------------------------------------------------------------------------------------------
+
+// TransparencyValue holds a transparency value.
+type TransparencyValue struct {
+	TextValue
+}
+
+// Transparency constructs a new transparency value.
+func Transparency(v string) TransparencyValue {
+	return TransparencyValue{Text(v)}
+}
+
+// Transparent specifies event transparency when the event does not block other events.
+func Transparent() TransparencyValue {
+	return Transparency("TRANSPARENT")
+}
+
+// Opaque specifies event transparency when the event blocks other events.
+func Opaque() TransparencyValue {
+	return Transparency("OPAQUE")
 }
 
 //-------------------------------------------------------------------------------------------------

@@ -30,15 +30,13 @@ func TestDateTimeRender(t *testing.T) {
 		dt  DateTimeValue
 		exp string
 	}{
-		{DateTime(utcJanNoon), "DT;VALUE=DATE-TIME:20140101T120000\n"},
-		{DateTime(utcJanNoon).UTC(), "DT;VALUE=DATE-TIME:20140101T120000Z\n"},
-		{DateTime(utcJanNoon).With(parameter.TZID("UTC")).UTC(), "DT;VALUE=DATE-TIME:20140101T120000Z\n"},
+		{DateTime(utcJanNoon), "DT;VALUE=DATE-TIME:20140101T120000Z\n"},
+		//{DateTime(utcJanNoon).With(parameter.TZID("UTC")).UTC(), "DT;VALUE=DATE-TIME:20140101T120000Z\n"},
 		{DateTime(parisJanNoon), "DT;VALUE=DATE-TIME:20140102T120000\n"},
 		{DateTime(parisJanNoon).With(parameter.TZID("Europe/Paris")), "DT;VALUE=DATE-TIME;TZID=Europe/Paris:20140102T120000\n"},
 		//{DateTime(parisJanNoon).UTC(), "DT;VALUE=DATE-TIME:20140102T120000Z\n"},
 
-		{DateTime(utcJulyNoon), "DT;VALUE=DATE-TIME:20140701T120000\n"},
-		{DateTime(utcJulyNoon).UTC(), "DT;VALUE=DATE-TIME:20140701T120000Z\n"},
+		{DateTime(utcJulyNoon), "DT;VALUE=DATE-TIME:20140701T120000Z\n"},
 		{DateTime(parisJulyNoon), "DT;VALUE=DATE-TIME:20140702T120000\n"},
 		//{DateTime(parisJulyNoon).UTC(), "DT;VALUE=DATE-TIME:20140702T120000Z\n"},
 	}

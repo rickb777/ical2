@@ -28,7 +28,7 @@ func TestEncode(t *testing.T) {
 		Description:  Text("Lorem ipsum dolor sit amet, consectetµr adipiscing elit, sed do eiusmod tempor incididµnt µt labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."),
 		RelatedTo:    Text("19960401-080045-4000F192713-0052@example.com"),
 		Location:     Text("South Bank, London SE1 9PX"),
-		Transparency: Text(TRANSPARENT),
+		Transparency: Transparent(),
 	}
 
 	b, err := testSetup(tz, event)
@@ -44,6 +44,8 @@ X-WR-CALNAME:name
 X-WR-CALDESC:desc
 X-WR-TIMEZONE:Europe/Paris
 BEGIN:VEVENT
+DTSTART;VALUE=DATE-TIME;TZID=Europe/Paris:20140101T080000
+DTEND;VALUE=DATE-TIME;TZID=Europe/Paris:20140101T130000
 DTSTAMP:20140101T060000Z
 UID:123
 ORGANIZER;CN=H.Tudwr:mailto:ht@throne.com
@@ -60,8 +62,6 @@ DESCRIPTION:Lorem ipsum dolor sit amet\, consectetµr adipiscing elit\, sed
 LOCATION:South Bank\, London SE1 9PX
 RELATED-TO:19960401-080045-4000F192713-0052@example.com
 TRANSP:TRANSPARENT
-DTSTART;VALUE=DATE-TIME;TZID=Europe/Paris:20140101T080000
-DTEND;VALUE=DATE-TIME;TZID=Europe/Paris:20140101T130000
 END:VEVENT
 END:VCALENDAR
 `
@@ -83,7 +83,7 @@ func TestEncodeAllDayTrue(t *testing.T) {
 		Start:        DateTime(d).With(TZID(tz)),
 		End:          DateTime(d).With(TZID(tz)),
 		Summary:      Text("summary"),
-		Transparency: Text(OPAQUE),
+		Transparency: Opaque(),
 	}).AllDay()
 
 	b, err := testSetup(tz, event)
@@ -99,12 +99,12 @@ X-WR-CALNAME:name
 X-WR-CALDESC:desc
 X-WR-TIMEZONE:Asia/Tokyo
 BEGIN:VEVENT
+DTSTART;TZID=Asia/Tokyo;VALUE=DATE:20140101
+DTEND;TZID=Asia/Tokyo;VALUE=DATE:20140101
 DTSTAMP:20131231T150000Z
 UID:123
 SUMMARY:summary
 TRANSP:OPAQUE
-DTSTART;TZID=Asia/Tokyo;VALUE=DATE:20140101
-DTEND;TZID=Asia/Tokyo;VALUE=DATE:20140101
 END:VEVENT
 END:VCALENDAR
 `
@@ -148,11 +148,11 @@ X-WR-CALDESC:desc
 X-WR-TIMEZONE:Asia/Tokyo
 X-PUBLISHED-TTL:PT12H
 BEGIN:VEVENT
+DTSTART;VALUE=DATE-TIME;TZID=Asia/Tokyo:20140101T000000
+DTEND;VALUE=DATE-TIME;TZID=Asia/Tokyo:20140101T000000
 DTSTAMP:20131231T150000Z
 UID:123
 SUMMARY:summary
-DTSTART;VALUE=DATE-TIME;TZID=Asia/Tokyo:20140101T000000
-DTEND;VALUE=DATE-TIME;TZID=Asia/Tokyo:20140101T000000
 END:VEVENT
 END:VCALENDAR
 `
@@ -186,11 +186,11 @@ CALSCALE:GREGORIAN
 X-WR-CALNAME:name
 X-WR-CALDESC:desc
 BEGIN:VEVENT
+DTSTART;VALUE=DATE-TIME:20140101T000000
+DTEND;VALUE=DATE-TIME:20140101T000000
 DTSTAMP:20140101T000000Z
 UID:123
 SUMMARY:summary
-DTSTART;VALUE=DATE-TIME:20140101T000000
-DTEND;VALUE=DATE-TIME:20140101T000000
 END:VEVENT
 END:VCALENDAR
 `
@@ -207,8 +207,8 @@ func TestEncodeUtcTzid(t *testing.T) {
 	event := &VEvent{
 		UID:     Text("123"),
 		DTStamp: TStamp(d),
-		Start:   DateTime(d).UTC(),
-		End:     DateTime(d).UTC(),
+		Start:   DateTime(d),
+		End:     DateTime(d),
 		Summary: Text("summary"),
 	}
 
@@ -225,11 +225,11 @@ X-WR-CALNAME:name
 X-WR-CALDESC:desc
 X-WR-TIMEZONE:UTC
 BEGIN:VEVENT
+DTSTART;VALUE=DATE-TIME:20140101T000000Z
+DTEND;VALUE=DATE-TIME:20140101T000000Z
 DTSTAMP:20140101T000000Z
 UID:123
 SUMMARY:summary
-DTSTART;VALUE=DATE-TIME:20140101T000000Z
-DTEND;VALUE=DATE-TIME:20140101T000000Z
 END:VEVENT
 END:VCALENDAR
 `
@@ -266,11 +266,11 @@ X-WR-CALNAME:name
 X-WR-CALDESC:desc
 X-WR-TIMEZONE:Asia/Tokyo
 BEGIN:VEVENT
+DTSTART;VALUE=DATE:20140101
+DTEND;VALUE=DATE:20140101
 DTSTAMP:20131231T150000Z
 UID:123
 SUMMARY:summary
-DTSTART;VALUE=DATE:20140101
-DTEND;VALUE=DATE:20140101
 END:VEVENT
 END:VCALENDAR
 `
@@ -307,11 +307,11 @@ X-WR-CALNAME:name
 X-WR-CALDESC:desc
 X-WR-TIMEZONE:Asia/Tokyo
 BEGIN:VEVENT
+DTSTART;VALUE=DATE:20140101
+DTEND;VALUE=DATE:20140101
 DTSTAMP:20131231T150000Z
 UID:123
 SUMMARY:summary
-DTSTART;VALUE=DATE:20140101
-DTEND;VALUE=DATE:20140101
 END:VEVENT
 END:VCALENDAR
 `
@@ -355,7 +355,7 @@ func testSetupWithDraft(tz string, vComponents ...VComponent) (bytes.Buffer, err
 	c.RefreshInterval = Duration("PT12H")
 	c.Extend("X-PUBLISHED-TTL", Text("PT12H"))
 	c.Color = Text("#34AF10")
-	c.Method = Text("PUBLISH")
+	c.Method = Publish()
 
 	c.VComponent = vComponents
 
