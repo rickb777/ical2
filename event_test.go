@@ -11,7 +11,7 @@ import (
 	"time"
 )
 
-func ExampleVEventWithTimezone() {
+func ExampleVEvent_With_Timezone() {
 	const tz = "Europe/Paris"
 	zone, _ := time.LoadLocation(tz)
 	dt := time.Date(2014, time.Month(1), 1, 7, 0, 0, 0, zone)
@@ -61,7 +61,7 @@ func ExampleVEventWithTimezone() {
 	// END:VCALENDAR
 }
 
-func ExampleMeetingVEvent() {
+func ExampleVEvent_Meeting() {
 	dt := time.Date(2014, time.Month(1), 1, 8, 0, 0, 0, time.UTC)
 	ds := dt.Add(48 * time.Hour)
 	de := ds.Add(72 * time.Hour)

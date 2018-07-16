@@ -6,10 +6,10 @@ import "github.com/rickb777/ical2/parameter"
 const ROLE = "ROLE"
 
 const (
-	CHAIR            = "CHAIR"
-	REQ_PARTICIPANT  = "REQ-PARTICIPANT"
-	OPT_PARTICIPANT  = "OPT-PARTICIPANT"
-	NON_PARTICIPANT  = "NON-PARTICIPANT"
+	CHAIR           = "CHAIR"
+	REQ_PARTICIPANT = "REQ-PARTICIPANT"
+	OPT_PARTICIPANT = "OPT-PARTICIPANT"
+	NON_PARTICIPANT = "NON-PARTICIPANT"
 )
 
 // Role specifies the participation role for the calendar user

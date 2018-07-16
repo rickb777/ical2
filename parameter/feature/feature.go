@@ -8,19 +8,19 @@ const FEATURE = "FEATURE"
 
 const (
 	// AUDIO - audio capability.
-	AUDIO      = "AUDIO"
+	AUDIO = "AUDIO"
 	// CHAT - chat or instant messaging.
-	CHAT       = "CHAT"
+	CHAT = "CHAT"
 	// FEED - blog or Atom feed.
-	FEED       = "FEED"
+	FEED = "FEED"
 	// MODERATOR - moderator dial-in code.
-	MODERATOR  = "MODERATOR"
+	MODERATOR = "MODERATOR"
 	// PHONE - phone conference.
-	PHONE      = "PHONE"
+	PHONE = "PHONE"
 	// SCREEN - screen sharing.
-	SCREEN     = "SCREEN"
+	SCREEN = "SCREEN"
 	// VIDEO - video capability.
-	VIDEO      = "VIDEO"
+	VIDEO = "VIDEO"
 )
 
 // Feature specifies one or more features available on a conference.

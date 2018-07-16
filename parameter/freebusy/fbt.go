@@ -6,10 +6,10 @@ import "github.com/rickb777/ical2/parameter"
 const FBTTYPE = "FBTTYPE"
 
 const (
-	FREE              = "FREE"
-	BUSY              = "BUSY"
-	BUSY_UNAVAILABLE  = "BUSY-UNAVAILABLE"
-	BUSY_TENTATIVE    = "BUSY-TENTATIVE"
+	FREE             = "FREE"
+	BUSY             = "BUSY"
+	BUSY_UNAVAILABLE = "BUSY-UNAVAILABLE"
+	BUSY_TENTATIVE   = "BUSY-TENTATIVE"
 )
 
 // FbtType specifies the free or busy time type.
