@@ -23,8 +23,9 @@ type VEvent struct {
 	Comment      value.TextValue
 	RelatedTo    value.TextValue
 	Sequence     value.IntegerValue
-	Status       value.TextValue
+	Status       value.StatusValue
 	Location     value.TextValue
+	Geo          value.GeoValue
 	Transparency value.TransparencyValue
 	Color        value.TextValue // CSS3 color name
 
@@ -72,6 +73,7 @@ func (e *VEvent) EncodeIcal(b *ics.Buffer, method value.MethodValue) error {
 	b.WriteValuerLine(ics.IsDefined(e.Summary), "SUMMARY", e.Summary)
 	b.WriteValuerLine(ics.IsDefined(e.Description), "DESCRIPTION", e.Description)
 	b.WriteValuerLine(ics.IsDefined(e.Location), "LOCATION", e.Location)
+	b.WriteValuerLine(ics.IsDefined(e.Geo), "GEO", e.Geo)
 	b.WriteValuerLine(ics.IsDefined(e.Class), "CLASS", e.Class)
 	b.WriteValuerLine(ics.IsDefined(e.Comment), "COMMENT", e.Comment)
 	b.WriteValuerLine(ics.IsDefined(e.Created), "CREATED", e.Created)

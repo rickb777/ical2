@@ -129,7 +129,7 @@ func ExampleMeetingVEvent() {
 		Created:      value.TStamp(dt.Add(-2 * time.Hour)),
 		LastModified: value.TStamp(dt.Add(-1 * time.Hour)),
 		Sequence:     value.Integer(0),
-		Status:       value.Text("CONFIRMED"),
+		Status:       value.ConfirmedStatus(),
 		Start:        value.TStamp(ds),
 		End:          value.TStamp(de),
 		Organizer:    value.CalAddress("ht@throne.com").With(parameter.CommonName("H.Tudwr")),
@@ -137,6 +137,7 @@ func ExampleMeetingVEvent() {
 		Summary:      value.Text("Meet the family"),
 		Description:  value.Text("This is a great chance to meet each other!"),
 		Location:     value.Text("South Bank, London SE1 9PX"),
+		Geo:          value.Geo(51.506616, -0.11538874),
 		Transparency: value.Opaque(),
 	}
 
@@ -171,6 +172,7 @@ func ExampleMeetingVEvent() {
 	// SUMMARY:Meet the family
 	// DESCRIPTION:This is a great chance to meet each other!
 	// LOCATION:South Bank\, London SE1 9PX
+	// GEO:51.506616;-0.11538874
 	// CREATED:20140101T060000Z
 	// LAST-MODIFIED:20140101T070000Z
 	// SEQUENCE:0

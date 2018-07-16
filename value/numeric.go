@@ -135,3 +135,39 @@ func (v IntegerValue) WriteTo(w ics.StringWriter) error {
 	_, e := w.WriteString(strconv.Itoa(v.Value))
 	return e
 }
+
+//-------------------------------------------------------------------------------------------------
+
+// GeoValue holds an integer.
+type GeoValue struct {
+	Parameters parameter.Parameters
+	Lat, Lon   float64
+	defined    bool
+}
+
+// Geo returns a new GeoValue.
+func Geo(lat, lon float64) GeoValue {
+	return GeoValue{Lat: lat, Lon: lon, defined: true}
+}
+
+// IsDefined tests whether the value has been explicitly defined or is default.
+func (v GeoValue) IsDefined() bool {
+	return v.defined
+}
+
+// With appends parameters to the value.
+func (v GeoValue) With(params ...parameter.Parameter) GeoValue {
+	v.Parameters = v.Parameters.Append(params...)
+	return v
+}
+
+// WriteTo writes the value to the writer.
+// This is part of the Valuer interface.
+func (v GeoValue) WriteTo(w ics.StringWriter) error {
+	v.Parameters.WriteTo(w)
+	w.WriteByte(':')
+	w.WriteString(strconv.FormatFloat(v.Lat, 'G', -1, 64))
+	w.WriteByte(';')
+	_, e := w.WriteString(strconv.FormatFloat(v.Lon, 'G', -1, 64))
+	return e
+}

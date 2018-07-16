@@ -131,6 +131,58 @@ func Request() MethodValue {
 
 //-------------------------------------------------------------------------------------------------
 
+// StatusValue holds a status value.
+type StatusValue struct {
+	TextValue
+}
+
+// Status constructs a new status value.
+func Status(v string) StatusValue {
+	return StatusValue{Text(v)}
+}
+
+// TentativeStatus specifies an event with tentative status.
+func TentativeStatus() StatusValue {
+	return Status("TENTATIVE")
+}
+
+// ConfirmedStatus specifies an event with confirmed status.
+func ConfirmedStatus() StatusValue {
+	return Status("CONFIRMED")
+}
+
+// CancelledStatus specifies an event, a to-do or a journal with cancelled status.
+func CancelledStatus() StatusValue {
+	return Status("CANCELLED")
+}
+
+// CompletedStatus specifies a to-do with completed status.
+func CompletedStatus() StatusValue {
+	return Status("COMPLETED")
+}
+
+// NeedsActionStatus specifies a to-do with needs-action status.
+func NeedsActionStatus() StatusValue {
+	return Status("NEEDS-ACTION")
+}
+
+// InProcessStatus specifies a to-do with in-process status.
+func InProcessStatus() StatusValue {
+	return Status("IN-PROCESS")
+}
+
+// DraftStatus specifies a journal with draft status.
+func DraftStatus() StatusValue {
+	return Status("DRAFT")
+}
+
+// FinalStatus specifies a journal with final status.
+func FinalStatus() StatusValue {
+	return Status("FINAL")
+}
+
+//-------------------------------------------------------------------------------------------------
+
 // TransparencyValue holds a transparency value.
 type TransparencyValue struct {
 	TextValue
