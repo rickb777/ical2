@@ -4,7 +4,7 @@
 
 # ical2
 
-Simple ical (https://tools.ietf.org/html/rfc5545) encoder for golang.
+Simple ical (https://tools.ietf.org/html/rfc5545) encoder for Go.
 
 This repo is a rewritten fork from github.com/ajcollins/ical, which was orignally from github.com/soh335/ical.
 
@@ -15,12 +15,6 @@ This repo is a rewritten fork from github.com/ajcollins/ical, which was orignall
 or
 
     dep ensure -add github.com/rickb777/ical2
-
-## Support Extensions
-
-* X-WR-CALNAME
-* X-WR-CALDESC
-* X-WR-TIMEZONE
 
 ## Support Components
 
