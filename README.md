@@ -1,5 +1,6 @@
-[![Build Status](https://travis-ci.org/rickb777/ical.svg?branch=master)](https://travis-ci.org/rickb777/ical)
-[![Go Report Card](https://goreportcard.com/badge/github.com/rickb777/ical)](https://goreportcard.com/report/github.com/rickb777/ical)
+[![GoDoc](https://img.shields.io/badge/api-Godoc-blue.svg?style=flat-square)](https://godoc.org/github.com/rickb777/ical2)
+[![Build Status](https://travis-ci.org/rickb777/ical2.svg?branch=master)](https://travis-ci.org/rickb777/ical2)
+[![Go Report Card](https://goreportcard.com/badge/github.com/rickb777/ical2)](https://goreportcard.com/report/github.com/rickb777/ical2)
 
 # ical2
 
