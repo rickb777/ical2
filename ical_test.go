@@ -164,44 +164,6 @@ END:VCALENDAR
 	}
 }
 
-func TestEncodeNoTzid(t *testing.T) {
-	d := time.Date(2014, time.Month(1), 1, 0, 0, 0, 0, time.Local)
-
-	event := &VEvent{
-		UID:     Text("123"),
-		DTStamp: TStamp(d),
-		Start:   DateTime(d),
-		End:     DateTime(d),
-		Summary: Text("summary"),
-	}
-
-	b, err := testSetup("", event)
-	if err != nil {
-		t.Error("got err:", err)
-	}
-
-	expect := `BEGIN:VCALENDAR
-VERSION:2.0
-PRODID:prodid
-CALSCALE:GREGORIAN
-X-WR-CALNAME:name
-X-WR-CALDESC:desc
-BEGIN:VEVENT
-DTSTART;VALUE=DATE-TIME:20140101T000000
-DTEND;VALUE=DATE-TIME:20140101T000000
-DTSTAMP:20140101T000000Z
-UID:123
-SUMMARY:summary
-END:VEVENT
-END:VCALENDAR
-`
-	expect = unixToDOSLineEndings(expect)
-
-	if s := b.String(); s != expect {
-		t.Errorf("got %s", s)
-	}
-}
-
 func TestEncodeUtcTzid(t *testing.T) {
 	d := time.Date(2014, time.Month(1), 1, 0, 0, 0, 0, time.UTC)
 
