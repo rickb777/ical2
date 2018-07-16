@@ -12,21 +12,22 @@ type Parameters []Parameter
 func (pp Parameters) WriteTo(w ics.StringWriter) error {
 	for _, p := range pp {
 		w.WriteByte(';')
-		w.WriteString(p.Key)
-		w.WriteByte('=')
-		w.WriteString(p.Value)
+		p.WriteTo(w)
 	}
 
 	return nil
 }
 
-// Remove removes all parameters with a key (or keys) from the list.
-func (pp Parameters) Remove(key ...string) Parameters {
+// RemoveByKey removes all parameters with a key (or keys) from the list.
+func (pp Parameters) RemoveByKey(key ...string) Parameters {
 	for i := 0; i < len(pp); i++ {
 		for _, k := range key {
-			k = strings.ToUpper(k)
-			if pp[i].Key == k {
-				pp = append(pp[:i], pp[i+1:]...)
+			// the length might have changed: need to check it again
+			if i < len(pp) {
+				k = strings.ToUpper(k)
+				if pp[i].Key == k {
+					pp = append(pp[:i], pp[i+1:]...)
+				}
 			}
 		}
 	}
@@ -37,7 +38,7 @@ func (pp Parameters) Remove(key ...string) Parameters {
 func (pp Parameters) Prepend(ps ...Parameter) Parameters {
 	for _, p := range ps {
 		p.Key = strings.ToUpper(p.Key)
-		pp = append(Parameters{p}, pp.Remove(p.Key)...)
+		pp = append(Parameters{p}, pp.RemoveByKey(p.Key)...)
 	}
 	return pp
 }
@@ -46,7 +47,7 @@ func (pp Parameters) Prepend(ps ...Parameter) Parameters {
 func (pp Parameters) Append(ps ...Parameter) Parameters {
 	for _, p := range ps {
 		p.Key = strings.ToUpper(p.Key)
-		pp = append(pp.Remove(p.Key), p)
+		pp = append(pp.RemoveByKey(p.Key), p)
 	}
 	return pp
 }

@@ -31,9 +31,9 @@ func TestDateTimeRender(t *testing.T) {
 		exp string
 	}{
 		{DateTime(utcJanNoon), "DT;VALUE=DATE-TIME:20140101T120000Z\n"},
-		//{DateTime(utcJanNoon).With(parameter.TZID("UTC")).UTC(), "DT;VALUE=DATE-TIME:20140101T120000Z\n"},
+		{DateTime(utcJanNoon).With(parameter.TZid("UTC")), "DT;VALUE=DATE-TIME:20140101T120000Z\n"},
 		{DateTime(parisJanNoon), "DT;VALUE=DATE-TIME:20140102T120000\n"},
-		{DateTime(parisJanNoon).With(parameter.TZID("Europe/Paris")), "DT;VALUE=DATE-TIME;TZID=Europe/Paris:20140102T120000\n"},
+		{DateTime(parisJanNoon).With(parameter.TZid("Europe/Paris")), "DT;VALUE=DATE-TIME;TZID=Europe/Paris:20140102T120000\n"},
 		//{DateTime(parisJanNoon).UTC(), "DT;VALUE=DATE-TIME:20140102T120000Z\n"},
 
 		{DateTime(utcJulyNoon), "DT;VALUE=DATE-TIME:20140701T120000Z\n"},

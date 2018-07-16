@@ -10,34 +10,68 @@
 package parameter
 
 import (
-	"fmt"
+	"github.com/rickb777/ical2/ics"
 	"strings"
 )
 
 // Parameter holds an iCal parameter. The key must be uppercase, this being a
 // pattern that simplifies the requirement for keys to be case-insensitive.
+//
+// For most parameters, the value is singular, i.e. there is exactly one string.
+// There are several exceptions.
 type Parameter struct {
-	Key, Value string
+	Key   string
+	Value []string
 }
 
-func quote(v string) string {
-	return fmt.Sprintf("%q", v)
-}
-
-func quoted(k, v string) Parameter {
-	return Parameter{k, quote(v)}
-}
-
-func quotedList(k string, vv []string) Parameter {
-	qq := make([]string, 0, len(vv))
-	for _, s := range vv {
-		qq = append(qq, quote(s))
+// Equals tests whether two parameters have the same key and the same value(s).
+func (p Parameter) Equals(q Parameter) bool {
+	if !strings.EqualFold(p.Key, q.Key) || len(p.Value) != len(q.Value) {
+		return false
 	}
-	return Parameter{k, strings.Join(qq, ",")}
+	for i, v := range p.Value {
+		if v != q.Value[i] {
+			return false
+		}
+	}
+	return true
 }
 
-func plain(k, v string) Parameter {
-	return Parameter{k, v}
+// WriteTo serialises the parameter in iCal ics format to the writer.
+// Parameters with multiple values are serialised using a comma-separated list.
+//
+// Parameters with values containing a COLON character, a SEMICOLON character
+// or a COMMA character are placed in quoted text.
+func (p Parameter) WriteTo(w ics.StringWriter) error {
+	w.WriteString(p.Key)
+	w.WriteByte('=')
+
+	needQuotes := false
+	for _, v := range p.Value {
+		needQuotes = needQuotes || strings.IndexAny(v, ":;,") >= 0
+	}
+
+	if needQuotes {
+		sep := ""
+		for _, v := range p.Value {
+			w.WriteString(sep)
+			w.WriteByte('"')
+			w.WriteString(v)
+			w.WriteByte('"')
+			sep = ","
+		}
+	} else {
+		w.WriteString(strings.Join(p.Value, ","))
+	}
+
+	return nil
+}
+
+//-------------------------------------------------------------------------------------------------
+
+// Single returns a Parameter with a single string value.
+func Single(k, v string) Parameter {
+	return Parameter{k, []string{v}}
 }
 
 func either(key string, predicate bool, yes, no string) Parameter {
@@ -45,226 +79,5 @@ func either(key string, predicate bool, yes, no string) Parameter {
 	if predicate {
 		v = yes
 	}
-	return plain(key, v)
-}
-
-//-------------------------------------------------------------------------------------------------
-// RFC-5545 parameters
-
-// AltRep specifies an alternate text representation for the property value.
-func AltRep(v string) Parameter {
-	return quoted("ALTREP", v)
-}
-
-// CommonName specifies the common name to be associated with the
-// calendar user specified by the property.
-func CommonName(v string) Parameter {
-	return plain("CN", v)
-}
-
-// CUValue provides values for calendar user types.
-type CUValue string
-
-const (
-	// An individual
-	INDIVIDUAL CUValue = "INDIVIDUAL"
-	// A group of individuals
-	GROUP CUValue = "GROUP"
-	// A physical resource
-	RESOURCE CUValue = "RESOURCE"
-	// A room resource
-	ROOM CUValue = "ROOM"
-	// Otherwise not known
-	UNKNOWN CUValue = "UNKNOWN"
-)
-
-// CUType identifies the type of calendar user specified by the property.
-func CUType(v CUValue) Parameter {
-	return plain("CUTYPE", string(v))
-}
-
-// Delegator names the calendar users that have delegated their
-// participation to the calendar user(s) specified by the property.
-func Delegator(v ...string) Parameter {
-	return quotedList("DELEGATED-FROM", v)
-}
-
-// Delegatee names the calendar users to whom the calendar user
-// specified by the property has delegated participation.
-func Delegatee(v ...string) Parameter {
-	return quotedList("DELEGATED-TO", v)
-}
-
-// Dir specifies reference to a directory entry associated with
-// the calendar user specified by the property.
-func Dir(v string) Parameter {
-	return quoted("DIR", v)
-}
-
-// Encoding specifies an alternate inline encoding for the property value.
-func Encoding(base64 bool) Parameter {
-	return either("ENCODING", base64, "BASE64", "8BIT")
-}
-
-// FmtType specifies the content type of a referenced object.
-func FmtType(typeName, subTypeName string) Parameter {
-	return plain("FMTTYPE", fmt.Sprintf("%s/%s", typeName, subTypeName))
-}
-
-// FbtValue provides values for free or busy time.
-type FbtValue string
-
-const (
-	FREE             FbtValue = "FREE"
-	BUSY             FbtValue = "BUSY"
-	BUSY_UNAVAILABLE FbtValue = "BUSY-UNAVAILABLE"
-	BUSY_TENTATIVE   FbtValue = "BUSY-TENTATIVE"
-)
-
-// FbtType specifies the free or busy time type.
-func FbtType(v FbtValue) Parameter {
-	return plain("FBTTYPE", string(v))
-}
-
-// Language specifies the language for text values in a property or
-// property parameter. See https://tools.ietf.org/html/rfc5646
-func Language(v string) Parameter {
-	return plain("LANGUAGE", v)
-}
-
-// Member specifies the group or list membership of the calendar
-// user specified by the property.
-func Member(v ...string) Parameter {
-	return quotedList("Member", v)
-}
-
-// FbtValue provides values for free or busy time.
-type PartStatValue string
-
-const (
-	NEEDS_ACTION PartStatValue = "NEEDS-ACTION"
-	ACCEPTED     PartStatValue = "ACCEPTED"
-	DECLINED     PartStatValue = "DECLINED"
-	TENTATIVE    PartStatValue = "TENTATIVE"
-	DELEGATED    PartStatValue = "DELEGATED"
-)
-
-// PartStat specifies the participation status for the calendar user
-// specified by the property.
-func PartStat(v PartStatValue) Parameter {
-	return plain("PARTSTAT", string(v))
-}
-
-/// TODO RANGE ; Recurrence identifier range
-/// TODO RELATED ; Alarm trigger relationship
-/// TODO RELTYPE ; Relationship type
-
-// RoleValue provides values for participation role.
-type RoleValue string
-
-const (
-	CHAIR           RoleValue = "CHAIR"
-	REQ_PARTICIPANT RoleValue = "REQ-PARTICIPANT"
-	OPT_PARTICIPANT RoleValue = "OPT-PARTICIPANT"
-	NON_PARTICIPANT RoleValue = "NON-PARTICIPANT"
-)
-
-// Role specifies the participation role for the calendar user
-// specified by the property.
-func Role(v RoleValue) Parameter {
-	return plain("ROLE", string(v))
-}
-
-// RSVP specifies whether there is an expectation of a reply from
-// the calendar user specified by the property value.
-func RSVP(yes bool) Parameter {
-	return either("RSVP", yes, "TRUE", "FALSE")
-}
-
-// SentBy specifies the calendar user that is acting on behalf of
-// the calendar user specified by the property.
-func SentBy(v string) Parameter {
-	return quoted("SENT-BY", v)
-}
-
-// TZID specifies the identifier for the time zone definition for
-// a time component in the property value.
-func TZID(v string) Parameter {
-	return plain("TZID", v)
-}
-
-// ValueType provides type information for iCal property values.
-type ValueType string
-
-const (
-	BINARY_TYPE      ValueType = "BINARY"
-	BOOLEAN_TYPE     ValueType = "BOOLEAN"
-	CAL_ADDRESS_TYPE ValueType = "CAL-ADDRESS"
-	DATE_TYPE        ValueType = "DATE"
-	DATE_TIME_TYPE   ValueType = "DATE-TIME"
-	DURATION_TYPE    ValueType = "DURATION"
-	FLOAT_TYPE       ValueType = "FLOAT"
-	INTEGER_TYPE     ValueType = "INTEGER"
-	PERIOD_TYPE      ValueType = "PERIOD"
-	RECUR_TYPE       ValueType = "RECUR"
-	TEXT_TYPE        ValueType = "TEXT"
-	TIME_TYPE        ValueType = "TIME"
-	URI_TYPE         ValueType = "URI"
-	UTC_OFFSET_TYPE  ValueType = "UTC-OFFSET"
-)
-
-// Type explicitly specifies the value type format for a property value.
-func Type(v ValueType) Parameter {
-	return plain("VALUE", string(v))
-}
-
-//-------------------------------------------------------------------------------------------------
-// RFC7986 addtitions
-
-// DisplayValue provides values for display.
-// https://tools.ietf.org/html/rfc7986#section-6.1
-type DisplayValue string
-
-const (
-	BADGE     DisplayValue = "BADGE" // the default
-	GRAPHIC   DisplayValue = "GRAPHIC"
-	FULLSIZE  DisplayValue = "FULLSIZE"
-	THUMBNAIL DisplayValue = "THUMBNAIL"
-)
-
-// Display specifies different ways in which an image for a calendar
-// or component can be displayed.
-func Display(v DisplayValue) Parameter {
-	return plain("DISPLAY", string(v))
-}
-
-// Email specifies an email address that is used to identify or
-// contact an organizer or attendee.
-func Email(v string) Parameter {
-	return plain("EMAIL", v)
-}
-
-// FeatureValue provides values for display.
-// https://tools.ietf.org/html/rfc7986#section-6.3
-type FeatureValue string
-
-const (
-	AUDIO     FeatureValue = "AUDIO"
-	CHAT      FeatureValue = "CHAT"
-	FEED      FeatureValue = "FEED"
-	MODERATOR FeatureValue = "MODERATOR"
-	PHONE     FeatureValue = "PHONE"
-	SCREEN    FeatureValue = "SCREEN"
-	VIDEO     FeatureValue = "VIDEO"
-)
-
-// Feature specifies a feature or features of a conference or
-// broadcast system.
-func Feature(v FeatureValue) Parameter {
-	return plain("FEATURE", string(v))
-}
-
-// Label provides a human-readable label.
-func Label(v string) Parameter {
-	return plain("LABEL", v)
+	return Single(key, v)
 }

@@ -3,6 +3,7 @@ package value
 import (
 	"github.com/rickb777/ical2/ics"
 	"github.com/rickb777/ical2/parameter"
+	"github.com/rickb777/ical2/parameter/valuetype"
 	"strconv"
 	"time"
 )
@@ -24,12 +25,12 @@ type DateTimeValue struct {
 // DateTime constructs a new date-time value. This is represented as a "floating"
 // local time. It has VALUE=DATE-TIME.
 func DateTime(t time.Time) DateTimeValue {
-	return DateTimeValue{Value: t, format: dateTimeLayout}.With(parameter.Type(parameter.DATE_TIME_TYPE))
+	return DateTimeValue{Value: t, format: dateTimeLayout}.With(valuetype.Type(valuetype.DATE_TIME))
 }
 
 // Date constructs a new date value, i.e. without time. It has VALUE=DATE.
 func Date(t time.Time) DateTimeValue {
-	return DateTimeValue{Value: t, format: dateLayout}.With(parameter.Type(parameter.DATE_TYPE))
+	return DateTimeValue{Value: t, format: dateLayout}.With(valuetype.Type(valuetype.DATE))
 }
 
 // TStamp constructs a date-time value using UTC. It has no VALUE parameter; the type the default
@@ -41,8 +42,8 @@ func TStamp(t time.Time) DateTimeValue {
 // AsDate converts a date-time value to a date-only value.
 func (v DateTimeValue) AsDate() DateTimeValue {
 	v.format = dateLayout
-	v.Parameters.Remove(string("DATE-TIME"))
-	return v.With(parameter.Type(parameter.DATE_TYPE))
+	v.Parameters.RemoveByKey(valuetype.DATE_TIME)
+	return v.With(valuetype.Type(valuetype.DATE))
 }
 
 // IsDefined tests whether the value has been explicitly defined or is default.
@@ -63,7 +64,7 @@ func (v DateTimeValue) WriteTo(w ics.StringWriter) error {
 
 	// when the date-time is UTC, remove the TZID parameter and add Zulu "Z" instead
 	if zone, _ := v.Value.Zone(); zone == "UTC" && format == dateTimeLayout {
-		v.Parameters = v.Parameters.Remove("TZID", "DATE-TIME")
+		v.Parameters = v.Parameters.RemoveByKey(parameter.TZID, valuetype.DATE_TIME)
 		format = dateTimeLayout + "Z"
 	}
 
@@ -84,7 +85,7 @@ type DurationValue struct {
 
 // Duration returns a new DurationValue.
 func Duration(d string) DurationValue {
-	return DurationValue{simpleValue{Value: d}}.With(parameter.Type(parameter.DURATION_TYPE))
+	return DurationValue{simpleValue{Value: d}}.With(valuetype.Type(valuetype.DURATION))
 }
 
 // With appends parameters to the value.

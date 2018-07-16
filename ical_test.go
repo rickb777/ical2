@@ -3,6 +3,7 @@ package ical2
 import (
 	"bytes"
 	. "github.com/rickb777/ical2/parameter"
+	"github.com/rickb777/ical2/parameter/role"
 	. "github.com/rickb777/ical2/value"
 	"strings"
 	"testing"
@@ -19,10 +20,10 @@ func TestEncode(t *testing.T) {
 	event := &VEvent{
 		UID:          Text("123"),
 		DTStamp:      TStamp(dt),
-		Start:        DateTime(ds).With(TZID(tz)),
-		End:          DateTime(de).With(TZID(tz)),
+		Start:        DateTime(ds).With(TZid(tz)),
+		End:          DateTime(de).With(TZid(tz)),
 		Organizer:    CalAddress("ht@throne.com").With(CommonName("H.Tudwr")),
-		Attendee:     []URIValue{CalAddress("ann.blin@example.com").With(Role("REQ-PARTICIPANT"), CommonName("Ann Blin"))},
+		Attendee:     []URIValue{CalAddress("ann.blin@example.com").With(role.Role("REQ-PARTICIPANT"), CommonName("Ann Blin"))},
 		Contact:      Text("T.Moore, Esq."),
 		Summary:      Text("summary, with punctuation"),
 		Description:  Text("Lorem ipsum dolor sit amet, consectetµr adipiscing elit, sed do eiusmod tempor incididµnt µt labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."),
@@ -80,8 +81,8 @@ func TestEncodeAllDayTrue(t *testing.T) {
 	event := (&VEvent{
 		UID:          Text("123"),
 		DTStamp:      TStamp(d),
-		Start:        DateTime(d).With(TZID(tz)),
-		End:          DateTime(d).With(TZID(tz)),
+		Start:        DateTime(d).With(TZid(tz)),
+		End:          DateTime(d).With(TZid(tz)),
 		Summary:      Text("summary"),
 		Transparency: Opaque(),
 	}).AllDay()
@@ -123,8 +124,8 @@ func TestEncodeDraftProperties(t *testing.T) {
 	event := &VEvent{
 		UID:     Text("123"),
 		DTStamp: TStamp(d),
-		Start:   DateTime(d).With(TZID(tz)),
-		End:     DateTime(d).With(TZID(tz)),
+		Start:   DateTime(d).With(TZid(tz)),
+		End:     DateTime(d).With(TZid(tz)),
 		Summary: Text("summary"),
 	}
 

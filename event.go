@@ -29,7 +29,7 @@ type VEvent struct {
 	Transparency value.TransparencyValue
 	Color        value.TextValue // CSS3 color name
 
-	// TODO (RFC5545) GEO PRIORITY RECURRENCE-ID EXDATE RDATE RRULE
+	// TODO (RFC5545) PRIORITY RECURRENCE-ID EXDATE RDATE RRULE
 	// TODO (RFC7986) []CONFERENCE []IMAGE
 }
 
