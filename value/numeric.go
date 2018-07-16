@@ -24,15 +24,16 @@ type DateTimeValue struct {
 // DateTime constructs a new date-time value. This is represented as a "floating"
 // local time. It has VALUE=DATE-TIME.
 func DateTime(t time.Time) DateTimeValue {
-	return DateTimeValue{Value: t, format: dateTimeLayout}.With(parameter.Type(parameter.DATE_TIME))
+	return DateTimeValue{Value: t, format: dateTimeLayout}.With(parameter.Type(parameter.DATE_TIME_TYPE))
 }
 
 // Date constructs a new date value, i.e. without time. It has VALUE=DATE.
 func Date(t time.Time) DateTimeValue {
-	return DateTimeValue{Value: t, format: dateLayout}.With(parameter.Type(parameter.DATE))
+	return DateTimeValue{Value: t, format: dateLayout}.With(parameter.Type(parameter.DATE_TYPE))
 }
 
-// TStamp constructs a date-time value using UTC. It has no VALUE parameter
+// TStamp constructs a date-time value using UTC. It has no VALUE parameter; the type the default
+// and is obvious from the rendered value.
 func TStamp(t time.Time) DateTimeValue {
 	return DateTimeValue{Value: t.UTC(), format: dateTimeLayout + "Z"}
 }
@@ -41,7 +42,7 @@ func TStamp(t time.Time) DateTimeValue {
 func (v DateTimeValue) AsDate() DateTimeValue {
 	v.format = dateLayout
 	v.Parameters.Remove(string("DATE-TIME"))
-	return v.With(parameter.Type(parameter.DATE))
+	return v.With(parameter.Type(parameter.DATE_TYPE))
 }
 
 // IsDefined tests whether the value has been explicitly defined or is default.
@@ -83,7 +84,7 @@ type DurationValue struct {
 
 // Duration returns a new DurationValue.
 func Duration(d string) DurationValue {
-	return DurationValue{simpleValue{Value: d}}.With(parameter.Type(parameter.DURATION))
+	return DurationValue{simpleValue{Value: d}}.With(parameter.Type(parameter.DURATION_TYPE))
 }
 
 // With appends parameters to the value.

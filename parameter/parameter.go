@@ -197,20 +197,20 @@ func TZID(v string) Parameter {
 type ValueType string
 
 const (
-	BINARY      ValueType = "BINARY"
-	BOOLEAN     ValueType = "BOOLEAN"
-	CAL_ADDRESS ValueType = "CAL-ADDRESS"
-	DATE        ValueType = "DATE"
-	DATE_TIME   ValueType = "DATE-TIME"
-	DURATION    ValueType = "DURATION"
-	FLOAT       ValueType = "FLOAT"
-	INTEGER     ValueType = "INTEGER"
-	PERIOD      ValueType = "PERIOD"
-	RECUR       ValueType = "RECUR"
-	TEXT        ValueType = "TEXT"
-	TIME        ValueType = "TIME"
-	URI         ValueType = "URI"
-	UTC_OFFSET  ValueType = "UTC-OFFSET"
+	BINARY_TYPE      ValueType = "BINARY"
+	BOOLEAN_TYPE     ValueType = "BOOLEAN"
+	CAL_ADDRESS_TYPE ValueType = "CAL-ADDRESS"
+	DATE_TYPE        ValueType = "DATE"
+	DATE_TIME_TYPE   ValueType = "DATE-TIME"
+	DURATION_TYPE    ValueType = "DURATION"
+	FLOAT_TYPE       ValueType = "FLOAT"
+	INTEGER_TYPE     ValueType = "INTEGER"
+	PERIOD_TYPE      ValueType = "PERIOD"
+	RECUR_TYPE       ValueType = "RECUR"
+	TEXT_TYPE        ValueType = "TEXT"
+	TIME_TYPE        ValueType = "TIME"
+	URI_TYPE         ValueType = "URI"
+	UTC_OFFSET_TYPE  ValueType = "UTC-OFFSET"
 )
 
 // Type explicitly specifies the value type format for a property value.

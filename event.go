@@ -14,12 +14,12 @@ type VEvent struct {
 	End          value.DateTimeValue
 	Created      value.DateTimeValue
 	LastModified value.DateTimeValue
-	Organizer    value.CalAddressValue
-	Attendee     []value.CalAddressValue
+	Organizer    value.URIValue
+	Attendee     []value.URIValue
 	Contact      value.TextValue
 	Summary      value.TextValue
 	Description  value.TextValue
-	Class        value.TextValue // PUBLIC, PRIVATE, CONFIDENTIAL
+	Class        value.ClassValue // PUBLIC, PRIVATE, CONFIDENTIAL
 	Comment      value.TextValue
 	RelatedTo    value.TextValue
 	Sequence     value.IntegerValue
@@ -28,8 +28,8 @@ type VEvent struct {
 	Transparency value.TransparencyValue
 	Color        value.TextValue // CSS3 color name
 
-	// TODO (RFC5545) CREATED GEO PRIORITY RECURRENCE-ID EXDATE RDATE RRULE
-	// TODO (RFC7986) []CONFERENCE
+	// TODO (RFC5545) GEO PRIORITY RECURRENCE-ID EXDATE RDATE RRULE
+	// TODO (RFC7986) []CONFERENCE []IMAGE
 }
 
 // AllDay changes the start and end to represent dates without time.
@@ -80,6 +80,7 @@ func (e *VEvent) EncodeIcal(b *ics.Buffer, method value.MethodValue) error {
 	b.WriteValuerLine(ics.IsDefined(e.Sequence), "SEQUENCE", e.Sequence)
 	b.WriteValuerLine(ics.IsDefined(e.Status), "STATUS", e.Status)
 	b.WriteValuerLine(ics.IsDefined(e.Transparency), "TRANSP", e.Transparency)
+	b.WriteValuerLine(ics.IsDefined(e.Color), "COLOR", e.Color)
 
 	//if ics.IsDefined(e.ALARM) {
 	//	b.WriteLine("BEGIN:VALARM")

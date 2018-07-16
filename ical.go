@@ -50,8 +50,8 @@ type VCalendar struct {
 	Name            value.TextValue // My Calendar Name
 	Description     value.TextValue // A description of my calendar
 	UID             value.TextValue
-	URL             value.TextValue // http://my.calendar/url
-	LastModified    value.DateTimeValue
+	URL             value.TextValue     // http://my.calendar/url
+	LastModified    value.DateTimeValue // can also be specified per VComponent
 	RefreshInterval value.DurationValue // PT12H
 	Color           value.TextValue     // CSS3 color name
 	// TODO CATEGORIES, SOURCE, []IMAGE

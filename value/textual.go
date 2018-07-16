@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"github.com/rickb777/ical2/ics"
 	"github.com/rickb777/ical2/parameter"
+	"strings"
 )
 
 type simpleValue struct {
@@ -18,53 +19,40 @@ func (v simpleValue) IsDefined() bool {
 
 //-------------------------------------------------------------------------------------------------
 
-// CalAddressValue holds calendar address, which is typically an email address.
-type CalAddressValue struct {
+// URIValue holds a URI.
+type URIValue struct {
 	simpleValue
 }
 
+// URI returns a new URIValue.
+func URI(uri string) URIValue {
+	return URIValue{simpleValue{Value: uri}}
+}
+
 // CalAddress returns a new CalAddressValue.
-func CalAddress(mailto string) CalAddressValue {
-	return CalAddressValue{simpleValue{Value: mailto}}
+func CalAddress(mailto string) URIValue {
+	if !strings.HasPrefix(mailto, "mailto:") {
+		mailto = "mailto:" + mailto
+	}
+	return URIValue{simpleValue{Value: mailto}}
 }
 
 // With appends parameters to the value.
-func (v CalAddressValue) With(params ...parameter.Parameter) CalAddressValue {
+func (v URIValue) With(params ...parameter.Parameter) URIValue {
 	v.Parameters = v.Parameters.Append(params...)
 	return v
 }
 
 // WriteTo writes the value to the writer.
 // This is part of the Valuer interface.
-func (v CalAddressValue) WriteTo(w ics.StringWriter) error {
+func (v URIValue) WriteTo(w ics.StringWriter) error {
 	v.Parameters.WriteTo(w)
-	w.WriteString(":mailto:")
+	w.WriteString(":")
 	_, e := w.WriteString(v.Value)
 	return e
 }
 
 //-------------------------------------------------------------------------------------------------
-
-const (
-	// Calendar class property
-	PUBLIC       = "PUBLIC"
-	PRIVATE      = "PRIVATE"
-	CONFIDENTIAL = "CONFIDENTIAL"
-
-	// Event status
-	//TENTATIVE = "TENTATIVE"
-	// Event status
-	//CONFIRMED = "CONFIRMED"
-	// Event and To-do status
-	//CANCELLED = "CANCELLED"
-
-	// To-do status
-	//NEEDS_ACTION = "NEEDS-ACTION"
-	// To-do status
-	//COMPLETED = "COMPLETED"
-	// To-do status
-	//IN_PROCESS = "IN-PROCESS"
-)
 
 // TextValue holds a value that is a string and which will be escaped
 // when written out.
@@ -90,6 +78,33 @@ func (v TextValue) WriteTo(w ics.StringWriter) error {
 	w.WriteByte(':')
 	_, e := w.WriteString(escapeText(v.Value))
 	return e
+}
+
+//-------------------------------------------------------------------------------------------------
+
+// ClassValue holds a classification value.
+type ClassValue struct {
+	TextValue
+}
+
+// Class constructs a new classification value.
+func Class(v string) ClassValue {
+	return ClassValue{Text(v)}
+}
+
+// Public is an event visible publicly.
+func Public() ClassValue {
+	return Class("PUBLIC")
+}
+
+// Private is a private event.
+func Private() ClassValue {
+	return Class("PRIVATE")
+}
+
+// Confidential is a confidential event.
+func Confidential() ClassValue {
+	return Class("CONFIDENTIAL")
 }
 
 //-------------------------------------------------------------------------------------------------
