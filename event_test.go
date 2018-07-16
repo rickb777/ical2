@@ -11,7 +11,7 @@ import (
 	"time"
 )
 
-func ExampleVEvent_with_timezone() {
+func ExampleVEvent_timezone() {
 	const tz = "Europe/Paris"
 	zone, _ := time.LoadLocation(tz)
 	dt := time.Date(2014, time.Month(1), 1, 7, 0, 0, 0, zone)
