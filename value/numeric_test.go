@@ -32,29 +32,59 @@ func TestDateTimeRender(t *testing.T) {
 		dt  DateTimeValue
 		exp string
 	}{
-		{DateTime(utcJanNoon), "DT;VALUE=DATE-TIME:20140101T120000Z\n"},
-		{DateTime(utcJanNoon).With(parameter.TZid("UTC")), "DT;VALUE=DATE-TIME:20140101T120000Z\n"},
-		{DateTime(parisJanNoon), "DT;VALUE=DATE-TIME:20140102T120000\n"},
-		{DateTime(parisJanNoon).With(parameter.TZid("Europe/Berlin")), "DT;VALUE=DATE-TIME;TZID=Europe/Berlin:20140102T120000\n"},
+		{TStamp(utcJanNoon), ":20140101T120000Z\n"},
+		{DateTime(utcJanNoon), ";VALUE=DATE-TIME:20140101T120000Z\n"},
+		{DateTime(utcJanNoon).With(parameter.TZid("UTC")), ";VALUE=DATE-TIME:20140101T120000Z\n"},
+		{DateTime(parisJanNoon), ";VALUE=DATE-TIME:20140102T120000\n"},
+		{DateTime(parisJanNoon).With(parameter.TZid("Europe/Berlin")), ";VALUE=DATE-TIME;TZID=Europe/Berlin:20140102T120000\n"},
 
-		{DateTime(utcJulyNoon), "DT;VALUE=DATE-TIME:20140701T120000Z\n"},
-		{DateTime(parisJulyNoon), "DT;VALUE=DATE-TIME:20140702T120000\n"},
+		{DateTime(utcJulyNoon), ";VALUE=DATE-TIME:20140701T120000Z\n"},
+		{DateTime(parisJulyNoon), ";VALUE=DATE-TIME:20140702T120000\n"},
 
-		{DateTime(utcJanNoon).AsDate(), "DT;VALUE=DATE:20140101\n"},
-		{DateTime(utcJanNoon).With(parameter.TZid("UTC")).AsDate(), "DT;TZID=UTC;VALUE=DATE:20140101\n"},
-		{DateTime(parisJanNoon).AsDate(), "DT;VALUE=DATE:20140102\n"},
-		{DateTime(parisJanNoon).With(parameter.TZid("Europe/Berlin")).AsDate(), "DT;TZID=Europe/Berlin;VALUE=DATE:20140102\n"},
+		{DateTime(utcJanNoon).AsDate(), ";VALUE=DATE:20140101\n"},
+		{DateTime(utcJanNoon).AsDate().With(parameter.TZid("UTC")), ";VALUE=DATE;TZID=UTC:20140101\n"},
+		{DateTime(parisJanNoon).AsDate(), ";VALUE=DATE:20140102\n"},
+		{DateTime(parisJanNoon).AsDate().With(parameter.TZid("Europe/Berlin")), ";VALUE=DATE;TZID=Europe/Berlin:20140102\n"},
 	}
 
 	for i, c := range cases {
 		b := &bytes.Buffer{}
 		x := ics.NewBuffer(b, "\n")
-		x.WriteValuerLine(true, "DT", c.dt)
+		x.WriteValuerLine(true, "X", c.dt)
 		err := x.Flush()
 		if err != nil {
 			t.Errorf("%d: unexpected error %v", i, err)
 		}
 		s := b.String()
+		// ignore the "X" label
+		s = s[1:]
+		if s != c.exp {
+			t.Errorf("%d: expected %s, got %s", i, strings.TrimSpace(c.exp), s)
+		}
+	}
+}
+
+func TestBinaryRender(t *testing.T) {
+
+	cases := []struct {
+		dt  ics.Valuer
+		exp string
+	}{
+		{Binary([]byte("ABC")), ";VALUE=BINARY;ENCODING=BASE64:QUJD\n"},
+		{Binary([]byte("A}~B")), ";VALUE=BINARY;ENCODING=BASE64:QX1+Qg==\n"},
+	}
+
+	for i, c := range cases {
+		b := &bytes.Buffer{}
+		x := ics.NewBuffer(b, "\n")
+		x.WriteValuerLine(true, "X", c.dt)
+		err := x.Flush()
+		if err != nil {
+			t.Errorf("%d: unexpected error %v", i, err)
+		}
+		s := b.String()
+		// ignore the "X" label
+		s = s[1:]
 		if s != c.exp {
 			t.Errorf("%d: expected %s, got %s", i, strings.TrimSpace(c.exp), s)
 		}
@@ -74,6 +104,8 @@ func TestNonTextValuesShouldIncludeType(t *testing.T) {
 		{Geo(1, 2), ";VALUE=FLOAT;"},
 		{Integer(1), ";VALUE=INTEGER;"},
 		{URI("a:b:c"), ";VALUE=URI;"},
+		{Binary([]byte("x")), ";VALUE=BINARY;"},
+		{Binary([]byte("x")), ";ENCODING=BASE64;"},
 	}
 
 	for i, c := range cases {
@@ -107,12 +139,14 @@ func TestDefaultValuesShouldNotBeDefined(t *testing.T) {
 		{Integer(1), true},
 		{URI("a:b:c"), true},
 		{Text("abc"), true},
+		{Binary([]byte("x")), true},
 
 		{DateTimeValue{}, false},
 		{GeoValue{}, false},
 		{IntegerValue{}, false},
 		{URI(""), false},
 		{Text(""), false},
+		{Binary(nil), false},
 	}
 
 	for i, c := range cases {

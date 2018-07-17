@@ -42,7 +42,11 @@ type URIValue struct {
 
 // URI returns a new URIValue.
 func URI(uri string) URIValue {
-	return URIValue{baseValue{Value: uri, escape: noOp}}.With(valuetype.Type(valuetype.URI))
+	return URIValue{baseValue{
+		Parameters: parameter.Parameters{valuetype.Type(valuetype.URI)},
+		Value:      uri,
+		escape:     noOp,
+	}}
 }
 
 // CalAddress returns a new CalAddressValue.

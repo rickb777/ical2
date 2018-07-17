@@ -1,6 +1,7 @@
 package value
 
 import (
+	"encoding/base64"
 	"github.com/rickb777/ical2/ics"
 	"github.com/rickb777/ical2/parameter"
 	"github.com/rickb777/ical2/parameter/valuetype"
@@ -17,33 +18,46 @@ const (
 // DateTimeValue holds a date/time and its formatting decision.
 // See https://tools.ietf.org/html/rfc5545#section-3.3.5
 type DateTimeValue struct {
-	Parameters parameter.Parameters
-	Value      time.Time
-	format     string
+	Parameters  parameter.Parameters
+	Value       time.Time
+	includeTime bool
+	zulu        bool
 }
 
 // DateTime constructs a new date-time value. This is represented as a "floating"
 // local time. It has VALUE=DATE-TIME.
 func DateTime(t time.Time) DateTimeValue {
-	return DateTimeValue{Value: t, format: dateTimeLayout}.With(valuetype.Type(valuetype.DATE_TIME))
+	return DateTimeValue{
+		Parameters:  parameter.Parameters{valuetype.Type(valuetype.DATE_TIME)},
+		Value:       t,
+		includeTime: true,
+	}
 }
 
 // Date constructs a new date value, i.e. without time. It has VALUE=DATE.
 func Date(t time.Time) DateTimeValue {
-	return DateTimeValue{Value: t, format: dateLayout}.With(valuetype.Type(valuetype.DATE))
+	return DateTimeValue{
+		Parameters:  parameter.Parameters{valuetype.Type(valuetype.DATE)},
+		Value:       t,
+		includeTime: false,
+	}
 }
 
 // TStamp constructs a date-time value using UTC. It has no VALUE parameter; the type the default
 // and is obvious from the rendered value.
 func TStamp(t time.Time) DateTimeValue {
-	return DateTimeValue{Value: t.UTC(), format: dateTimeLayout + "Z"}
+	return DateTimeValue{
+		Value:       t.UTC(),
+		includeTime: true,
+		zulu:        true,
+	}
 }
 
 // AsDate converts a date-time value to a date-only value.
 func (v DateTimeValue) AsDate() DateTimeValue {
-	v.format = dateLayout
-	v.Parameters = v.Parameters.RemoveByKey(valuetype.DATE_TIME)
-	return v.With(valuetype.Type(valuetype.DATE))
+	v.includeTime = false
+	v.Parameters = v.Parameters.RemoveByKey(valuetype.DATE_TIME).Append(valuetype.Type(valuetype.DATE))
+	return v
 }
 
 // IsDefined tests whether the value has been explicitly defined or is default.
@@ -60,10 +74,16 @@ func (v DateTimeValue) With(params ...parameter.Parameter) DateTimeValue {
 // WriteTo writes the value to the writer.
 // This is part of the Valuer interface.
 func (v DateTimeValue) WriteTo(w ics.StringWriter) error {
-	format := v.format
+	format := dateLayout
+	if v.includeTime {
+		format = dateTimeLayout
+		if v.zulu {
+			format = dateTimeLayout + "Z"
+		}
+	}
 
 	// when the date-time is UTC, remove the TZID parameter and add Zulu "Z" instead
-	if zone, _ := v.Value.Zone(); zone == "UTC" && format == dateTimeLayout {
+	if zone, _ := v.Value.Zone(); zone == "UTC" && v.includeTime {
 		v.Parameters = v.Parameters.RemoveByKey(parameter.TZID, valuetype.DATE_TIME)
 		format = dateTimeLayout + "Z"
 	}
@@ -85,7 +105,10 @@ type DurationValue struct {
 
 // Duration returns a new DurationValue.
 func Duration(d string) DurationValue {
-	return DurationValue{baseValue{Value: d}}.With(valuetype.Type(valuetype.DURATION))
+	return DurationValue{baseValue{
+		Parameters: parameter.Parameters{valuetype.Type(valuetype.DURATION)},
+		Value:      d,
+	}}
 }
 
 // With appends parameters to the value.
@@ -113,8 +136,12 @@ type IntegerValue struct {
 }
 
 // Integer returns a new IntegerValue.
-func Integer(d int) IntegerValue {
-	return IntegerValue{Value: d, defined: true}.With(valuetype.Type(valuetype.INTEGER))
+func Integer(number int) IntegerValue {
+	return IntegerValue{
+		Parameters: parameter.Parameters{valuetype.Type(valuetype.INTEGER)},
+		Value:      number,
+		defined:    true,
+	}
 }
 
 // IsDefined tests whether the value has been explicitly defined or is default.
@@ -155,7 +182,12 @@ type GeoValue struct {
 //
 // See https://tools.ietf.org/html/rfc5545#section-3.8.1.6
 func Geo(lat, lon float64) GeoValue {
-	return GeoValue{Lat: lat, Lon: lon, defined: true}.With(valuetype.Type(valuetype.FLOAT))
+	return GeoValue{
+		Parameters: parameter.Parameters{valuetype.Type(valuetype.FLOAT)},
+		Lat:        lat,
+		Lon:        lon,
+		defined:    true,
+	}
 }
 
 // IsDefined tests whether the value has been explicitly defined or is default.
@@ -178,4 +210,41 @@ func (v GeoValue) WriteTo(w ics.StringWriter) error {
 	w.WriteByte(';')
 	_, e := w.WriteString(strconv.FormatFloat(v.Lon, 'G', -1, 64))
 	return e
+}
+
+//-------------------------------------------------------------------------------------------------
+
+// BinaryValue holds binary data, such as an inline image.
+type BinaryValue struct {
+	Parameters parameter.Parameters
+	Value      []byte
+}
+
+// Binary returns a new BinaryValue.
+func Binary(data []byte) BinaryValue {
+	return BinaryValue{Value: data}
+}
+
+// IsDefined tests whether the value has been explicitly defined or is default.
+func (v BinaryValue) IsDefined() bool {
+	return len(v.Value) > 0
+}
+
+// With appends parameters to the value.
+func (v BinaryValue) With(params ...parameter.Parameter) BinaryValue {
+	v.Parameters = v.Parameters.Append(params...)
+	return v
+}
+
+// WriteTo writes the value to the writer.
+// This is part of the Writable interface.
+func (v BinaryValue) WriteTo(w ics.StringWriter) error {
+	// the mandatory parameters are appended lazily here, ensuring they aren't removed accidentally
+	pp := v.Parameters.Append(valuetype.Type(valuetype.BINARY), parameter.Encoding(true))
+	pp.WriteTo(w)
+	w.WriteByte(':')
+	// RFC5545 requires 'standard' encoding (using alphanum, +, /) with padding.
+	encoder := base64.NewEncoder(base64.StdEncoding, w)
+	encoder.Write(v.Value)
+	return encoder.Close()
 }
