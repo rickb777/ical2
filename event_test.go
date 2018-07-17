@@ -29,6 +29,8 @@ func ExampleVEvent_timezone() {
 		Summary:      value.Text("Event summary"),
 		Description:  value.Text("This describes the event."),
 		RelatedTo:    value.Text("19960401-080045-4000F192713-0052@example.com"),
+		Categories:   value.List("MEETING"),
+		Resources:    value.List("CATERING", "CHAIRS"),
 		Location:     value.Text("South Bank, London SE1 9PX"),
 		Transparency: value.Transparent(),
 	}
@@ -56,6 +58,8 @@ func ExampleVEvent_timezone() {
 	// DESCRIPTION:This describes the event.
 	// LOCATION:South Bank\, London SE1 9PX
 	// RELATED-TO:19960401-080045-4000F192713-0052@example.com
+	// CATEGORIES:MEETING
+	// RESOURCES:CATERING,CHAIRS
 	// TRANSP:TRANSPARENT
 	// END:VEVENT
 	// END:VCALENDAR

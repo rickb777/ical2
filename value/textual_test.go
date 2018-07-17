@@ -15,6 +15,7 @@ func TestTextConstructors(t *testing.T) {
 		{Text("abc").With(valuetype.Type(valuetype.TEXT)), ";VALUE=TEXT:abc\n"},
 		{Text("a,b,c"), ":a\\,b\\,c\n"},
 		{CalAddress("j@x.org"), ":mailto:j@x.org\n"},
+		{List("APPOINTMENT", "EDUCATION"), ":APPOINTMENT,EDUCATION\n"},
 		{Public(), ":PUBLIC\n"},
 		{Private(), ":PRIVATE\n"},
 		{Confidential(), ":CONFIDENTIAL\n"},

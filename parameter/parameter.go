@@ -72,9 +72,9 @@ func (p Parameter) WriteTo(w ics.StringWriter) error {
 		}
 	} else {
 		w.WriteString(p.Value)
-		if len(p.Others) > 0 {
+		for _, v := range p.Others {
 			w.WriteByte(comma)
-			w.WriteString(strings.Join(p.Others, ","))
+			w.WriteString(v)
 		}
 	}
 

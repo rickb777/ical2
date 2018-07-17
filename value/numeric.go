@@ -80,12 +80,12 @@ func (v DateTimeValue) WriteTo(w ics.StringWriter) error {
 // (https://en.wikipedia.org/wiki/ISO_8601#Durations);
 // see github.com/rickb777/date/period for a compatible duration API.
 type DurationValue struct {
-	simpleValue
+	baseValue
 }
 
 // Duration returns a new DurationValue.
 func Duration(d string) DurationValue {
-	return DurationValue{simpleValue{Value: d}}.With(valuetype.Type(valuetype.DURATION))
+	return DurationValue{baseValue{Value: d}}.With(valuetype.Type(valuetype.DURATION))
 }
 
 // With appends parameters to the value.

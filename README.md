@@ -4,7 +4,9 @@
 
 # ical2
 
-Simple ical (https://tools.ietf.org/html/rfc5545) encoder for Go.
+Simple iCalendar encoder for Go. See https://tools.ietf.org/html/rfc5545
+
+There is no parsing (unmarshalling) implementation yet, although the design will support this.
 
 This repo is a rewritten fork from github.com/ajcollins/ical, which was orignally from github.com/soh335/ical.
 
@@ -16,14 +18,16 @@ or
 
     dep ensure -add github.com/rickb777/ical2
 
-## Support Components
+## Supported Components
 
 * [x] Event Component
+* [ ] Event Recurrence rules
 * [ ] To-do Component
 * [ ] Journal Component
 * [ ] Free/Busy Component
 * [ ] Time Zone Component
 * [ ] Alarm Component
-
-
-
+* [ ] Parameter Value Encoding https://tools.ietf.org/html/rfc6868,
+* [ ] Non-Gregorian Recurrence Rules https://tools.ietf.org/html/rfc7529
+* [ ] Calendar Availability https://tools.ietf.org/html/rfc7953
+* [-] New Properties https://tools.ietf.org/html/rfc7986

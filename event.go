@@ -22,6 +22,8 @@ type VEvent struct {
 	Class        value.ClassValue // PUBLIC, PRIVATE, CONFIDENTIAL
 	Comment      value.TextValue
 	RelatedTo    value.TextValue
+	Categories   value.ListValue
+	Resources    value.ListValue
 	Sequence     value.IntegerValue
 	Priority     value.IntegerValue // in the range 0 to 9; 0 is undefined; 1 is highest; 9 is lowest
 	Status       value.StatusValue
@@ -80,6 +82,8 @@ func (e *VEvent) EncodeIcal(b *ics.Buffer, method value.MethodValue) error {
 	b.WriteValuerLine(ics.IsDefined(e.Created), "CREATED", e.Created)
 	b.WriteValuerLine(ics.IsDefined(e.LastModified), "LAST-MODIFIED", e.LastModified)
 	b.WriteValuerLine(ics.IsDefined(e.RelatedTo), "RELATED-TO", e.RelatedTo)
+	b.WriteValuerLine(ics.IsDefined(e.Categories), "CATEGORIES", e.Categories)
+	b.WriteValuerLine(ics.IsDefined(e.Resources), "RESOURCES", e.Resources)
 	b.WriteValuerLine(ics.IsDefined(e.Sequence), "SEQUENCE", e.Sequence)
 	b.WriteValuerLine(ics.IsDefined(e.Priority), "PRIORITY", e.Priority)
 	b.WriteValuerLine(ics.IsDefined(e.Status), "STATUS", e.Status)
