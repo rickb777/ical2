@@ -40,6 +40,8 @@ type URIValue struct {
 	baseValue
 }
 
+var _ Attachable = URIValue{}
+
 // URI returns a new URIValue.
 func URI(uri string) URIValue {
 	return URIValue{baseValue{
@@ -61,6 +63,10 @@ func CalAddress(mailto string) URIValue {
 func (v URIValue) With(params ...parameter.Parameter) URIValue {
 	v.Parameters = v.Parameters.Append(params...)
 	return v
+}
+
+// IsAttachable indicates that URI values can be used as images or attachments.
+func (v URIValue) IsAttachable() {
 }
 
 //-------------------------------------------------------------------------------------------------

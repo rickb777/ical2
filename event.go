@@ -32,9 +32,10 @@ type VEvent struct {
 	Geo          value.GeoValue
 	Transparency value.TransparencyValue
 	Color        value.TextValue // CSS3 color name
+	Attach       []value.Attachable
+	Image        []value.Attachable
 
 	// TODO (RFC5545) RECURRENCE-ID EXDATE RDATE RRULE
-	// TODO (RFC7986) []IMAGE
 }
 
 // AllDay changes the start and end to represent dates without time.
@@ -91,6 +92,12 @@ func (e *VEvent) EncodeIcal(b *ics.Buffer, method value.MethodValue) error {
 	b.WriteValuerLine(ics.IsDefined(e.Status), "STATUS", e.Status)
 	b.WriteValuerLine(ics.IsDefined(e.Transparency), "TRANSP", e.Transparency)
 	b.WriteValuerLine(ics.IsDefined(e.Color), "COLOR", e.Color)
+	for _, attachment := range e.Attach {
+		b.WriteValuerLine(true, "ATTACH", attachment)
+	}
+	for _, image := range e.Image {
+		b.WriteValuerLine(true, "IMAGE", image)
+	}
 
 	//if ics.IsDefined(e.ALARM) {
 	//	b.WriteLine("BEGIN:VALARM")

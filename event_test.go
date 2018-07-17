@@ -5,6 +5,7 @@ import (
 	"github.com/rickb777/ical2"
 	"github.com/rickb777/ical2/parameter"
 	"github.com/rickb777/ical2/parameter/cuvalue"
+	"github.com/rickb777/ical2/parameter/display"
 	"github.com/rickb777/ical2/parameter/feature"
 	"github.com/rickb777/ical2/parameter/partstat"
 	"github.com/rickb777/ical2/parameter/role"
@@ -35,6 +36,10 @@ func ExampleVEvent_timezone() {
 		Resources:    value.List("CATERING", "CHAIRS"),
 		Location:     value.Text("South Bank, London SE1 9PX"),
 		Transparency: value.Transparent(),
+		Attach: []value.Attachable{value.Binary([]byte("ABC")).
+			With(parameter.FmtTypeOf("text", "plain"))},
+		Image: []value.Attachable{value.URI("http://example.com/images/party.png").
+			With(display.Display(display.BADGE), parameter.FmtTypeOf("image", "png"))},
 	}
 
 	c := ical2.NewVCalendar("-//My App//Event Calendar//EN").With(event)
@@ -65,6 +70,9 @@ func ExampleVEvent_timezone() {
 	// CATEGORIES:MEETING
 	// RESOURCES:CATERING,CHAIRS
 	// TRANSP:TRANSPARENT
+	// ATTACH;FMTTYPE=text/plain;VALUE=BINARY;ENCODING=BASE64:QUJD
+	// IMAGE;VALUE=URI;DISPLAY=BADGE;FMTTYPE=image/png:http://example.com/images/p
+	//  arty.png
 	// END:VEVENT
 	// END:VCALENDAR
 }

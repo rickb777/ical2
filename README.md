@@ -20,8 +20,8 @@ or
 
 ## Supported Components
 
-* [x] Event Component
-* [ ] Event Recurrence rules
+* [x] Event Component (except for recurrence rules)
+* [ ] Event recurrence rules (RECURRENCE-ID EXDATE RDATE RRULE)
 * [ ] To-do Component
 * [ ] Journal Component
 * [ ] Free/Busy Component
@@ -30,4 +30,4 @@ or
 * [ ] Parameter Value Encoding https://tools.ietf.org/html/rfc6868,
 * [ ] Non-Gregorian Recurrence Rules https://tools.ietf.org/html/rfc7529
 * [ ] Calendar Availability https://tools.ietf.org/html/rfc7953
-* [ ] New Properties https://tools.ietf.org/html/rfc7986
+* [x] New Properties https://tools.ietf.org/html/rfc7986

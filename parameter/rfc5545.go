@@ -62,8 +62,13 @@ func Encoding(base64 bool) Parameter {
 const FMTTYPE = "FMTTYPE"
 
 // FmtType specifies the content type of a referenced object, e.g. "image/png".
-func FmtType(typeName, subTypeName string) Parameter {
-	return Single(FMTTYPE, fmt.Sprintf("%s/%s", typeName, subTypeName))
+func FmtType(mediaType string) Parameter {
+	return Single(FMTTYPE, mediaType)
+}
+
+// FmtTypeOf specifies the content type of a referenced object, e.g. "image", "png".
+func FmtTypeOf(typeName, subTypeName string) Parameter {
+	return FmtType(fmt.Sprintf("%s/%s", typeName, subTypeName))
 }
 
 // LANGUAGE is the key for a language parameter.

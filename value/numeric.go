@@ -9,6 +9,14 @@ import (
 	"time"
 )
 
+// Attachable marks values that are attachable.
+type Attachable interface {
+	ics.Valuer
+	IsAttachable()
+}
+
+//-------------------------------------------------------------------------------------------------
+
 const (
 	dateLayout     = "20060102"
 	dateTimeLayout = "20060102T150405"
@@ -228,6 +236,10 @@ func Binary(data []byte) BinaryValue {
 // IsDefined tests whether the value has been explicitly defined or is default.
 func (v BinaryValue) IsDefined() bool {
 	return len(v.Value) > 0
+}
+
+// IsAttachable indicates that binary values can be used as images or attachments.
+func (v BinaryValue) IsAttachable() {
 }
 
 // With appends parameters to the value.
