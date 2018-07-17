@@ -3,8 +3,8 @@ package value
 import (
 	"bytes"
 	"github.com/rickb777/ical2/ics"
-	"testing"
 	"github.com/rickb777/ical2/parameter/valuetype"
+	"testing"
 )
 
 func TestTextConstructors(t *testing.T) {

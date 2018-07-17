@@ -43,6 +43,9 @@ func (p Parameter) Equals(q Parameter) bool {
 	return true
 }
 
+const dquote = '"'
+const comma = ','
+
 // WriteTo serialises the parameter in iCal ics format to the writer.
 // Parameters with multiple values are serialised using a comma-separated list.
 //
@@ -58,18 +61,19 @@ func (p Parameter) WriteTo(w ics.StringWriter) error {
 	}
 
 	if needQuotes {
-		w.WriteByte('"')
+		w.WriteByte(dquote)
 		w.WriteString(p.Value)
-		w.WriteByte('"')
+		w.WriteByte(dquote)
 		for _, v := range p.Others {
-			w.WriteByte('"')
+			w.WriteByte(comma)
+			w.WriteByte(dquote)
 			w.WriteString(v)
-			w.WriteByte('"')
+			w.WriteByte(dquote)
 		}
 	} else {
 		w.WriteString(p.Value)
 		if len(p.Others) > 0 {
-			w.WriteByte(',')
+			w.WriteByte(comma)
 			w.WriteString(strings.Join(p.Others, ","))
 		}
 	}
