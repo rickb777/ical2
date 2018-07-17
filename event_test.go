@@ -5,6 +5,7 @@ import (
 	"github.com/rickb777/ical2"
 	"github.com/rickb777/ical2/parameter"
 	"github.com/rickb777/ical2/parameter/cuvalue"
+	"github.com/rickb777/ical2/parameter/feature"
 	"github.com/rickb777/ical2/parameter/partstat"
 	"github.com/rickb777/ical2/parameter/role"
 	"github.com/rickb777/ical2/value"
@@ -25,6 +26,7 @@ func ExampleVEvent_timezone() {
 		End:          value.DateTime(de).With(parameter.TZid(tz)),
 		Organizer:    value.CalAddress("ht@throne.com").With(parameter.CommonName("H.Tudwr")),
 		Attendee:     []value.URIValue{value.CalAddress("ann.blin@example.com").With(role.Role(role.REQ_PARTICIPANT), parameter.CommonName("Ann Blin"))},
+		Conference:   []value.URIValue{value.URI("https://chat.example.com/audio?id=123456").With(feature.Feature(feature.AUDIO, feature.VIDEO)).With(parameter.Label("Attendee dial-in"))},
 		Contact:      value.Text("T.Moore, Esq."),
 		Summary:      value.Text("Event summary"),
 		Description:  value.Text("This describes the event."),
@@ -53,6 +55,8 @@ func ExampleVEvent_timezone() {
 	// UID:123
 	// ORGANIZER;CN=H.Tudwr:mailto:ht@throne.com
 	// ATTENDEE;ROLE=REQ-PARTICIPANT;CN=Ann Blin:mailto:ann.blin@example.com
+	// CONFERENCE;VALUE=URI;FEATURE=AUDIO,VIDEO;LABEL=Attendee dial-in:https://cha
+	//  t.example.com/audio?id=123456
 	// CONTACT:T.Moore\, Esq.
 	// SUMMARY:Event summary
 	// DESCRIPTION:This describes the event.

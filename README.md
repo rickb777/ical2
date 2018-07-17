@@ -30,4 +30,4 @@ or
 * [ ] Parameter Value Encoding https://tools.ietf.org/html/rfc6868,
 * [ ] Non-Gregorian Recurrence Rules https://tools.ietf.org/html/rfc7529
 * [ ] Calendar Availability https://tools.ietf.org/html/rfc7953
-* [-] New Properties https://tools.ietf.org/html/rfc7986
+* [ ] New Properties https://tools.ietf.org/html/rfc7986

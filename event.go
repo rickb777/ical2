@@ -16,6 +16,7 @@ type VEvent struct {
 	LastModified value.DateTimeValue
 	Organizer    value.URIValue
 	Attendee     []value.URIValue
+	Conference   []value.URIValue
 	Contact      value.TextValue
 	Summary      value.TextValue
 	Description  value.TextValue
@@ -33,7 +34,7 @@ type VEvent struct {
 	Color        value.TextValue // CSS3 color name
 
 	// TODO (RFC5545) RECURRENCE-ID EXDATE RDATE RRULE
-	// TODO (RFC7986) []CONFERENCE []IMAGE
+	// TODO (RFC7986) []IMAGE
 }
 
 // AllDay changes the start and end to represent dates without time.
@@ -67,11 +68,12 @@ func (e *VEvent) EncodeIcal(b *ics.Buffer, method value.MethodValue) error {
 	b.WriteValuerLine(true, "DTSTAMP", e.DTStamp)
 	b.WriteValuerLine(true, "UID", e.UID)
 	b.WriteValuerLine(ics.IsDefined(e.Organizer), "ORGANIZER", e.Organizer)
-
 	for _, attendee := range e.Attendee {
 		b.WriteValuerLine(true, "ATTENDEE", attendee)
 	}
-
+	for _, conference := range e.Conference {
+		b.WriteValuerLine(true, "CONFERENCE", conference)
+	}
 	b.WriteValuerLine(ics.IsDefined(e.Contact), "CONTACT", e.Contact)
 	b.WriteValuerLine(ics.IsDefined(e.Summary), "SUMMARY", e.Summary)
 	b.WriteValuerLine(ics.IsDefined(e.Description), "DESCRIPTION", e.Description)
