@@ -42,7 +42,7 @@ func TStamp(t time.Time) DateTimeValue {
 // AsDate converts a date-time value to a date-only value.
 func (v DateTimeValue) AsDate() DateTimeValue {
 	v.format = dateLayout
-	v.Parameters.RemoveByKey(valuetype.DATE_TIME)
+	v.Parameters = v.Parameters.RemoveByKey(valuetype.DATE_TIME)
 	return v.With(valuetype.Type(valuetype.DATE))
 }
 
@@ -114,7 +114,7 @@ type IntegerValue struct {
 
 // Integer returns a new IntegerValue.
 func Integer(d int) IntegerValue {
-	return IntegerValue{Value: d, defined: true}
+	return IntegerValue{Value: d, defined: true}.With(valuetype.Type(valuetype.INTEGER))
 }
 
 // IsDefined tests whether the value has been explicitly defined or is default.
@@ -147,8 +147,15 @@ type GeoValue struct {
 }
 
 // Geo returns a new GeoValue.
+// Values for latitude and longitude are expressed as decimal
+// fractions of degrees.  Whole degrees of latitude are
+// represented by a decimal number ranging from 0 through
+// 90.  Whole degrees of longitude are represented by a decimal
+// number ranging from 0 through 180. Each can be positive or negative.
+//
+// See https://tools.ietf.org/html/rfc5545#section-3.8.1.6
 func Geo(lat, lon float64) GeoValue {
-	return GeoValue{Lat: lat, Lon: lon, defined: true}
+	return GeoValue{Lat: lat, Lon: lon, defined: true}.With(valuetype.Type(valuetype.FLOAT))
 }
 
 // IsDefined tests whether the value has been explicitly defined or is default.

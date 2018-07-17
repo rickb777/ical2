@@ -25,5 +25,5 @@ const (
 
 // Feature specifies one or more features available on a conference.
 func Feature(vv ...string) parameter.Parameter {
-	return parameter.Parameter{FEATURE, vv}
+	return parameter.Multiple(FEATURE, vv)
 }

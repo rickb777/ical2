@@ -29,7 +29,7 @@ const DELEGATED_FROM = "DELEGATED-FROM"
 // Delegator names the calendar users that have delegated their
 // participation to the calendar user(s) specified by the property.
 func Delegator(v ...string) Parameter {
-	return Parameter{DELEGATED_FROM, v}
+	return Multiple(DELEGATED_FROM, v)
 }
 
 // DELEGATED_TO is the key for a delegatee parameter.
@@ -38,7 +38,7 @@ const DELEGATED_TO = "DELEGATED-TO"
 // Delegatee names the calendar users to whom the calendar user
 // specified by the property has delegated participation.
 func Delegatee(v ...string) Parameter {
-	return Parameter{DELEGATED_TO, v}
+	return Multiple(DELEGATED_TO, v)
 }
 
 // DIR is the key for a directory parameter.
@@ -81,7 +81,7 @@ const MEMBER = "MEMBER"
 // Member specifies the group or list membership of the calendar
 // user specified by the property.
 func Member(v ...string) Parameter {
-	return Parameter{MEMBER, v}
+	return Multiple(MEMBER, v)
 }
 
 /// TODO RANGE ; Recurrence identifier range

@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"github.com/rickb777/ical2/ics"
 	"github.com/rickb777/ical2/parameter"
+	"github.com/rickb777/ical2/parameter/valuetype"
 	"strings"
 )
 
@@ -26,7 +27,7 @@ type URIValue struct {
 
 // URI returns a new URIValue.
 func URI(uri string) URIValue {
-	return URIValue{simpleValue{Value: uri}}
+	return URIValue{simpleValue{Value: uri}}.With(valuetype.Type(valuetype.URI))
 }
 
 // CalAddress returns a new CalAddressValue.

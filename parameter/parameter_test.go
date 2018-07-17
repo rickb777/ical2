@@ -14,12 +14,17 @@ func TestParameterEquals(t *testing.T) {
 		{Encoding(true), Language("en"), false},
 		{Delegator("one"), Delegator("another"), false},
 		{Delegator("one"), Delegator("one"), true},
+		{Delegator("one"), Delegatee("one"), false},
 		{Delegator("one"), Delegator("one", "two"), false},
 		{Delegator("one", "2"), Delegator("one", "two"), false},
 	}
 
 	for i, c := range cases {
-		assertTrue(t, c.a.Equals(c.b) == c.mustEqual, "%d: %v must equal %v", i, c.a, c.b)
+		if c.mustEqual {
+			assertTrue(t, c.a.Equals(c.b), "%d: %v must equal %v", i, c.a, c.b)
+		} else {
+			assertTrue(t, !c.a.Equals(c.b), "%d: %v must not equal %v", i, c.a, c.b)
+		}
 	}
 }
 

@@ -18,22 +18,28 @@ import (
 // pattern that simplifies the requirement for keys to be case-insensitive.
 //
 // For most parameters, the value is singular, i.e. there is exactly one string.
-// There are several exceptions.
+// There are a few exceptions that have several values, expressed as a
+// comma-separated list.
 type Parameter struct {
-	Key   string
-	Value []string
+	Key    string
+	Value  string   // there is always at least one value
+	Others []string // there may be others too
 }
 
 // Equals tests whether two parameters have the same key and the same value(s).
 func (p Parameter) Equals(q Parameter) bool {
-	if !strings.EqualFold(p.Key, q.Key) || len(p.Value) != len(q.Value) {
+	if !strings.EqualFold(p.Key, q.Key) ||
+		p.Value != q.Value ||
+		len(p.Others) != len(q.Others) {
 		return false
 	}
-	for i, v := range p.Value {
-		if v != q.Value[i] {
+
+	for i, v := range p.Others {
+		if v != q.Others[i] {
 			return false
 		}
 	}
+
 	return true
 }
 
@@ -46,22 +52,26 @@ func (p Parameter) WriteTo(w ics.StringWriter) error {
 	w.WriteString(p.Key)
 	w.WriteByte('=')
 
-	needQuotes := false
-	for _, v := range p.Value {
+	needQuotes := strings.IndexAny(p.Value, ":;,") >= 0
+	for _, v := range p.Others {
 		needQuotes = needQuotes || strings.IndexAny(v, ":;,") >= 0
 	}
 
 	if needQuotes {
-		sep := ""
-		for _, v := range p.Value {
-			w.WriteString(sep)
+		w.WriteByte('"')
+		w.WriteString(p.Value)
+		w.WriteByte('"')
+		for _, v := range p.Others {
 			w.WriteByte('"')
 			w.WriteString(v)
 			w.WriteByte('"')
-			sep = ","
 		}
 	} else {
-		w.WriteString(strings.Join(p.Value, ","))
+		w.WriteString(p.Value)
+		if len(p.Others) > 0 {
+			w.WriteByte(',')
+			w.WriteString(strings.Join(p.Others, ","))
+		}
 	}
 
 	return nil
@@ -71,7 +81,11 @@ func (p Parameter) WriteTo(w ics.StringWriter) error {
 
 // Single returns a Parameter with a single string value.
 func Single(k, v string) Parameter {
-	return Parameter{k, []string{v}}
+	return Parameter{k, v, nil}
+}
+
+func Multiple(k string, v []string) Parameter {
+	return Parameter{k, v[0], v[1:]}
 }
 
 func either(key string, predicate bool, yes, no string) Parameter {

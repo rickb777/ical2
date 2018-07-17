@@ -23,13 +23,14 @@ type VEvent struct {
 	Comment      value.TextValue
 	RelatedTo    value.TextValue
 	Sequence     value.IntegerValue
+	Priority     value.IntegerValue // in the range 0 to 9; 0 is undefined; 1 is highest; 9 is lowest
 	Status       value.StatusValue
 	Location     value.TextValue
 	Geo          value.GeoValue
 	Transparency value.TransparencyValue
 	Color        value.TextValue // CSS3 color name
 
-	// TODO (RFC5545) PRIORITY RECURRENCE-ID EXDATE RDATE RRULE
+	// TODO (RFC5545) RECURRENCE-ID EXDATE RDATE RRULE
 	// TODO (RFC7986) []CONFERENCE []IMAGE
 }
 
@@ -80,6 +81,7 @@ func (e *VEvent) EncodeIcal(b *ics.Buffer, method value.MethodValue) error {
 	b.WriteValuerLine(ics.IsDefined(e.LastModified), "LAST-MODIFIED", e.LastModified)
 	b.WriteValuerLine(ics.IsDefined(e.RelatedTo), "RELATED-TO", e.RelatedTo)
 	b.WriteValuerLine(ics.IsDefined(e.Sequence), "SEQUENCE", e.Sequence)
+	b.WriteValuerLine(ics.IsDefined(e.Priority), "PRIORITY", e.Priority)
 	b.WriteValuerLine(ics.IsDefined(e.Status), "STATUS", e.Status)
 	b.WriteValuerLine(ics.IsDefined(e.Transparency), "TRANSP", e.Transparency)
 	b.WriteValuerLine(ics.IsDefined(e.Color), "COLOR", e.Color)
