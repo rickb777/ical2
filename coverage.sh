@@ -14,7 +14,7 @@ fi
 mkdir -p reports
 rm -f reports/*.html coverage?*.*
 
-for file in $(find . -type f -name \*_test.go); do
+for file in $(find . -type f -name \*_test.go | fgrep -v vendor/); do
   dirname $file >> coverage$$.tmp
 done
 

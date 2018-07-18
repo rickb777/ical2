@@ -24,7 +24,7 @@ or
 * [ ] Event recurrence rules (RECURRENCE-ID EXDATE RDATE RRULE)
 * [ ] To-do Component
 * [ ] Journal Component
-* [ ] Free/Busy Component
+* [x] Free/Busy Component
 * [ ] Time Zone Component
 * [ ] Alarm Component
 * [ ] Parameter Value Encoding https://tools.ietf.org/html/rfc6868,

@@ -2,6 +2,7 @@ package value
 
 import (
 	"encoding/base64"
+	"github.com/rickb777/date/timespan"
 	"github.com/rickb777/ical2/ics"
 	"github.com/rickb777/ical2/parameter"
 	"github.com/rickb777/ical2/parameter/valuetype"
@@ -104,6 +105,50 @@ func (v DateTimeValue) WriteTo(w ics.StringWriter) error {
 
 //-------------------------------------------------------------------------------------------------
 
+// FreeBusyValue holds a date/time and its formatting decision.
+// See https://tools.ietf.org/html/rfc5545#section-3.3.5
+type FreeBusyValue struct {
+	Parameters parameter.Parameters
+	Value      timespan.TimeSpan
+}
+
+// FreeBusy constructs a new timespan value. The time should be UTC.
+// It has VALUE=PERIOD.
+func FreeBusy(ts timespan.TimeSpan) FreeBusyValue {
+	return FreeBusyValue{
+		Parameters: parameter.Parameters{valuetype.Type(valuetype.PERIOD)},
+		Value:      ts,
+	}
+}
+
+// FreeBusyOf constructs a new timespan value. The time should be UTC.
+// It has VALUE=PERIOD.
+func FreeBusyOf(t time.Time, d time.Duration) FreeBusyValue {
+	return FreeBusy(timespan.TimeSpanOf(t, d))
+}
+
+// IsDefined tests whether the value has been explicitly defined or is default.
+func (v FreeBusyValue) IsDefined() bool {
+	return !v.Value.Start().IsZero()
+}
+
+// With appends parameters to the value.
+func (v FreeBusyValue) With(params ...parameter.Parameter) FreeBusyValue {
+	v.Parameters = v.Parameters.Append(params...)
+	return v
+}
+
+// WriteTo writes the value to the writer.
+// This is part of the Valuer interface.
+func (v FreeBusyValue) WriteTo(w ics.StringWriter) error {
+	v.Parameters.WriteTo(w)
+	w.WriteByte(':')
+	_, e := w.WriteString(v.Value.FormatRFC5545(true))
+	return e
+}
+
+//-------------------------------------------------------------------------------------------------
+
 // DurationValue holds a time duration. This should be in ISO-8601 form
 // (https://en.wikipedia.org/wiki/ISO_8601#Durations);
 // see github.com/rickb777/date/period for a compatible duration API.
@@ -111,7 +156,7 @@ type DurationValue struct {
 	baseValue
 }
 
-// Duration returns a new DurationValue.
+// Duration returns a new DurationValue. It has VALUE=DURATION.
 func Duration(d string) DurationValue {
 	return DurationValue{baseValue{
 		Parameters: parameter.Parameters{valuetype.Type(valuetype.DURATION)},
@@ -143,7 +188,7 @@ type IntegerValue struct {
 	defined    bool
 }
 
-// Integer returns a new IntegerValue.
+// Integer returns a new IntegerValue. It has VALUE=INTEGER.
 func Integer(number int) IntegerValue {
 	return IntegerValue{
 		Parameters: parameter.Parameters{valuetype.Type(valuetype.INTEGER)},
@@ -188,6 +233,8 @@ type GeoValue struct {
 // 90.  Whole degrees of longitude are represented by a decimal
 // number ranging from 0 through 180. Each can be positive or negative.
 //
+// It has VALUE=FLOAT.
+//
 // See https://tools.ietf.org/html/rfc5545#section-3.8.1.6
 func Geo(lat, lon float64) GeoValue {
 	return GeoValue{
@@ -230,7 +277,10 @@ type BinaryValue struct {
 
 // Binary returns a new BinaryValue.
 func Binary(data []byte) BinaryValue {
-	return BinaryValue{Value: data}
+	return BinaryValue{
+		Parameters: parameter.Parameters{valuetype.Type(valuetype.BINARY), parameter.Encoding(true)},
+		Value:      data,
+	}
 }
 
 // IsDefined tests whether the value has been explicitly defined or is default.
@@ -251,9 +301,7 @@ func (v BinaryValue) With(params ...parameter.Parameter) BinaryValue {
 // WriteTo writes the value to the writer.
 // This is part of the Writable interface.
 func (v BinaryValue) WriteTo(w ics.StringWriter) error {
-	// the mandatory parameters are appended lazily here, ensuring they aren't removed accidentally
-	pp := v.Parameters.Append(valuetype.Type(valuetype.BINARY), parameter.Encoding(true))
-	pp.WriteTo(w)
+	v.Parameters.WriteTo(w)
 	w.WriteByte(':')
 	// RFC5545 requires 'standard' encoding (using alphanum, +, /) with padding.
 	encoder := base64.NewEncoder(base64.StdEncoding, w)

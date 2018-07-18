@@ -18,10 +18,7 @@ func TestDateTimeZero(t *testing.T) {
 
 func TestDateTimeRender(t *testing.T) {
 	// choose one that's not UTC
-	berlin, err := time.LoadLocation("Europe/Berlin")
-	if err != nil {
-		t.Errorf("unexpected error %v", err)
-	}
+	berlin, _ := time.LoadLocation("Europe/Berlin")
 
 	utcJanNoon := time.Date(2014, time.Month(1), 1, 12, 0, 0, 0, time.UTC)
 	utcJulyNoon := time.Date(2014, time.Month(7), 1, 12, 0, 0, 0, time.UTC)
@@ -45,6 +42,33 @@ func TestDateTimeRender(t *testing.T) {
 		{DateTime(utcJanNoon).AsDate().With(parameter.TZid("UTC")), ";VALUE=DATE;TZID=UTC:20140101\n"},
 		{DateTime(parisJanNoon).AsDate(), ";VALUE=DATE:20140102\n"},
 		{DateTime(parisJanNoon).AsDate().With(parameter.TZid("Europe/Berlin")), ";VALUE=DATE;TZID=Europe/Berlin:20140102\n"},
+	}
+
+	for i, c := range cases {
+		b := &bytes.Buffer{}
+		x := ics.NewBuffer(b, "\n")
+		x.WriteValuerLine(true, "X", c.dt)
+		err := x.Flush()
+		if err != nil {
+			t.Errorf("%d: unexpected error %v", i, err)
+		}
+		s := b.String()
+		// ignore the "X" label
+		s = s[1:]
+		if s != c.exp {
+			t.Errorf("%d: expected %s, got %s", i, strings.TrimSpace(c.exp), s)
+		}
+	}
+}
+
+func TestFreeBusyRender(t *testing.T) {
+	utcJanNoon := time.Date(2014, time.Month(2), 3, 12, 4, 5, 0, time.UTC)
+
+	cases := []struct {
+		dt  FreeBusyValue
+		exp string
+	}{
+		{FreeBusyOf(utcJanNoon, time.Hour), ";VALUE=PERIOD:20140203T120405Z/PT1H\n"},
 	}
 
 	for i, c := range cases {
@@ -101,6 +125,7 @@ func TestNonTextValuesShouldIncludeType(t *testing.T) {
 		{DateTime(now), ";VALUE=DATE-TIME;"},
 		{Date(now), ";VALUE=DATE;"},
 		{Duration("PT1H"), ";VALUE=DURATION;"},
+		{FreeBusyOf(now, 1), ";VALUE=PERIOD;"},
 		{Geo(1, 2), ";VALUE=FLOAT;"},
 		{Integer(1), ";VALUE=INTEGER;"},
 		{URI("a:b:c"), ";VALUE=URI;"},
