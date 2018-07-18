@@ -27,7 +27,7 @@ or
 * [x] Free/Busy Component
 * [ ] Time Zone Component
 * [ ] Alarm Component
-* [ ] Parameter Value Encoding https://tools.ietf.org/html/rfc6868,
+* [ ] Parameter Value Encoding https://tools.ietf.org/html/rfc6868 (not yet standard)
 * [ ] Non-Gregorian Recurrence Rules https://tools.ietf.org/html/rfc7529
 * [ ] Calendar Availability https://tools.ietf.org/html/rfc7953
 * [x] New Properties https://tools.ietf.org/html/rfc7986

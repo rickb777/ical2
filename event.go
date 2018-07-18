@@ -21,7 +21,7 @@ type VEvent struct {
 	Summary      value.TextValue
 	Description  value.TextValue
 	Class        value.ClassValue // PUBLIC, PRIVATE, CONFIDENTIAL
-	Comment      value.TextValue
+	Comment      []value.TextValue
 	RelatedTo    value.TextValue
 	Categories   value.ListValue
 	Resources    value.ListValue
@@ -81,7 +81,9 @@ func (e *VEvent) EncodeIcal(b *ics.Buffer, method value.MethodValue) error {
 	b.WriteValuerLine(ics.IsDefined(e.Location), "LOCATION", e.Location)
 	b.WriteValuerLine(ics.IsDefined(e.Geo), "GEO", e.Geo)
 	b.WriteValuerLine(ics.IsDefined(e.Class), "CLASS", e.Class)
-	b.WriteValuerLine(ics.IsDefined(e.Comment), "COMMENT", e.Comment)
+	for _, comment := range e.Comment {
+		b.WriteValuerLine(ics.IsDefined(comment), "COMMENT", comment)
+	}
 	b.WriteValuerLine(ics.IsDefined(e.Created), "CREATED", e.Created)
 	b.WriteValuerLine(ics.IsDefined(e.LastModified), "LAST-MODIFIED", e.LastModified)
 	b.WriteValuerLine(ics.IsDefined(e.RelatedTo), "RELATED-TO", e.RelatedTo)

@@ -130,6 +130,7 @@ func ExampleVEvent_meeting() {
 		Location:     value.Text("South Bank, London SE1 9PX"),
 		Geo:          value.Geo(51.506616, -0.11538874),
 		Transparency: value.Opaque(),
+		Comment:      []value.TextValue{value.Text("History in the making")},
 	}
 
 	c := ical2.NewVCalendar("-//My App//Event Calendar//EN").With(event)
@@ -164,6 +165,7 @@ func ExampleVEvent_meeting() {
 	// DESCRIPTION:This is a great chance to meet each other!
 	// LOCATION:South Bank\, London SE1 9PX
 	// GEO;VALUE=FLOAT:51.506616;-0.11538874
+	// COMMENT:History in the making
 	// CREATED:20140101T060000Z
 	// LAST-MODIFIED:20140101T070000Z
 	// SEQUENCE;VALUE=INTEGER:0

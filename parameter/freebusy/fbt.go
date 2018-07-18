@@ -2,8 +2,8 @@ package freebusy
 
 import "github.com/rickb777/ical2/parameter"
 
-// FBTTYPE is the key for a free-busy type parameter.
-const FBTTYPE = "FBTTYPE"
+// FBTYPE is the key for a free-busy type parameter.
+const FBTYPE = "FBTYPE"
 
 const (
 	FREE             = "FREE"
@@ -12,7 +12,7 @@ const (
 	BUSY_TENTATIVE   = "BUSY-TENTATIVE"
 )
 
-// FbtType specifies the free or busy time type.
-func FbtType(v string) parameter.Parameter {
-	return parameter.Single(FBTTYPE, v)
+// FbType specifies the free or busy time type.
+func FbType(v string) parameter.Parameter {
+	return parameter.Single(FBTYPE, v)
 }
