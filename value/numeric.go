@@ -103,6 +103,9 @@ func (v DateTimeValue) WriteTo(w ics.StringWriter) error {
 	return e
 }
 
+// IsTrigger allows date-time to be used for triggers.
+func (v DateTimeValue) IsTrigger() {}
+
 //-------------------------------------------------------------------------------------------------
 
 // FreeBusyValue holds a date/time and its formatting decision.
@@ -149,6 +152,11 @@ func (v FreeBusyValue) WriteTo(w ics.StringWriter) error {
 
 //-------------------------------------------------------------------------------------------------
 
+type Trigger interface {
+	ics.Valuer
+	IsTrigger()
+}
+
 // DurationValue holds a time duration. This should be in ISO-8601 form
 // (https://en.wikipedia.org/wiki/ISO_8601#Durations);
 // see github.com/rickb777/date/period for a compatible duration API.
@@ -178,6 +186,9 @@ func (v DurationValue) WriteTo(w ics.StringWriter) error {
 	_, e := w.WriteString(v.Value)
 	return e
 }
+
+// IsTrigger allows duration to be used for triggers.
+func (v DurationValue) IsTrigger() {}
 
 //-------------------------------------------------------------------------------------------------
 

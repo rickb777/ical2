@@ -34,6 +34,7 @@ type VEvent struct {
 	Color        value.TextValue // CSS3 color name
 	Attach       []value.Attachable
 	Image        []value.Attachable
+	Alarm        []VAlarm
 
 	// TODO (RFC5545) RECURRENCE-ID EXDATE RDATE RRULE
 }
@@ -100,13 +101,9 @@ func (e *VEvent) EncodeIcal(b *ics.Buffer, method value.MethodValue) error {
 	for _, image := range e.Image {
 		b.WriteValuerLine(true, "IMAGE", image)
 	}
-
-	//if ics.IsDefined(e.ALARM) {
-	//	b.WriteLine("BEGIN:VALARM")
-	//	b.WriteValuerLine(true, "TRIGGER", e.ALARM)
-	//	b.WriteLine("ACTION:DISPLAY")
-	//	b.WriteLine("END:VALARM")
-	//}
+	for _, alarm := range e.Alarm {
+		alarm.EncodeIcal(b, method)
+	}
 
 	b.WriteLine("END:VEVENT")
 

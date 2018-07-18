@@ -12,9 +12,11 @@ package ical2
 
 import (
 	"bytes"
+	"fmt"
 	"github.com/rickb777/ical2/ics"
 	"github.com/rickb777/ical2/value"
 	"io"
+	"os"
 )
 
 /*
@@ -138,7 +140,10 @@ func (c *VCalendar) EncodePlain(w io.Writer) error {
 // String returns the ICS formatted content, albeit using "\n" line endings.
 func (c *VCalendar) String() string {
 	buf := &bytes.Buffer{}
-	c.EncodePlain(buf)
+	err := c.EncodePlain(buf)
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err.Error())
+	}
 	return buf.String()
 }
 
