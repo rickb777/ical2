@@ -20,8 +20,7 @@ or
 
 ## Supported Components
 
-* [x] Event Component (except for recurrence rules)
-* [ ] Event recurrence rules (RECURRENCE-ID EXDATE RDATE RRULE)
+* [x] Event Component (including recurrence rules)
 * [ ] To-do Component
 * [ ] Journal Component
 * [x] Free/Busy Component

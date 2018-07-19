@@ -29,32 +29,33 @@ func TestDateTimeRender(t *testing.T) {
 		dt  DateTimeValue
 		exp string
 	}{
-		{TStamp(utcJanNoon), ":20140101T120000Z\n"},
-		{DateTime(utcJanNoon), ";VALUE=DATE-TIME:20140101T120000Z\n"},
-		{DateTime(utcJanNoon).With(parameter.TZid("UTC")), ";VALUE=DATE-TIME:20140101T120000Z\n"},
-		{DateTime(parisJanNoon), ";VALUE=DATE-TIME:20140102T120000\n"},
-		{DateTime(parisJanNoon).With(parameter.TZid("Europe/Berlin")), ";VALUE=DATE-TIME;TZID=Europe/Berlin:20140102T120000\n"},
+		{TStamp(utcJanNoon), ":20140101T120000Z"},
+		{DateTime(utcJanNoon), ";VALUE=DATE-TIME:20140101T120000Z"},
+		{DateTime(utcJanNoon).With(parameter.TZid("UTC")), ";VALUE=DATE-TIME:20140101T120000Z"},
+		{DateTime(parisJanNoon), ";VALUE=DATE-TIME:20140102T120000"},
+		{DateTime(parisJanNoon).With(parameter.TZid("Europe/Berlin")), ";VALUE=DATE-TIME;TZID=Europe/Berlin:20140102T120000"},
 
-		{DateTime(utcJulyNoon), ";VALUE=DATE-TIME:20140701T120000Z\n"},
-		{DateTime(parisJulyNoon), ";VALUE=DATE-TIME:20140702T120000\n"},
+		{DateTime(utcJulyNoon), ";VALUE=DATE-TIME:20140701T120000Z"},
+		{DateTime(parisJulyNoon), ";VALUE=DATE-TIME:20140702T120000"},
 
-		{DateTime(utcJanNoon).AsDate(), ";VALUE=DATE:20140101\n"},
-		{DateTime(utcJanNoon).AsDate().With(parameter.TZid("UTC")), ";VALUE=DATE;TZID=UTC:20140101\n"},
-		{DateTime(parisJanNoon).AsDate(), ";VALUE=DATE:20140102\n"},
-		{DateTime(parisJanNoon).AsDate().With(parameter.TZid("Europe/Berlin")), ";VALUE=DATE;TZID=Europe/Berlin:20140102\n"},
+		{DateTime(utcJanNoon).AsDate(), ";VALUE=DATE:20140101"},
+		{DateTime(utcJanNoon).AsDate().With(parameter.TZid("UTC")), ";VALUE=DATE;TZID=UTC:20140101"},
+		{DateTime(parisJanNoon).AsDate(), ";VALUE=DATE:20140102"},
+		{DateTime(parisJanNoon).AsDate().With(parameter.TZid("Europe/Berlin")), ";VALUE=DATE;TZID=Europe/Berlin:20140102"},
 	}
 
 	for i, c := range cases {
 		b := &bytes.Buffer{}
-		x := ics.NewBuffer(b, "\n")
-		x.WriteValuerLine(true, "X", c.dt)
-		err := x.Flush()
+		x := ics.NewFoldWriter(b, "\n")
+
+		c.dt.WriteTo(x)
+
+		err := x.(ics.Flusher).Flush()
 		if err != nil {
 			t.Errorf("%d: unexpected error %v", i, err)
 		}
+
 		s := b.String()
-		// ignore the "X" label
-		s = s[1:]
 		if s != c.exp {
 			t.Errorf("%d: expected %s, got %s", i, strings.TrimSpace(c.exp), s)
 		}
@@ -68,20 +69,21 @@ func TestFreeBusyRender(t *testing.T) {
 		dt  PeriodValue
 		exp string
 	}{
-		{PeriodOf(utcJanNoon, time.Hour), ";VALUE=PERIOD:20140203T120405Z/PT1H\n"},
+		{PeriodOf(utcJanNoon, time.Hour), ";VALUE=PERIOD:20140203T120405Z/PT1H"},
 	}
 
 	for i, c := range cases {
 		b := &bytes.Buffer{}
-		x := ics.NewBuffer(b, "\n")
-		x.WriteValuerLine(true, "X", c.dt)
-		err := x.Flush()
+		x := ics.NewFoldWriter(b, "\n")
+
+		c.dt.WriteTo(x)
+
+		err := x.(ics.Flusher).Flush()
 		if err != nil {
 			t.Errorf("%d: unexpected error %v", i, err)
 		}
+
 		s := b.String()
-		// ignore the "X" label
-		s = s[1:]
 		if s != c.exp {
 			t.Errorf("%d: expected %s, got %s", i, strings.TrimSpace(c.exp), s)
 		}
@@ -94,21 +96,22 @@ func TestBinaryRender(t *testing.T) {
 		dt  ics.Valuer
 		exp string
 	}{
-		{Binary([]byte("ABC")), ";VALUE=BINARY;ENCODING=BASE64:QUJD\n"},
-		{Binary([]byte("A}~B")), ";VALUE=BINARY;ENCODING=BASE64:QX1+Qg==\n"},
+		{Binary([]byte("ABC")), ";VALUE=BINARY;ENCODING=BASE64:QUJD"},
+		{Binary([]byte("A}~B")), ";VALUE=BINARY;ENCODING=BASE64:QX1+Qg=="},
 	}
 
 	for i, c := range cases {
 		b := &bytes.Buffer{}
-		x := ics.NewBuffer(b, "\n")
-		x.WriteValuerLine(true, "X", c.dt)
-		err := x.Flush()
+		x := ics.NewFoldWriter(b, "\n")
+
+		c.dt.WriteTo(x)
+
+		err := x.(ics.Flusher).Flush()
 		if err != nil {
 			t.Errorf("%d: unexpected error %v", i, err)
 		}
+
 		s := b.String()
-		// ignore the "X" label
-		s = s[1:]
 		if s != c.exp {
 			t.Errorf("%d: expected %s, got %s", i, strings.TrimSpace(c.exp), s)
 		}
@@ -135,12 +138,15 @@ func TestNonTextValuesShouldIncludeType(t *testing.T) {
 
 	for i, c := range cases {
 		b := &bytes.Buffer{}
-		x := ics.NewBuffer(b, "\n")
-		x.WriteValuerLine(true, "X", c.v)
-		err := x.Flush()
+		x := ics.NewFoldWriter(b, "\n")
+
+		c.v.WriteTo(x)
+
+		err := x.(ics.Flusher).Flush()
 		if err != nil {
 			t.Errorf("%d: unexpected error %v", i, err)
 		}
+
 		s := b.String()
 		// ignore differences between COLON and SEMICOLON
 		s = strings.Replace(s, ":", ";", -1)

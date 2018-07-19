@@ -27,7 +27,16 @@ type StringWriter interface {
 	WriteString(s string) (n int, err error)
 }
 
+// Flusher is implemented by buffers that need to be flushed.
+type Flusher interface {
+	Flush() error
+}
+
 //-------------------------------------------------------------------------------------------------
+
+// MaxLineLength is the maximum length of lines emitted by the line-folding
+// writer. It defaults to 75.
+var MaxLineLength = 75
 
 // foldWriter implements the max-75 character line folding.
 // It also collapses any i/o errors.
@@ -38,7 +47,12 @@ type foldWriter struct {
 	lineEnding string // usually "\r\n"
 }
 
-func newFoldWriter(w io.Writer, lineEnding string) *foldWriter {
+// NewFoldWriter returns a StringWriter wrapping an io.Writer that folds
+// lines at the 75th column (determined by MaxLineLength). The line
+// ending defaults to "\r\n" if blank.
+//
+// The data is buffered; therefore Flush must be called at the end.
+func NewFoldWriter(w io.Writer, lineEnding string) StringWriter {
 	if lineEnding == "" {
 		lineEnding = "\r\n"
 	}
@@ -50,13 +64,13 @@ func (fw *foldWriter) Write(s []byte) (i int, err error) {
 		return
 	}
 
-	remaining := 75 - fw.n
+	remaining := MaxLineLength - fw.n
 
 	for i = 0; i < len(s) && fw.err == nil; i++ {
 		c := s[i]
 		if remaining < 1 {
 			fw.wrapLine()
-			remaining = 75
+			remaining = MaxLineLength
 		}
 
 		fw.err = fw.w.WriteByte(c)
@@ -72,7 +86,7 @@ func (fw *foldWriter) WriteByte(c byte) error {
 		return fw.err
 	}
 
-	if fw.n > 74 {
+	if fw.n >= MaxLineLength {
 		fw.wrapLine()
 	}
 
@@ -105,7 +119,7 @@ func (fw *foldWriter) newline() error {
 	return fw.err
 }
 
-func (fw *foldWriter) flush() error {
+func (fw *foldWriter) Flush() error {
 	e := fw.w.Flush()
 	if e != nil {
 		return e
@@ -126,7 +140,7 @@ type Buffer struct {
 // NewBuffer constructs a Buffer that wraps some Writer. The lineEnding can be
 // "" or "\r\n" for normal iCalendar formatting, or "\n" in other cases.
 func NewBuffer(w io.Writer, lineEnding string) *Buffer {
-	return &Buffer{newFoldWriter(w, lineEnding)}
+	return &Buffer{NewFoldWriter(w, lineEnding).(*foldWriter)}
 }
 
 // WriteString writes the string supplied.
@@ -158,5 +172,5 @@ func (b *Buffer) WriteValuerLine(predicate bool, label string, v Valuer) error {
 // Flush flushes the buffered data through to the underlying writer. This must be
 // called at least once, at the end.
 func (b *Buffer) Flush() error {
-	return b.fw.flush()
+	return b.fw.Flush()
 }

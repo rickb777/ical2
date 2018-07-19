@@ -32,8 +32,9 @@ type Trigger interface {
 //-------------------------------------------------------------------------------------------------
 
 const (
-	dateLayout     = "20060102"
-	dateTimeLayout = "20060102T150405"
+	dateLayout      = "20060102"
+	dateTimeLayout  = "20060102T150405"
+	dateTimeLayoutZ = dateTimeLayout + "Z"
 	//timeLayout     = "150405"
 )
 
@@ -112,16 +113,17 @@ func (v DateTimeValue) With(params ...parameter.Parameter) DateTimeValue {
 func (v DateTimeValue) WriteTo(w ics.StringWriter) (err error) {
 	format := dateLayout
 	if v.includeTime {
-		format = dateTimeLayout
-		if v.zulu {
-			format = dateTimeLayout + "Z"
+		// when the date-time is UTC, remove the TZID parameter and add Zulu "Z" instead
+		if zone, _ := v.Value.Zone(); zone == "UTC" {
+			v.Parameters = v.Parameters.RemoveByKey(parameter.TZID, valuetype.DATE_TIME)
+			v.zulu = true
 		}
-	}
 
-	// when the date-time is UTC, remove the TZID parameter and add Zulu "Z" instead
-	if zone, _ := v.Value.Zone(); zone == "UTC" && v.includeTime {
-		v.Parameters = v.Parameters.RemoveByKey(parameter.TZID, valuetype.DATE_TIME)
-		format = dateTimeLayout + "Z"
+		format = dateTimeLayout
+
+		if v.zulu {
+			format = dateTimeLayoutZ
+		}
 	}
 
 	v.Parameters.WriteTo(w)

@@ -16,6 +16,7 @@ type VEvent struct {
 	LastModified   value.DateTimeValue
 	ExceptionDate  value.DateTimeValue
 	RecurrenceDate value.Temporal // DateTime or Period
+	RecurrenceRule value.RecurrenceValue
 	Organizer      value.URIValue
 	Attendee       []value.URIValue
 	Conference     []value.URIValue
@@ -90,6 +91,8 @@ func (e *VEvent) EncodeIcal(b *ics.Buffer, method value.MethodValue) error {
 	b.WriteValuerLine(ics.IsDefined(e.Created), "CREATED", e.Created)
 	b.WriteValuerLine(ics.IsDefined(e.LastModified), "LAST-MODIFIED", e.LastModified)
 	b.WriteValuerLine(ics.IsDefined(e.ExceptionDate), "EXDATE", e.ExceptionDate)
+	b.WriteValuerLine(ics.IsDefined(e.RecurrenceDate), "RDATE", e.RecurrenceDate)
+	b.WriteValuerLine(ics.IsDefined(e.RecurrenceRule), "RRULE", e.RecurrenceRule)
 	b.WriteValuerLine(ics.IsDefined(e.RelatedTo), "RELATED-TO", e.RelatedTo)
 	b.WriteValuerLine(ics.IsDefined(e.Categories), "CATEGORIES", e.Categories)
 	b.WriteValuerLine(ics.IsDefined(e.Resources), "RESOURCES", e.Resources)

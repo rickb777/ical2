@@ -13,8 +13,58 @@ import (
 	"time"
 )
 
+func ExampleVEvent_recurrence() {
+	dt := time.Date(2014, time.Month(1), 1, 7, 0, 0, 0, time.UTC)
+	ds := dt.Add(time.Hour)
+	de := ds.Add(5 * time.Hour)
+
+	// Recurrence rule are sophisticated: see recur_test.go for many examples.
+	rv := value.Recurrence(value.WEEKLY)
+	rv.ByDay = []value.WeekDayNum{value.MO, value.WE, value.FR}
+
+	event := &ical2.VEvent{
+		UID:            value.Text("123"),
+		DTStamp:        value.TStamp(dt),
+		Start:          value.DateTime(ds),
+		End:            value.DateTime(de),
+		Organizer:      value.CalAddress("ht@throne.com").With(parameter.CommonName("H.Tudwr")),
+		Attendee:       []value.URIValue{value.CalAddress("ann.blin@example.com").With(role.Role(role.REQ_PARTICIPANT), parameter.CommonName("Ann Blin"))},
+		Summary:        value.Text("Event summary"),
+		Description:    value.Text("This describes the event."),
+		Transparency:   value.Opaque(),
+		RecurrenceRule: rv,
+		// can have RecurrenceDate too, in which case the event sets are unioned.
+		// Use ExceptionDate to exclude specific dates from the event set.
+	}
+
+	c := ical2.NewVCalendar("-//My App//Event Calendar//EN").With(event)
+	// usually you'd Encode to some io.Writer
+	//c.Encode(w)
+	// but for this example, we'll just stringify
+	fmt.Printf(c.String())
+
+	// Output:
+	// BEGIN:VCALENDAR
+	// VERSION:2.0
+	// PRODID:-//My App//Event Calendar//EN
+	// CALSCALE:GREGORIAN
+	// BEGIN:VEVENT
+	// DTSTART;VALUE=DATE-TIME:20140101T080000Z
+	// DTEND;VALUE=DATE-TIME:20140101T130000Z
+	// DTSTAMP:20140101T070000Z
+	// UID:123
+	// ORGANIZER;CN=H.Tudwr:mailto:ht@throne.com
+	// ATTENDEE;ROLE=REQ-PARTICIPANT;CN=Ann Blin:mailto:ann.blin@example.com
+	// SUMMARY:Event summary
+	// DESCRIPTION:This describes the event.
+	// RRULE;VALUE=RECUR:FREQ=WEEKLY;BYDAY=MO,WE,FR
+	// TRANSP:OPAQUE
+	// END:VEVENT
+	// END:VCALENDAR
+}
+
 func ExampleVEvent_timezone() {
-	const tz = "Europe/Paris"
+	const tz = "Europe/London"
 	zone, _ := time.LoadLocation(tz)
 	dt := time.Date(2014, time.Month(1), 1, 7, 0, 0, 0, zone)
 	ds := dt.Add(time.Hour)
@@ -54,9 +104,9 @@ func ExampleVEvent_timezone() {
 	// PRODID:-//My App//Event Calendar//EN
 	// CALSCALE:GREGORIAN
 	// BEGIN:VEVENT
-	// DTSTART;VALUE=DATE-TIME;TZID=Europe/Paris:20140101T080000
-	// DTEND;VALUE=DATE-TIME;TZID=Europe/Paris:20140101T130000
-	// DTSTAMP:20140101T060000Z
+	// DTSTART;VALUE=DATE-TIME;TZID=Europe/London:20140101T080000
+	// DTEND;VALUE=DATE-TIME;TZID=Europe/London:20140101T130000
+	// DTSTAMP:20140101T070000Z
 	// UID:123
 	// ORGANIZER;CN=H.Tudwr:mailto:ht@throne.com
 	// ATTENDEE;ROLE=REQ-PARTICIPANT;CN=Ann Blin:mailto:ann.blin@example.com
