@@ -68,10 +68,10 @@ func ExampleVFreeBusy_publish() {
 		End:       value.DateTime(de),
 		Organizer: value.CalAddress("jsmith@example.com"),
 		URL:       value.URI("http://www.example.com/calendar/busytime/jsmith.ifb"),
-		FreeBusy: []value.FreeBusyValue{
-			value.FreeBusy(timespan.TimeSpanOf(t1s, time.Hour)).With(freebusy.FbType(freebusy.BUSY)),
-			value.FreeBusy(timespan.TimeSpanOf(t2s, time.Hour)).With(freebusy.FbType(freebusy.BUSY_TENTATIVE)),
-			value.FreeBusy(timespan.TimeSpanOf(t3s, time.Hour)).With(freebusy.FbType(freebusy.BUSY_UNAVAILABLE)),
+		FreeBusy: []value.PeriodValue{
+			value.Period(timespan.TimeSpanOf(t1s, time.Hour)).With(freebusy.FbType(freebusy.BUSY)),
+			value.Period(timespan.TimeSpanOf(t2s, time.Hour)).With(freebusy.FbType(freebusy.BUSY_TENTATIVE)),
+			value.Period(timespan.TimeSpanOf(t3s, time.Hour)).With(freebusy.FbType(freebusy.BUSY_UNAVAILABLE)),
 		},
 		Comment: []value.TextValue{value.Text("Busy time")},
 	}

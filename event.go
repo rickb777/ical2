@@ -8,33 +8,35 @@ import (
 
 // VEvent captures a calendar event
 type VEvent struct {
-	UID          value.TextValue
-	DTStamp      value.DateTimeValue
-	Start        value.DateTimeValue
-	End          value.DateTimeValue
-	Created      value.DateTimeValue
-	LastModified value.DateTimeValue
-	Organizer    value.URIValue
-	Attendee     []value.URIValue
-	Conference   []value.URIValue
-	Contact      value.TextValue
-	Summary      value.TextValue
-	Description  value.TextValue
-	Class        value.ClassValue // PUBLIC, PRIVATE, CONFIDENTIAL
-	Comment      []value.TextValue
-	RelatedTo    value.TextValue
-	Categories   value.ListValue
-	Resources    value.ListValue
-	Sequence     value.IntegerValue
-	Priority     value.IntegerValue // in the range 0 to 9; 0 is undefined; 1 is highest; 9 is lowest
-	Status       value.StatusValue
-	Location     value.TextValue
-	Geo          value.GeoValue
-	Transparency value.TransparencyValue
-	Color        value.TextValue // CSS3 color name
-	Attach       []value.Attachable
-	Image        []value.Attachable
-	Alarm        []VAlarm
+	UID            value.TextValue
+	DTStamp        value.DateTimeValue
+	Start          value.DateTimeValue
+	End            value.DateTimeValue
+	Created        value.DateTimeValue
+	LastModified   value.DateTimeValue
+	ExceptionDate  value.DateTimeValue
+	RecurrenceDate value.Temporal // DateTime or Period
+	Organizer      value.URIValue
+	Attendee       []value.URIValue
+	Conference     []value.URIValue
+	Contact        value.TextValue
+	Summary        value.TextValue
+	Description    value.TextValue
+	Class          value.ClassValue // PUBLIC, PRIVATE, CONFIDENTIAL
+	Comment        []value.TextValue
+	RelatedTo      value.TextValue
+	Categories     value.ListValue
+	Resources      value.ListValue
+	Sequence       value.IntegerValue
+	Priority       value.IntegerValue // in the range 0 to 9; 0 is undefined; 1 is highest; 9 is lowest
+	Status         value.StatusValue
+	Location       value.TextValue
+	Geo            value.GeoValue
+	Transparency   value.TransparencyValue
+	Color          value.TextValue // CSS3 color name
+	Attach         []value.Attachable
+	Image          []value.Attachable
+	Alarm          []VAlarm
 
 	// TODO (RFC5545) RECURRENCE-ID EXDATE RDATE RRULE
 }
@@ -87,6 +89,7 @@ func (e *VEvent) EncodeIcal(b *ics.Buffer, method value.MethodValue) error {
 	}
 	b.WriteValuerLine(ics.IsDefined(e.Created), "CREATED", e.Created)
 	b.WriteValuerLine(ics.IsDefined(e.LastModified), "LAST-MODIFIED", e.LastModified)
+	b.WriteValuerLine(ics.IsDefined(e.ExceptionDate), "EXDATE", e.ExceptionDate)
 	b.WriteValuerLine(ics.IsDefined(e.RelatedTo), "RELATED-TO", e.RelatedTo)
 	b.WriteValuerLine(ics.IsDefined(e.Categories), "CATEGORIES", e.Categories)
 	b.WriteValuerLine(ics.IsDefined(e.Resources), "RESOURCES", e.Resources)

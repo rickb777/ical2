@@ -54,6 +54,7 @@ type VCalendar struct {
 	UID             value.TextValue
 	URL             value.TextValue     // http://my.calendar/url
 	LastModified    value.DateTimeValue // can also be specified per VComponent
+	RecurrenceId    value.DateTimeValue
 	RefreshInterval value.DurationValue // PT12H
 	Color           value.TextValue     // CSS3 color name
 	// TODO CATEGORIES, SOURCE, []IMAGE
@@ -107,6 +108,7 @@ func (c *VCalendar) doEncode(w io.Writer, lineEnding string) error {
 	b.WriteValuerLine(ics.IsDefined(c.UID), "UID", c.UID)
 	b.WriteValuerLine(ics.IsDefined(c.URL), "URL", c.URL)
 	b.WriteValuerLine(ics.IsDefined(c.LastModified), "LAST-MODIFIED", c.LastModified)
+	b.WriteValuerLine(ics.IsDefined(c.RecurrenceId), "RECURRENCE-ID", c.RecurrenceId)
 	b.WriteValuerLine(ics.IsDefined(c.Color), "COLOR", c.Color)
 	b.WriteValuerLine(ics.IsDefined(c.RefreshInterval), "REFRESH-INTERVAL", c.RefreshInterval)
 

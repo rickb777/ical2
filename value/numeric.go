@@ -16,6 +16,19 @@ type Attachable interface {
 	IsAttachable()
 }
 
+// Temporal marks values that are date-time or period.
+type Temporal interface {
+	ics.Valuer
+	IsTemporal()
+}
+
+// Trigger marks values that can be used as alarm triggers:
+// date-time or duration before/after the event start.
+type Trigger interface {
+	ics.Valuer
+	IsTrigger()
+}
+
 //-------------------------------------------------------------------------------------------------
 
 const (
@@ -29,25 +42,39 @@ const (
 type DateTimeValue struct {
 	Parameters  parameter.Parameters
 	Value       time.Time
+	Others      []time.Time
 	includeTime bool
 	zulu        bool
 }
 
-// DateTime constructs a new date-time value. This is represented as a "floating"
-// local time. It has VALUE=DATE-TIME.
-func DateTime(t time.Time) DateTimeValue {
+// DateTime constructs a new date-time value. If the time parameter(s) is UTC, it is
+// represented using the Zulu "Z" suffix. Otherwise, it is represented as a
+// "floating" local time; however the TZID parameter can be used to steer this.
+//
+// If more than one time value is provided, they are represented as a comma-separated
+// list.
+//
+// The property has VALUE=DATE-TIME.
+func DateTime(t time.Time, others ...time.Time) DateTimeValue {
 	return DateTimeValue{
 		Parameters:  parameter.Parameters{valuetype.Type(valuetype.DATE_TIME)},
 		Value:       t,
+		Others:      others,
 		includeTime: true,
 	}
 }
 
-// Date constructs a new date value, i.e. without time. It has VALUE=DATE.
-func Date(t time.Time) DateTimeValue {
+// Date constructs a new date value, i.e. without time.
+//
+// If more than one time value is provided, they are represented as a comma-separated
+// list.
+//
+// The property has VALUE=DATE-TIME.
+func Date(t time.Time, others ...time.Time) DateTimeValue {
 	return DateTimeValue{
 		Parameters:  parameter.Parameters{valuetype.Type(valuetype.DATE)},
 		Value:       t,
+		Others:      others,
 		includeTime: false,
 	}
 }
@@ -82,7 +109,7 @@ func (v DateTimeValue) With(params ...parameter.Parameter) DateTimeValue {
 
 // WriteTo writes the value to the writer.
 // This is part of the Valuer interface.
-func (v DateTimeValue) WriteTo(w ics.StringWriter) error {
+func (v DateTimeValue) WriteTo(w ics.StringWriter) (err error) {
 	format := dateLayout
 	if v.includeTime {
 		format = dateTimeLayout
@@ -99,63 +126,68 @@ func (v DateTimeValue) WriteTo(w ics.StringWriter) error {
 
 	v.Parameters.WriteTo(w)
 	w.WriteByte(':')
-	_, e := w.WriteString(v.Value.Format(format))
-	return e
+	_, err = w.WriteString(v.Value.Format(format))
+	for _, o := range v.Others {
+		w.WriteByte(',')
+		_, err = w.WriteString(o.Format(format))
+	}
+	return err
 }
 
 // IsTrigger allows date-time to be used for triggers.
 func (v DateTimeValue) IsTrigger() {}
 
+// IsTemporal allows date-time to be used for temporal use-cases.
+func (v DateTimeValue) IsTemporal() {}
+
 //-------------------------------------------------------------------------------------------------
 
-// FreeBusyValue holds a date/time and its formatting decision.
+// PeriodValue holds a date/time and its formatting decision.
 // See https://tools.ietf.org/html/rfc5545#section-3.3.5
-type FreeBusyValue struct {
+type PeriodValue struct {
 	Parameters parameter.Parameters
 	Value      timespan.TimeSpan
 }
 
-// FreeBusy constructs a new timespan value. The time should be UTC.
+// Period constructs a new timespan value. The time should be UTC.
 // It has VALUE=PERIOD.
-func FreeBusy(ts timespan.TimeSpan) FreeBusyValue {
-	return FreeBusyValue{
+func Period(ts timespan.TimeSpan) PeriodValue {
+	return PeriodValue{
 		Parameters: parameter.Parameters{valuetype.Type(valuetype.PERIOD)},
 		Value:      ts,
 	}
 }
 
-// FreeBusyOf constructs a new timespan value. The time should be UTC.
+// PeriodOf constructs a new timespan value. The time should be UTC.
 // It has VALUE=PERIOD.
-func FreeBusyOf(t time.Time, d time.Duration) FreeBusyValue {
-	return FreeBusy(timespan.TimeSpanOf(t, d))
+func PeriodOf(t time.Time, d time.Duration) PeriodValue {
+	return Period(timespan.TimeSpanOf(t, d))
 }
 
 // IsDefined tests whether the value has been explicitly defined or is default.
-func (v FreeBusyValue) IsDefined() bool {
+func (v PeriodValue) IsDefined() bool {
 	return !v.Value.Start().IsZero()
 }
 
 // With appends parameters to the value.
-func (v FreeBusyValue) With(params ...parameter.Parameter) FreeBusyValue {
+func (v PeriodValue) With(params ...parameter.Parameter) PeriodValue {
 	v.Parameters = v.Parameters.Append(params...)
 	return v
 }
 
 // WriteTo writes the value to the writer.
 // This is part of the Valuer interface.
-func (v FreeBusyValue) WriteTo(w ics.StringWriter) error {
+func (v PeriodValue) WriteTo(w ics.StringWriter) error {
 	v.Parameters.WriteTo(w)
 	w.WriteByte(':')
 	_, e := w.WriteString(v.Value.FormatRFC5545(true))
 	return e
 }
 
-//-------------------------------------------------------------------------------------------------
+// IsTemporal allows period to be used for temporal use-cases.
+func (v PeriodValue) IsTemporal() {}
 
-type Trigger interface {
-	ics.Valuer
-	IsTrigger()
-}
+//-------------------------------------------------------------------------------------------------
 
 // DurationValue holds a time duration. This should be in ISO-8601 form
 // (https://en.wikipedia.org/wiki/ISO_8601#Durations);

@@ -8,7 +8,7 @@ const ROLE = "ROLE"
 
 const (
 	// The chair
-	CHAIR           = "CHAIR"
+	CHAIR = "CHAIR"
 	// A required participant
 	REQ_PARTICIPANT = "REQ-PARTICIPANT"
 	// An optional participant

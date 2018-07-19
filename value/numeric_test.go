@@ -65,10 +65,10 @@ func TestFreeBusyRender(t *testing.T) {
 	utcJanNoon := time.Date(2014, time.Month(2), 3, 12, 4, 5, 0, time.UTC)
 
 	cases := []struct {
-		dt  FreeBusyValue
+		dt  PeriodValue
 		exp string
 	}{
-		{FreeBusyOf(utcJanNoon, time.Hour), ";VALUE=PERIOD:20140203T120405Z/PT1H\n"},
+		{PeriodOf(utcJanNoon, time.Hour), ";VALUE=PERIOD:20140203T120405Z/PT1H\n"},
 	}
 
 	for i, c := range cases {
@@ -125,7 +125,7 @@ func TestNonTextValuesShouldIncludeType(t *testing.T) {
 		{DateTime(now), ";VALUE=DATE-TIME;"},
 		{Date(now), ";VALUE=DATE;"},
 		{Duration("PT1H"), ";VALUE=DURATION;"},
-		{FreeBusyOf(now, 1), ";VALUE=PERIOD;"},
+		{PeriodOf(now, 1), ";VALUE=PERIOD;"},
 		{Geo(1, 2), ";VALUE=FLOAT;"},
 		{Integer(1), ";VALUE=INTEGER;"},
 		{URI("a:b:c"), ";VALUE=URI;"},

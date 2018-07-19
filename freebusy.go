@@ -17,7 +17,7 @@ type VFreeBusy struct {
 	Contact   value.TextValue
 	Attendee  []value.URIValue
 	Comment   []value.TextValue
-	FreeBusy  []value.FreeBusyValue
+	FreeBusy  []value.PeriodValue
 	//TODO []rstatus
 }
 
