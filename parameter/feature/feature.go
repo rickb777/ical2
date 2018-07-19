@@ -1,3 +1,4 @@
+// Package feature enumerates values for the feature parameter.
 package feature
 
 import "github.com/rickb777/ical2/parameter"

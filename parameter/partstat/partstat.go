@@ -1,3 +1,4 @@
+// Package partstat enumerates values for the participation status parameter.
 package partstat
 
 import "github.com/rickb777/ical2/parameter"

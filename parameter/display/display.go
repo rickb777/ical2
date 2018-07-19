@@ -1,3 +1,4 @@
+// Package display enumerates values for the display parameter.
 package display
 
 import "github.com/rickb777/ical2/parameter"
@@ -9,13 +10,13 @@ const (
 	// BADGE is image inline with the title of the event.
 	BADGE = "BADGE"
 
-	// DisplayGraphic is a full image replacement for the event itself.
+	// GRAPHIC is a full image replacement for the event itself.
 	GRAPHIC = "GRAPHIC"
 
-	// DisplayFullSize is an image that is used to enhance the event.
+	// FULLSIZE is an image that is used to enhance the event.
 	FULLSIZE = "FULLSIZE"
 
-	// DisplayThumbnail is a smaller variant of "FULLSIZE" to be used when
+	// THUMBNAIL is a smaller variant of "FULLSIZE" to be used when
 	// space for the image is constrained.
 	THUMBNAIL = "THUMBNAIL"
 )

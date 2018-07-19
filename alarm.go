@@ -42,7 +42,7 @@ type VEmailAlarm struct {
 // IsAlarm marks this type.
 func (e *VAudioAlarm) IsAlarm() {}
 
-// EncodeIcal serialises the event to the buffer in iCal ics format
+// EncodeIcal serialises the event to the buffer in iCalendar ics format
 func (e *VAudioAlarm) EncodeIcal(b *ics.Buffer, method value.MethodValue) error {
 
 	if !ics.IsDefined(e.Trigger) {
@@ -69,7 +69,7 @@ func (e *VAudioAlarm) EncodeIcal(b *ics.Buffer, method value.MethodValue) error 
 // IsAlarm marks this type.
 func (e *VDisplayAlarm) IsAlarm() {}
 
-// EncodeIcal serialises the event to the buffer in iCal ics format
+// EncodeIcal serialises the event to the buffer in iCalendar ics format
 func (e *VDisplayAlarm) EncodeIcal(b *ics.Buffer, method value.MethodValue) error {
 
 	if !ics.IsDefined(e.Description) {
@@ -100,7 +100,7 @@ func (e *VDisplayAlarm) EncodeIcal(b *ics.Buffer, method value.MethodValue) erro
 // IsAlarm marks this type.
 func (e *VEmailAlarm) IsAlarm() {}
 
-// EncodeIcal serialises the event to the buffer in iCal ics format
+// EncodeIcal serialises the event to the buffer in iCalendar ics format
 func (e *VEmailAlarm) EncodeIcal(b *ics.Buffer, method value.MethodValue) error {
 
 	if !ics.IsDefined(e.Description) {

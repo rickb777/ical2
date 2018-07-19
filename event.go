@@ -47,7 +47,7 @@ func (e *VEvent) AllDay() *VEvent {
 	return e
 }
 
-// EncodeIcal serialises the event to the buffer in iCal ics format
+// EncodeIcal serialises the event to the buffer in iCalendar ics format
 // (a VComponent method).
 func (e *VEvent) EncodeIcal(b *ics.Buffer, method value.MethodValue) error {
 

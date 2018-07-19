@@ -1,3 +1,4 @@
+// Package freebusy enumerates values for the free-busy parameter.
 package freebusy
 
 import "github.com/rickb777/ical2/parameter"

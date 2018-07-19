@@ -1,4 +1,4 @@
-// Package parameter handles iCal parameters. The key is required to be
+// Package parameter handles iCalendar parameters. The key is required to be
 // case-insensitive. Here, this this generally implemented by using upper-case
 // keys, a pattern that must be carefully followed if Parameter structs are
 // created on the fly.
@@ -14,7 +14,7 @@ import (
 	"strings"
 )
 
-// Parameter holds an iCal parameter. The key must be uppercase, this being a
+// Parameter holds an iCalendar parameter. The key must be uppercase, this being a
 // pattern that simplifies the requirement for keys to be case-insensitive.
 //
 // For most parameters, the value is singular, i.e. there is exactly one string.
@@ -46,7 +46,7 @@ func (p Parameter) Equals(q Parameter) bool {
 const dquote = '"'
 const comma = ','
 
-// WriteTo serialises the parameter in iCal ics format to the writer.
+// WriteTo serialises the parameter in iCalendar ics format to the writer.
 // Parameters with multiple values are serialised using a comma-separated list.
 //
 // Parameters with values containing a COLON character, a SEMICOLON character

@@ -1,3 +1,5 @@
+// Package ics provides low-level I/O support for the ical2 api.
+// Notably, it implements the iCalendar line-folding algorithm.
 package ics
 
 import (
@@ -5,7 +7,7 @@ import (
 	"io"
 )
 
-// Valuer holds an iCal value.
+// Valuer holds an iCalendar property value.
 type Valuer interface {
 	IsDefined() bool
 	WriteTo(w StringWriter) error
@@ -18,7 +20,7 @@ func IsDefined(v Valuer) bool {
 
 //-------------------------------------------------------------------------------------------------
 
-// StringWriter provides an iCal writing interface.
+// StringWriter provides an iCalendar writing interface.
 type StringWriter interface {
 	io.Writer
 	WriteByte(c byte) error
@@ -113,8 +115,8 @@ func (fw *foldWriter) flush() error {
 
 //-------------------------------------------------------------------------------------------------
 
-// Buffer wraps bufio.Writer with some iCal-specific helper methods.
-// It folds long lines to meet the iCal max-75 characters per line limit.
+// Buffer wraps bufio.Writer with some iCalendar-specific helper methods.
+// It folds long lines to meet the iCalendar max-75 characters per line limit.
 // If coallesces errors so they don't have to be checked after every method;
 // it is sufficient to check once at the end.
 type Buffer struct {
@@ -122,7 +124,7 @@ type Buffer struct {
 }
 
 // NewBuffer constructs a Buffer that wraps some Writer. The lineEnding can be
-// "" or "\r\n" for normal iCal formatting, or "\n" in other cases.
+// "" or "\r\n" for normal iCalendar formatting, or "\n" in other cases.
 func NewBuffer(w io.Writer, lineEnding string) *Buffer {
 	return &Buffer{newFoldWriter(w, lineEnding)}
 }

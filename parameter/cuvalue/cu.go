@@ -1,3 +1,4 @@
+// Package cuvalue enumerates values for calendar user types.
 package cuvalue
 
 import "github.com/rickb777/ical2/parameter"

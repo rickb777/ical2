@@ -8,7 +8,7 @@ import (
 // Parameters holds a set of key-value parameters.
 type Parameters []Parameter
 
-// WriteTo serialises the parameters in iCal ics format to the writer.
+// WriteTo serialises the parameters in iCalendar ics format to the writer.
 func (pp Parameters) WriteTo(w ics.StringWriter) error {
 	for _, p := range pp {
 		w.WriteByte(';')

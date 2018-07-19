@@ -1,5 +1,5 @@
-// Package ical2 provides a data model for the iCal specification. Marshalling
-// to the textual iCal ics format is implemented. Unmarshalling is not currently
+// Package ical2 provides a data model for the iCalendar specification. Marshalling
+// to the textual iCalendar ics format is implemented. Unmarshalling is not currently
 // supported.
 //
 // See
@@ -92,7 +92,7 @@ func (c *VCalendar) With(component VComponent) *VCalendar {
 }
 
 // doEncode encodes the calendar in ICS format, writing it to some Writer. The
-// lineEnding can be "" or "\r\n" for normal iCal formatting, or "\n" in other cases.
+// lineEnding can be "" or "\r\n" for normal iCalendar formatting, or "\n" in other cases.
 func (c *VCalendar) doEncode(w io.Writer, lineEnding string) error {
 	b := ics.NewBuffer(w, lineEnding)
 
@@ -126,7 +126,7 @@ func (c *VCalendar) doEncode(w io.Writer, lineEnding string) error {
 }
 
 // Encode encodes the calendar in ICS format, writing it to some Writer. The
-// line endings are "\r\n" for normal iCal transmission purposes.
+// line endings are "\r\n" for normal iCalendar transmission purposes.
 func (c *VCalendar) Encode(w io.Writer) error {
 	return c.doEncode(w, "\r\n")
 }
