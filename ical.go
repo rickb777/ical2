@@ -49,9 +49,8 @@ type VCalendar struct {
 	CalScale value.TextValue   // GREGORIAN
 
 	// RFC-7986 properties
-	Name            value.TextValue // My Calendar Name
-	Description     value.TextValue // A description of my calendar
-	UID             value.TextValue
+	Name            value.TextValue     // My Calendar Name
+	Description     value.TextValue     // A description of my calendar
 	URL             value.TextValue     // http://my.calendar/url
 	LastModified    value.DateTimeValue // can also be specified per VComponent
 	RecurrenceId    value.DateTimeValue
@@ -105,7 +104,6 @@ func (c *VCalendar) doEncode(w io.Writer, lineEnding string) error {
 	b.WriteValuerLine(ics.IsDefined(c.Method), "METHOD", c.Method)
 	b.WriteValuerLine(ics.IsDefined(c.Name), "NAME", c.Name)
 	b.WriteValuerLine(ics.IsDefined(c.Description), "DESCRIPTION", c.Description)
-	b.WriteValuerLine(ics.IsDefined(c.UID), "UID", c.UID)
 	b.WriteValuerLine(ics.IsDefined(c.URL), "URL", c.URL)
 	b.WriteValuerLine(ics.IsDefined(c.LastModified), "LAST-MODIFIED", c.LastModified)
 	b.WriteValuerLine(ics.IsDefined(c.RecurrenceId), "RECURRENCE-ID", c.RecurrenceId)

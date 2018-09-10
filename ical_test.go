@@ -301,7 +301,7 @@ func testSetup(tz string, vComponents ...VComponent) (bytes.Buffer, error) {
 
 	var b bytes.Buffer
 	if err := c.Encode(&b); err != nil {
-		return b, err
+		return bytes.Buffer{}, err
 	}
 
 	return b, nil
