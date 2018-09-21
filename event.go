@@ -34,14 +34,15 @@ type VEvent struct {
 	RecurrenceDate []value.Temporal // DateTime or Period
 	RecurrenceRule value.RecurrenceValue
 
+	// Conference specifies information for accessing a conferencing system.
 	// https://tools.ietf.org/html/rfc7986#section-5.11
 	Conference []value.URIValue
 
-	// Attendee defines an "Attendee" within a calendar component.
+	// Attendee defines the attendee(s) within the calendar component.
 	// https://tools.ietf.org/html/rfc5545#section-3.8.4.1
 	Attendee []value.URIValue
 
-	// Organizer defines the organizer for a calendar component.
+	// Organizer defines the organizer for the calendar component.
 	// https://tools.ietf.org/html/rfc5545#section-3.8.4.3
 	Organizer value.URIValue
 
@@ -58,7 +59,7 @@ type VEvent struct {
 	// https://tools.ietf.org/html/rfc5545#section-3.8.1.5
 	Description value.TextValue
 
-	// Class defines the access classification for a calendar component.
+	// Class defines the access classification for the calendar component.
 	// https://tools.ietf.org/html/rfc5545#section-3.8.1.3
 	Class value.TextValue // PUBLIC, PRIVATE, CONFIDENTIAL, etc
 
@@ -84,13 +85,13 @@ type VEvent struct {
 	UID value.TextValue
 
 	// Categories specify categories or subtypes of the calendar component.  The categories are useful
-	// in searching for a calendar component of a particular type and category.
+	// in searching for the calendar component of a particular type and category.
 	// https://tools.ietf.org/html/rfc5545#section-3.8.1.2
 	// https://tools.ietf.org/html/rfc7986#section-5.6
 	Categories []value.ListValue
 
 	// Resources lists the equipment or resources anticipated for an activity specified
-	// by a calendar component.
+	// by the calendar component.
 	// https://tools.ietf.org/html/rfc5545#section-3.8.1.10
 	Resources []value.ListValue
 
@@ -99,7 +100,8 @@ type VEvent struct {
 	// https://tools.ietf.org/html/rfc5545#section-3.8.7.4
 	Sequence value.IntegerValue
 
-	// In the range 0 to 9; 0 is undefined; 1 is highest; 9 is lowest.
+	// Priority defines the relative priority for the calendar component
+	// in the range 0 to 9; 0 is undefined; 1 is highest; 9 is lowest.
 	// https://tools.ietf.org/html/rfc5545#section-3.8.1.9
 	Priority value.IntegerValue
 
@@ -108,12 +110,12 @@ type VEvent struct {
 	// https://tools.ietf.org/html/rfc5545#section-3.8.1.11
 	Status value.TextValue
 
-	// Location defines the intended venue for the activity defined by a calendar component.
+	// Location defines the intended venue for the activity defined by the calendar component.
 	// https://tools.ietf.org/html/rfc5545#section-3.8.1.7
 	Location value.TextValue
 
 	// Geo specifies information related to the global position for the activity specified
-	// by a calendar component.
+	// by the calendar component.
 	// https://tools.ietf.org/html/rfc5545#section-3.8.1.6
 	Geo value.GeoValue
 
@@ -126,11 +128,11 @@ type VEvent struct {
 	// https://tools.ietf.org/html/rfc7986#section-5.9
 	Color value.TextValue // CSS3 color name
 
-	// Attach provides the capability to associate a document object with a calendar component.
+	// Attach provides the capability to associate a document object with the calendar component.
 	// https://tools.ietf.org/html/rfc5545#section-3.8.1.1
 	Attach []value.Attachable
 
-	// Image specifies an image or images associated with the calendar or a calendar component.
+	// Image specifies an image or images associated with the calendar or the calendar component.
 	// https://tools.ietf.org/html/rfc7986#section-5.10
 	Image []value.Attachable
 
