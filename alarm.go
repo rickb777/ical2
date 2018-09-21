@@ -43,7 +43,7 @@ type VEmailAlarm struct {
 func (e *VAudioAlarm) IsAlarm() {}
 
 // EncodeIcal serialises the event to the buffer in iCalendar ics format
-func (e *VAudioAlarm) EncodeIcal(b *ics.Buffer, method value.MethodValue) error {
+func (e *VAudioAlarm) EncodeIcal(b *ics.Buffer, method value.TextValue) error {
 
 	if !ics.IsDefined(e.Trigger) {
 		return fmt.Errorf("Trigger is required")
@@ -70,7 +70,7 @@ func (e *VAudioAlarm) EncodeIcal(b *ics.Buffer, method value.MethodValue) error 
 func (e *VDisplayAlarm) IsAlarm() {}
 
 // EncodeIcal serialises the event to the buffer in iCalendar ics format
-func (e *VDisplayAlarm) EncodeIcal(b *ics.Buffer, method value.MethodValue) error {
+func (e *VDisplayAlarm) EncodeIcal(b *ics.Buffer, method value.TextValue) error {
 
 	if !ics.IsDefined(e.Description) {
 		return fmt.Errorf("Description is required")
@@ -101,7 +101,7 @@ func (e *VDisplayAlarm) EncodeIcal(b *ics.Buffer, method value.MethodValue) erro
 func (e *VEmailAlarm) IsAlarm() {}
 
 // EncodeIcal serialises the event to the buffer in iCalendar ics format
-func (e *VEmailAlarm) EncodeIcal(b *ics.Buffer, method value.MethodValue) error {
+func (e *VEmailAlarm) EncodeIcal(b *ics.Buffer, method value.TextValue) error {
 
 	if !ics.IsDefined(e.Description) {
 		return fmt.Errorf("Description is required")

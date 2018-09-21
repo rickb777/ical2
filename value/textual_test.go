@@ -21,14 +21,14 @@ func TestTextConstructors(t *testing.T) {
 		{Confidential(), ":CONFIDENTIAL\n"},
 		{Publish(), ":PUBLISH\n"},
 		{Request(), ":REQUEST\n"},
-		{TentativeStatus(), ":TENTATIVE\n"},
-		{ConfirmedStatus(), ":CONFIRMED\n"},
-		{CancelledStatus(), ":CANCELLED\n"},
-		{CompletedStatus(), ":COMPLETED\n"},
-		{NeedsActionStatus(), ":NEEDS-ACTION\n"},
-		{InProcessStatus(), ":IN-PROCESS\n"},
-		{DraftStatus(), ":DRAFT\n"},
-		{FinalStatus(), ":FINAL\n"},
+		{Tentative(), ":TENTATIVE\n"},
+		{Confirmed(), ":CONFIRMED\n"},
+		{Cancelled(), ":CANCELLED\n"},
+		{Completed(), ":COMPLETED\n"},
+		{NeedsAction(), ":NEEDS-ACTION\n"},
+		{InProcess(), ":IN-PROCESS\n"},
+		{Draft(), ":DRAFT\n"},
+		{Final(), ":FINAL\n"},
 		{Transparent(), ":TRANSPARENT\n"},
 		{Opaque(), ":OPAQUE\n"},
 	}
@@ -46,6 +46,41 @@ func TestTextConstructors(t *testing.T) {
 		s = s[1:]
 		if s != c.exp {
 			t.Errorf("%d: expected %q but got %q", i, c.exp, s)
+		}
+	}
+}
+
+func TestLists(t *testing.T) {
+	cases := []struct {
+		vv  []ListValue
+		exp []string
+	}{
+		{Lists("APPOINTMENT", "EDUCATION"),
+			[]string{":APPOINTMENT,EDUCATION\n"}},
+
+		{Lists("ABCDEFGHIJKLMNOPQRSTUVWXYZ1", "ABCDEFGHIJKLMNOPQRSTUVWXYZ2", "ABCDEFGHIJKLMNOPQRSTUVWXYZ3",
+			"ABCDEFGHIJKLMNOPQRSTUVWXYZ4"),
+			[]string{":ABCDEFGHIJKLMNOPQRSTUVWXYZ1,ABCDEFGHIJKLMNOPQRSTUVWXYZ2\n", ":ABCDEFGHIJKLMNOPQRSTUVWXYZ3,ABCDEFGHIJKLMNOPQRSTUVWXYZ4\n"}},
+	}
+
+	for i, c := range cases {
+		if len(c.vv) != len(c.exp) {
+			t.Errorf("%d: expected %d but got %d\n%+v", i, len(c.exp), len(c.vv), c.vv)
+		}
+		for j, v := range c.vv {
+			b := &bytes.Buffer{}
+			x := ics.NewBuffer(b, "\n")
+			x.WriteValuerLine(true, "X", v)
+			err := x.Flush()
+			if err != nil {
+				t.Errorf("%d: unexpected error %v", i, err)
+			}
+			s := b.String()
+			// ignore X prefix
+			s = s[1:]
+			if s != c.exp[j] {
+				t.Errorf("%d: expected %q but got %q", i, c.exp, s)
+			}
 		}
 	}
 }

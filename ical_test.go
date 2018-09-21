@@ -1,7 +1,8 @@
-package ical2
+package ical2_test
 
 import (
 	"bytes"
+	"github.com/rickb777/ical2"
 	. "github.com/rickb777/ical2/parameter"
 	"github.com/rickb777/ical2/parameter/role"
 	. "github.com/rickb777/ical2/value"
@@ -17,14 +18,14 @@ func TestEncode(t *testing.T) {
 	ds := dt.Add(time.Hour)
 	de := ds.Add(5 * time.Hour)
 
-	event := &VEvent{
+	event := &ical2.VEvent{
 		UID:          Text("123"),
 		DTStamp:      TStamp(dt),
 		Start:        DateTime(ds).With(TZid(tz)),
 		End:          DateTime(de).With(TZid(tz)),
 		Organizer:    CalAddress("ht@throne.com").With(CommonName("H.Tudwr")),
 		Attendee:     []URIValue{CalAddress("ann.blin@example.com").With(role.Role("REQ-PARTICIPANT"), CommonName("Ann Blin"))},
-		Contact:      Text("T.Moore, Esq."),
+		Contact:      []TextValue{Text("T.Moore, Esq.")},
 		Summary:      Text("summary, with punctuation"),
 		Description:  Text("Lorem ipsum dolor sit amet, consectetµr adipiscing elit, sed do eiusmod tempor incididµnt µt labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."),
 		RelatedTo:    Text("19960401-080045-4000F192713-0052@example.com"),
@@ -78,7 +79,7 @@ func TestEncodeAllDayTrue(t *testing.T) {
 	zone := time.FixedZone(tz, 60*60*9)
 	d := time.Date(2014, time.Month(1), 1, 0, 0, 0, 0, zone)
 
-	event := (&VEvent{
+	event := (&ical2.VEvent{
 		UID:          Text("123"),
 		DTStamp:      TStamp(d),
 		Start:        DateTime(d).With(TZid(tz)),
@@ -121,7 +122,7 @@ func TestEncodeDraftProperties(t *testing.T) {
 	zone := time.FixedZone(tz, 60*60*9)
 	d := time.Date(2014, time.Month(1), 1, 0, 0, 0, 0, zone)
 
-	event := &VEvent{
+	event := &ical2.VEvent{
 		UID:     Text("123"),
 		DTStamp: TStamp(d),
 		Start:   DateTime(d).With(TZid(tz)),
@@ -167,7 +168,7 @@ END:VCALENDAR
 func TestEncodeUtcTzid(t *testing.T) {
 	d := time.Date(2014, time.Month(1), 1, 0, 0, 0, 0, time.UTC)
 
-	event := &VEvent{
+	event := &ical2.VEvent{
 		UID:     Text("123"),
 		DTStamp: TStamp(d),
 		Start:   DateTime(d),
@@ -208,7 +209,7 @@ func TestEncodeNoTzidAllDay(t *testing.T) {
 	zone := time.FixedZone(tz, 60*60*9)
 	d := time.Date(2014, time.Month(1), 1, 0, 0, 0, 0, zone)
 
-	event := (&VEvent{
+	event := (&ical2.VEvent{
 		UID:     Text("123"),
 		DTStamp: TStamp(d),
 		Start:   DateTime(d),
@@ -249,7 +250,7 @@ func TestEncodeUtcTzidAllDay(t *testing.T) {
 	zone := time.FixedZone(tz, 60*60*9)
 	d := time.Date(2014, time.Month(1), 1, 0, 0, 0, 0, zone)
 
-	event := (&VEvent{
+	event := (&ical2.VEvent{
 		UID:     Text("123"),
 		DTStamp: TStamp(d),
 		Start:   DateTime(d),
@@ -289,8 +290,8 @@ func unixToDOSLineEndings(input string) string {
 	return strings.Replace(input, "\n", "\r\n", -1)
 }
 
-func testSetup(tz string, vComponents ...VComponent) (bytes.Buffer, error) {
-	c := NewVCalendar("prodid")
+func testSetup(tz string, vComponents ...ical2.VComponent) (bytes.Buffer, error) {
+	c := ical2.NewVCalendar("prodid")
 	c.Extend("X-WR-CALNAME", Text("name"))
 	c.Extend("X-WR-CALDESC", Text("desc"))
 	if tz != "" {
@@ -307,8 +308,8 @@ func testSetup(tz string, vComponents ...VComponent) (bytes.Buffer, error) {
 	return b, nil
 }
 
-func testSetupWithDraft(tz string, vComponents ...VComponent) (bytes.Buffer, error) {
-	c := NewVCalendar("prodid")
+func testSetupWithDraft(tz string, vComponents ...ical2.VComponent) (bytes.Buffer, error) {
+	c := ical2.NewVCalendar("prodid")
 	c.URL = Text("http://my.calendar/url")
 	c.Name = Text("name")
 	c.Extend("X-WR-CALNAME", Text("name"))

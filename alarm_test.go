@@ -28,7 +28,7 @@ func ExampleVAlarm_audio() {
 		DTStamp: value.TStamp(dt),
 		Start:   value.DateTime(ds).With(parameter.TZid(tz)),
 		End:     value.DateTime(de).With(parameter.TZid(tz)),
-		Status:  value.NeedsActionStatus(),
+		Status:  value.NeedsAction(),
 		Alarm:   []ical2.VAlarm{alarm},
 	}
 

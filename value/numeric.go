@@ -16,6 +16,11 @@ type Attachable interface {
 	IsAttachable()
 }
 
+// Attachables is a short-hand for composing URIValues and Binary values as a list.
+func Attachables(vv ...Attachable) []Attachable {
+	return vv
+}
+
 // Temporal marks values that are date-time or period.
 type Temporal interface {
 	ics.Valuer
@@ -80,8 +85,8 @@ func Date(t time.Time, others ...time.Time) DateTimeValue {
 	}
 }
 
-// TStamp constructs a date-time value using UTC. It has no VALUE parameter; the type the default
-// and is obvious from the rendered value.
+// TStamp constructs a date-time value using UTC. It has no VALUE parameter; the type is the
+// default and is obvious from the rendered value.
 func TStamp(t time.Time) DateTimeValue {
 	return DateTimeValue{
 		Value:       t.UTC(),

@@ -23,7 +23,7 @@ type VFreeBusy struct {
 
 // EncodeIcal serialises the event to the buffer in iCalendar ics format
 // (a VComponent method).
-func (e *VFreeBusy) EncodeIcal(b *ics.Buffer, method value.MethodValue) error {
+func (e *VFreeBusy) EncodeIcal(b *ics.Buffer, method value.TextValue) error {
 
 	if !ics.IsDefined(e.DTStamp) {
 		return fmt.Errorf("DTstamp is required")

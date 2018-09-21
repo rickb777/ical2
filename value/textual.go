@@ -66,7 +66,16 @@ func (v URIValue) With(params ...parameter.Parameter) URIValue {
 }
 
 // IsAttachable indicates that URI values can be used as images or attachments.
-func (v URIValue) IsAttachable() {
+func (v URIValue) IsAttachable() {}
+
+// URIs constructs a new []URIValue slice. These will be rendered on
+// separate lines.
+func URIs(vv ...string) []URIValue {
+	s := make([]URIValue, len(vv))
+	for i, v := range vv {
+		s[i] = URI(v)
+	}
+	return s
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -86,6 +95,16 @@ func Text(v string) TextValue {
 func (v TextValue) With(params ...parameter.Parameter) TextValue {
 	v.Parameters = v.Parameters.Append(params...)
 	return v
+}
+
+// Texts constructs a new []TextValue slice. These will be rendered on
+// separate lines.
+func Texts(vv ...string) []TextValue {
+	s := make([]TextValue, len(vv))
+	for i, v := range vv {
+		s[i] = Text(v)
+	}
+	return s
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -111,127 +130,109 @@ func List(v ...string) ListValue {
 	return ListValue{baseValue{Value: v[0], Others: v[1:], escape: escapeText}}
 }
 
-//-------------------------------------------------------------------------------------------------
-
-// ClassValue holds a classification value.
-type ClassValue struct {
-	TextValue
-}
-
-// Class constructs a new classification value.
-func Class(v string) ClassValue {
-	return ClassValue{Text(v)}
-}
-
-// Public is an event visible publicly.
-func Public() ClassValue {
-	return Class("PUBLIC")
-}
-
-// Private is a private event.
-func Private() ClassValue {
-	return Class("PRIVATE")
-}
-
-// Confidential is a confidential event.
-func Confidential() ClassValue {
-	return Class("CONFIDENTIAL")
+// Lists constructs one or more list values, grouping the strings provided so that they
+// span across multiple lines rather than using the line folding algorithm.
+func Lists(v ...string) []ListValue {
+	s := make([]ListValue, 0)
+	n := 0
+	i := 0
+	for i = 0; i < len(v); i++ {
+		lv := len(v[i])
+		n += lv + 1
+		if n > 65 {
+			s = append(s, List(v[:i]...))
+			v = v[i:]
+			i = 0
+			n = 0
+		}
+	}
+	if n > 0 {
+		s = append(s, List(v...))
+	}
+	return s
 }
 
 //-------------------------------------------------------------------------------------------------
 
-// MethodValue holds a transparency value.
-type MethodValue struct {
-	TextValue
+// Public is a PUBLIC event. Use this for the Class.
+func Public() TextValue {
+	return Text("PUBLIC")
 }
 
-// Method constructs a new transparency value.
-func Method(v string) MethodValue {
-	return MethodValue{Text(v)}
+// Private is a PRIVATE event. Use this for the Class.
+func Private() TextValue {
+	return Text("PRIVATE")
 }
 
-// Publish specifies a publish event.
-func Publish() MethodValue {
-	return Method("PUBLISH")
-}
-
-// Request specifies an event that is a request to attend.
-func Request() MethodValue {
-	return Method("REQUEST")
+// Confidential is a CONFIDENTIAL event. Use this for the Class.
+func Confidential() TextValue {
+	return Text("CONFIDENTIAL")
 }
 
 //-------------------------------------------------------------------------------------------------
 
-// StatusValue holds a status value.
-type StatusValue struct {
-	TextValue
+// Publish specifies a PUBLISH event. Use this for the Method.
+func Publish() TextValue {
+	return Text("PUBLISH")
 }
 
-// Status constructs a new status value.
-func Status(v string) StatusValue {
-	return StatusValue{Text(v)}
-}
-
-// TentativeStatus specifies an event with tentative status.
-func TentativeStatus() StatusValue {
-	return Status("TENTATIVE")
-}
-
-// ConfirmedStatus specifies an event with confirmed status.
-func ConfirmedStatus() StatusValue {
-	return Status("CONFIRMED")
-}
-
-// CancelledStatus specifies an event, a to-do or a journal with cancelled status.
-func CancelledStatus() StatusValue {
-	return Status("CANCELLED")
-}
-
-// CompletedStatus specifies a to-do with completed status.
-func CompletedStatus() StatusValue {
-	return Status("COMPLETED")
-}
-
-// NeedsActionStatus specifies a to-do with needs-action status.
-func NeedsActionStatus() StatusValue {
-	return Status("NEEDS-ACTION")
-}
-
-// InProcessStatus specifies a to-do with in-process status.
-func InProcessStatus() StatusValue {
-	return Status("IN-PROCESS")
-}
-
-// DraftStatus specifies a journal with draft status.
-func DraftStatus() StatusValue {
-	return Status("DRAFT")
-}
-
-// FinalStatus specifies a journal with final status.
-func FinalStatus() StatusValue {
-	return Status("FINAL")
+// Request specifies an event that is a REQUEST to attend. Use this for the Method.
+func Request() TextValue {
+	return Text("REQUEST")
 }
 
 //-------------------------------------------------------------------------------------------------
 
-// TransparencyValue holds a transparency value.
-type TransparencyValue struct {
-	TextValue
+// Tentative specifies an event with TENTATIVE status. Use this for the Status.
+func Tentative() TextValue {
+	return Text("TENTATIVE")
 }
 
-// Transparency constructs a new transparency value.
-func Transparency(v string) TransparencyValue {
-	return TransparencyValue{Text(v)}
+// Confirmed specifies an event with confirmed status. Use this for the Status.
+func Confirmed() TextValue {
+	return Text("CONFIRMED")
 }
 
-// Transparent specifies event transparency when the event does not block other events.
-func Transparent() TransparencyValue {
-	return Transparency("TRANSPARENT")
+// Cancelled specifies an event, a to-do or a journal with cancelled status. Use this for the Status.
+func Cancelled() TextValue {
+	return Text("CANCELLED")
 }
 
-// Opaque specifies event transparency when the event blocks other events.
-func Opaque() TransparencyValue {
-	return Transparency("OPAQUE")
+// Completed specifies a to-do with COMPLETED status. Use this for the Status.
+func Completed() TextValue {
+	return Text("COMPLETED")
+}
+
+// NeedsAction specifies a to-do with NEEDS-ACTION status. Use this for the Status.
+func NeedsAction() TextValue {
+	return Text("NEEDS-ACTION")
+}
+
+// InProcess specifies a to-do with IN-PROCESS status. Use this for the Status.
+func InProcess() TextValue {
+	return Text("IN-PROCESS")
+}
+
+// Draft specifies a journal with DRAFT status. Use this for the Status.
+func Draft() TextValue {
+	return Text("DRAFT")
+}
+
+// Final specifies a journal with FINAL status. Use this for the Status.
+func Final() TextValue {
+	return Text("FINAL")
+}
+
+//-------------------------------------------------------------------------------------------------
+
+// Transparent specifies event is TRANSPARENT, i.e. when the event does not block other events.
+func Transparent() TextValue {
+	return Text("TRANSPARENT")
+}
+
+// Opaque specifies event is OPAQUE, i.e. when the event blocks other events.
+func Opaque() TextValue {
+	return Text("OPAQUE")
 }
 
 //-------------------------------------------------------------------------------------------------
