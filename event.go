@@ -175,6 +175,7 @@ func (e *VEvent) EncodeIcal(b *ics.Buffer, method value.TextValue) error {
 	b.WriteValuerLine(ics.IsDefined(e.End), "DTEND", e.End)
 	b.WriteValuerLine(true, "DTSTAMP", e.DTStamp)
 	b.WriteValuerLine(true, "UID", e.UID)
+	b.WriteValuerLine(ics.IsDefined(e.URL), "URL", e.URL)
 	b.WriteValuerLine(ics.IsDefined(e.Organizer), "ORGANIZER", e.Organizer)
 	for _, attendee := range e.Attendee {
 		b.WriteValuerLine(true, "ATTENDEE", attendee)

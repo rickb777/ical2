@@ -24,6 +24,7 @@ func ExampleVEvent_recurrence() {
 
 	event := &ical2.VEvent{
 		UID:            value.Text("123"),
+		URL:            value.URI("http://example.com/a/b/123"),
 		DTStamp:        value.TStamp(dt),
 		Start:          value.DateTime(ds),
 		End:            value.DateTime(de),
@@ -53,6 +54,7 @@ func ExampleVEvent_recurrence() {
 	// DTEND;VALUE=DATE-TIME:20140101T130000Z
 	// DTSTAMP:20140101T070000Z
 	// UID:123
+	// URL;VALUE=URI:http://example.com/a/b/123
 	// ORGANIZER;CN=H.Tudwr:mailto:ht@throne.com
 	// ATTENDEE;ROLE=REQ-PARTICIPANT;CN=Ann Blin:mailto:ann.blin@example.com
 	// SUMMARY:Event summary
