@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"github.com/rickb777/ical2/ics"
 	"github.com/rickb777/ical2/parameter"
-	"github.com/rickb777/ical2/parameter/valuetype"
+	"github.com/rickb777/ical2/parameter/value"
 	"strings"
 )
 
@@ -45,7 +45,7 @@ var _ Attachable = URIValue{}
 // URI returns a new URIValue.
 func URI(uri string) URIValue {
 	return URIValue{baseValue{
-		Parameters: parameter.Parameters{valuetype.Type(valuetype.URI)},
+		Parameters: parameter.Parameters{value.Type(value.URI)},
 		Value:      uri,
 		escape:     noOp,
 	}}

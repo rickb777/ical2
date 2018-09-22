@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/rickb777/ical2/ics"
 	"github.com/rickb777/ical2/parameter"
-	"github.com/rickb777/ical2/parameter/valuetype"
+	"github.com/rickb777/ical2/parameter/value"
 	"strconv"
 	"time"
 )
@@ -97,7 +97,7 @@ type RecurrenceValue struct {
 // Recurrence returns a new RecurrenceValue. It has VALUE=INTEGER.
 func Recurrence(freq string) RecurrenceValue {
 	return RecurrenceValue{
-		Parameters: parameter.Parameters{valuetype.Type(valuetype.RECUR)},
+		Parameters: parameter.Parameters{value.Type(value.RECUR)},
 		Freq:       freq,
 	}
 }

@@ -1,4 +1,5 @@
 // Package role enumerates values for the participation role parameter.
+// https://tools.ietf.org/html/rfc5545#section-3.2.16
 package role
 
 import "github.com/rickb777/ical2/parameter"
@@ -6,19 +7,32 @@ import "github.com/rickb777/ical2/parameter"
 // ROLE is the key for a participation role parameter.
 const ROLE = "ROLE"
 
-const (
-	// The chair
-	CHAIR = "CHAIR"
-	// A required participant
-	REQ_PARTICIPANT = "REQ-PARTICIPANT"
-	// An optional participant
-	OPT_PARTICIPANT = "OPT-PARTICIPANT"
-	// A non-participant who is copied-in for information only.
-	NON_PARTICIPANT = "NON-PARTICIPANT"
-)
+// Chair specifies the participation role for the calendar user
+// specified by the property is CHAIR.
+func Chair(v string) parameter.Parameter {
+	return Other("CHAIR")
+}
 
-// Role specifies the participation role for the calendar user
+// ReqParticipant specifies the participation role for the calendar user
+// specified by the property is a required participant, REQ-PARTICIPANT.
+func ReqParticipant() parameter.Parameter {
+	return Other("REQ-PARTICIPANT")
+}
+
+// OptParticipant specifies the participation role for the calendar user
+// specified by the property is an optional participant, OPT-PARTICIPANT.
+func OptParticipant() parameter.Parameter {
+	return Other("OPT-PARTICIPANT")
+}
+
+// NonParticipant specifies the participation role for the calendar user
+// specified by the property is a non-participant, NON-PARTICIPANT.
+func NonParticipant() parameter.Parameter {
+	return Other("NON-PARTICIPANT")
+}
+
+// Other specifies some other participation role for the calendar user
 // specified by the property.
-func Role(v string) parameter.Parameter {
+func Other(v string) parameter.Parameter {
 	return parameter.Single(ROLE, v)
 }

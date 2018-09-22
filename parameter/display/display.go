@@ -6,22 +6,28 @@ import "github.com/rickb777/ical2/parameter"
 // DISPLAY is the key for a display parameter.
 const DISPLAY = "DISPLAY"
 
-const (
-	// BADGE is image inline with the title of the event.
-	BADGE = "BADGE"
+// Badge identifies the property should be displayed as a badge.
+func Badge() parameter.Parameter {
+	return parameter.Single(DISPLAY, "BADGE")
+}
 
-	// GRAPHIC is a full image replacement for the event itself.
-	GRAPHIC = "GRAPHIC"
+// Graphic identifies the property should be displayed as a graphic.
+func Graphic() parameter.Parameter {
+	return parameter.Single(DISPLAY, "GRAPHIC")
+}
 
-	// FULLSIZE is an image that is used to enhance the event.
-	FULLSIZE = "FULLSIZE"
+// Fullsize identifies the property should be displayed fullsize.
+func Fullsize() parameter.Parameter {
+	return parameter.Single(DISPLAY, "FULLSIZE")
+}
 
-	// THUMBNAIL is a smaller variant of "FULLSIZE" to be used when
-	// space for the image is constrained.
-	THUMBNAIL = "THUMBNAIL"
-)
+// Thumbnail identifies the property should be displayed as a smaller variant of fullsize
+// when space for the image is constrained.
+func Thumbnail() parameter.Parameter {
+	return parameter.Single(DISPLAY, "THUMBNAIL")
+}
 
-// Display identifies how the property should be displayed.
+// Display identifies how the property should be displayed, via the DISPLAY parameter.
 func Display(v string) parameter.Parameter {
 	return parameter.Single(DISPLAY, v)
 }

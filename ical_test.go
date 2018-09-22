@@ -24,7 +24,7 @@ func TestEncode(t *testing.T) {
 		Start:        DateTime(ds).With(TZid(tz)),
 		End:          DateTime(de).With(TZid(tz)),
 		Organizer:    CalAddress("ht@throne.com").With(CommonName("H.Tudwr")),
-		Attendee:     []URIValue{CalAddress("ann.blin@example.com").With(role.Role("REQ-PARTICIPANT"), CommonName("Ann Blin"))},
+		Attendee:     []URIValue{CalAddress("ann.blin@example.com").With(role.ReqParticipant(), CommonName("Ann Blin"))},
 		Contact:      []TextValue{Text("T.Moore, Esq.")},
 		Summary:      Text("summary, with punctuation"),
 		Description:  Text("Lorem ipsum dolor sit amet, consectetµr adipiscing elit, sed do eiusmod tempor incididµnt µt labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."),

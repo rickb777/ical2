@@ -20,7 +20,7 @@ func ExampleVAlarm_audio() {
 		Duration: value.Duration("PT10M"),
 		Repeat:   value.Integer(3),
 		Attach: value.URI("http://example.com/clips/poke.aud").
-			With(parameter.FmtTypeOf("audio", "basic")),
+			With(parameter.FmtType("audio/basic")),
 	}
 
 	event := &ical2.VEvent{

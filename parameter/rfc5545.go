@@ -1,15 +1,12 @@
 package parameter
 
-import (
-	"fmt"
-)
-
 // RFC-5545 parameters
 
 // ALTREP is the key for an alternate text representation parameter.
 const ALTREP = "ALTREP"
 
 // AltRep specifies an alternate text representation for the property value.
+// https://tools.ietf.org/html/rfc5545#section-3.2.1
 func AltRep(v string) Parameter {
 	return Single(ALTREP, v)
 }
@@ -19,6 +16,7 @@ const CN = "CN"
 
 // CommonName specifies the common name to be associated with the
 // calendar user specified by the property.
+// https://tools.ietf.org/html/rfc5545#section-3.2.2
 func CommonName(v string) Parameter {
 	return Single(CN, v)
 }
@@ -28,8 +26,9 @@ const DELEGATED_FROM = "DELEGATED-FROM"
 
 // Delegator names the calendar users that have delegated their
 // participation to the calendar user(s) specified by the property.
+// https://tools.ietf.org/html/rfc5545#section-3.2.4
 func Delegator(v ...string) Parameter {
-	return Multiple(DELEGATED_FROM, v)
+	return Multiple(DELEGATED_FROM, v...)
 }
 
 // DELEGATED_TO is the key for a delegatee parameter.
@@ -37,8 +36,9 @@ const DELEGATED_TO = "DELEGATED-TO"
 
 // Delegatee names the calendar users to whom the calendar user
 // specified by the property has delegated participation.
+// https://tools.ietf.org/html/rfc5545#section-3.2.5
 func Delegatee(v ...string) Parameter {
-	return Multiple(DELEGATED_TO, v)
+	return Multiple(DELEGATED_TO, v...)
 }
 
 // DIR is the key for a directory parameter.
@@ -46,6 +46,7 @@ const DIR = "DIR"
 
 // Dir specifies reference to a directory entry associated with
 // the calendar user specified by the property.
+// https://tools.ietf.org/html/rfc5545#section-3.2.6
 func Dir(v string) Parameter {
 	return Single(DIR, v)
 }
@@ -54,28 +55,27 @@ func Dir(v string) Parameter {
 const ENCODING = "ENCODING"
 
 // Encoding specifies an alternate inline encoding for the property value.
+// https://tools.ietf.org/html/rfc5545#section-3.2.7
 func Encoding(base64 bool) Parameter {
 	return either(ENCODING, base64, "BASE64", "8BIT")
 }
 
-// FMTYPE is the key for a media type parameter.
+// FMTTYPE is the key for a media type parameter.
 const FMTTYPE = "FMTTYPE"
 
-// FmtType specifies the content type of a referenced object, e.g. "image/png".
+// FmtType specifies the format type (a.k.a content type, media type) of a
+// referenced object, e.g. "image/png".
+// https://tools.ietf.org/html/rfc5545#section-3.2.8
 func FmtType(mediaType string) Parameter {
 	return Single(FMTTYPE, mediaType)
-}
-
-// FmtTypeOf specifies the content type of a referenced object, e.g. "image", "png".
-func FmtTypeOf(typeName, subTypeName string) Parameter {
-	return FmtType(fmt.Sprintf("%s/%s", typeName, subTypeName))
 }
 
 // LANGUAGE is the key for a language parameter.
 const LANGUAGE = "LANGUAGE"
 
 // Language specifies the language for text values in a property or
-// property parameter. See https://tools.ietf.org/html/rfc5646
+// property parameter.
+// https://tools.ietf.org/html/rfc5545#section-3.2.10
 func Language(v string) Parameter {
 	return Single(LANGUAGE, v)
 }
@@ -85,8 +85,9 @@ const MEMBER = "MEMBER"
 
 // Member specifies the group or list membership of the calendar
 // user specified by the property.
+// https://tools.ietf.org/html/rfc5545#section-3.2.11
 func Member(v ...string) Parameter {
-	return Multiple(MEMBER, v)
+	return Multiple(MEMBER, v...)
 }
 
 /// TODO RANGE ; Recurrence identifier range

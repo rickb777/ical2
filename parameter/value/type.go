@@ -1,5 +1,5 @@
-// Package valuetype enumerates values of the type options for parameters (the VALUE parameter).
-package valuetype
+// Package value enumerates values of the type options for parameters (the VALUE parameter).
+package value
 
 import "github.com/rickb777/ical2/parameter"
 

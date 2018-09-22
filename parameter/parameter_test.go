@@ -38,7 +38,7 @@ func TestParameterConstructorsAndWriteTo(t *testing.T) {
 		{CommonName("abc"), "CN=abc"},
 		{Dir("abc"), "DIR=abc"},
 		{Email("a@b.it"), `EMAIL=a@b.it`},
-		{FmtTypeOf("image", "png"), "FMTTYPE=image/png"},
+		{FmtType("image/png"), "FMTTYPE=image/png"},
 		{Label("zap"), `LABEL=zap`},
 		{Language("en"), "LANGUAGE=en"},
 		{Member("a", "b"), "MEMBER=a,b"},

@@ -5,7 +5,7 @@ import (
 	"github.com/rickb777/date/timespan"
 	"github.com/rickb777/ical2/ics"
 	"github.com/rickb777/ical2/parameter"
-	"github.com/rickb777/ical2/parameter/valuetype"
+	"github.com/rickb777/ical2/parameter/value"
 	"strconv"
 	"time"
 )
@@ -63,7 +63,7 @@ type DateTimeValue struct {
 // The property has VALUE=DATE-TIME.
 func DateTime(t time.Time, others ...time.Time) DateTimeValue {
 	return DateTimeValue{
-		Parameters:  parameter.Parameters{valuetype.Type(valuetype.DATE_TIME)},
+		Parameters:  parameter.Parameters{value.Type(value.DATE_TIME)},
 		Value:       t,
 		Others:      others,
 		includeTime: true,
@@ -78,7 +78,7 @@ func DateTime(t time.Time, others ...time.Time) DateTimeValue {
 // The property has VALUE=DATE-TIME.
 func Date(t time.Time, others ...time.Time) DateTimeValue {
 	return DateTimeValue{
-		Parameters:  parameter.Parameters{valuetype.Type(valuetype.DATE)},
+		Parameters:  parameter.Parameters{value.Type(value.DATE)},
 		Value:       t,
 		Others:      others,
 		includeTime: false,
@@ -98,7 +98,7 @@ func TStamp(t time.Time) DateTimeValue {
 // AsDate converts a date-time value to a date-only value.
 func (v DateTimeValue) AsDate() DateTimeValue {
 	v.includeTime = false
-	v.Parameters = v.Parameters.RemoveByKey(valuetype.DATE_TIME).Append(valuetype.Type(valuetype.DATE))
+	v.Parameters = v.Parameters.RemoveByKey(value.DATE_TIME).Append(value.Type(value.DATE))
 	return v
 }
 
@@ -120,7 +120,7 @@ func (v DateTimeValue) WriteTo(w ics.StringWriter) (err error) {
 	if v.includeTime {
 		// when the date-time is UTC, remove the TZID parameter and add Zulu "Z" instead
 		if zone, _ := v.Value.Zone(); zone == "UTC" {
-			v.Parameters = v.Parameters.RemoveByKey(parameter.TZID, valuetype.DATE_TIME)
+			v.Parameters = v.Parameters.RemoveByKey(parameter.TZID, value.DATE_TIME)
 			v.zulu = true
 		}
 
@@ -160,7 +160,7 @@ type PeriodValue struct {
 // It has VALUE=PERIOD.
 func Period(ts timespan.TimeSpan) PeriodValue {
 	return PeriodValue{
-		Parameters: parameter.Parameters{valuetype.Type(valuetype.PERIOD)},
+		Parameters: parameter.Parameters{value.Type(value.PERIOD)},
 		Value:      ts,
 	}
 }
@@ -206,7 +206,7 @@ type DurationValue struct {
 // Duration returns a new DurationValue. It has VALUE=DURATION.
 func Duration(d string) DurationValue {
 	return DurationValue{baseValue{
-		Parameters: parameter.Parameters{valuetype.Type(valuetype.DURATION)},
+		Parameters: parameter.Parameters{value.Type(value.DURATION)},
 		Value:      d,
 	}}
 }
@@ -241,7 +241,7 @@ type IntegerValue struct {
 // Integer returns a new IntegerValue. It has VALUE=INTEGER.
 func Integer(number int) IntegerValue {
 	return IntegerValue{
-		Parameters: parameter.Parameters{valuetype.Type(valuetype.INTEGER)},
+		Parameters: parameter.Parameters{value.Type(value.INTEGER)},
 		Value:      number,
 		defined:    true,
 	}
@@ -288,7 +288,7 @@ type GeoValue struct {
 // See https://tools.ietf.org/html/rfc5545#section-3.8.1.6
 func Geo(lat, lon float64) GeoValue {
 	return GeoValue{
-		Parameters: parameter.Parameters{valuetype.Type(valuetype.FLOAT)},
+		Parameters: parameter.Parameters{value.Type(value.FLOAT)},
 		Lat:        lat,
 		Lon:        lon,
 		defined:    true,
@@ -328,7 +328,7 @@ type BinaryValue struct {
 // Binary returns a new BinaryValue.
 func Binary(data []byte) BinaryValue {
 	return BinaryValue{
-		Parameters: parameter.Parameters{valuetype.Type(valuetype.BINARY), parameter.Encoding(true)},
+		Parameters: parameter.Parameters{value.Type(value.BINARY), parameter.Encoding(true)},
 		Value:      data,
 	}
 }

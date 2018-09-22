@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/rickb777/ical2"
 	"github.com/rickb777/ical2/parameter"
-	"github.com/rickb777/ical2/parameter/cuvalue"
+	"github.com/rickb777/ical2/parameter/cutype"
 	"github.com/rickb777/ical2/parameter/display"
 	"github.com/rickb777/ical2/parameter/feature"
 	"github.com/rickb777/ical2/parameter/partstat"
@@ -29,7 +29,7 @@ func ExampleVEvent_recurrence() {
 		Start:          value.DateTime(ds),
 		End:            value.DateTime(de),
 		Organizer:      value.CalAddress("ht@throne.com").With(parameter.CommonName("H.Tudwr")),
-		Attendee:       []value.URIValue{value.CalAddress("ann.blin@example.com").With(role.Role(role.REQ_PARTICIPANT), parameter.CommonName("Ann Blin"))},
+		Attendee:       []value.URIValue{value.CalAddress("ann.blin@example.com").With(role.ReqParticipant(), parameter.CommonName("Ann Blin"))},
 		Summary:        value.Text("Event summary"),
 		Description:    value.Text("This describes the event."),
 		Transparency:   value.Opaque(),
@@ -78,7 +78,7 @@ func ExampleVEvent_timezone() {
 		Start:        value.DateTime(ds).With(parameter.TZid(tz)),
 		End:          value.DateTime(de).With(parameter.TZid(tz)),
 		Organizer:    value.CalAddress("ht@throne.com").With(parameter.CommonName("H.Tudwr")),
-		Attendee:     []value.URIValue{value.CalAddress("ann.blin@example.com").With(role.Role(role.REQ_PARTICIPANT), parameter.CommonName("Ann Blin"))},
+		Attendee:     []value.URIValue{value.CalAddress("ann.blin@example.com").With(role.ReqParticipant(), parameter.CommonName("Ann Blin"))},
 		Conference:   []value.URIValue{value.URI("https://chat.example.com/audio?id=123456").With(feature.Feature(feature.AUDIO, feature.VIDEO)).With(parameter.Label("Attendee dial-in"))},
 		Contact:      value.Texts("T.Moore, Esq."),
 		Summary:      value.Text("Event summary"),
@@ -89,9 +89,9 @@ func ExampleVEvent_timezone() {
 		Location:     value.Text("South Bank, London SE1 9PX"),
 		Transparency: value.Transparent(),
 		Attach: []value.Attachable{value.Binary([]byte("ABC")).
-			With(parameter.FmtTypeOf("text", "plain"))},
+			With(parameter.FmtType("text/plain"))},
 		Image: []value.Attachable{value.URI("http://example.com/images/party.png").
-			With(display.Display(display.BADGE), parameter.FmtTypeOf("image", "png"))},
+			With(display.Badge(), parameter.FmtType("image/png"))},
 	}
 
 	c := ical2.NewVCalendar("-//My App//Event Calendar//EN").With(event)
@@ -135,9 +135,9 @@ func ExampleVEvent_meeting() {
 	de := ds.Add(72 * time.Hour)
 
 	shared := parameter.Parameters{
-		cuvalue.CUType(cuvalue.INDIVIDUAL),
-		role.Role(role.REQ_PARTICIPANT),
-		partstat.PartStat(partstat.NEEDS_ACTION),
+		cutype.Individual(),
+		role.ReqParticipant(),
+		partstat.NeedsAction(),
 		parameter.Rsvp(true),
 		parameter.Single("X-NUM-GUESTS", "0"),
 	}

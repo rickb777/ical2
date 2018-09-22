@@ -88,8 +88,14 @@ func Single(k, v string) Parameter {
 	return Parameter{k, v, nil}
 }
 
-func Multiple(k string, v []string) Parameter {
+// Multiple returns a Parameter with multiple string values.
+func Multiple(k string, v ...string) Parameter {
 	return Parameter{k, v[0], v[1:]}
+}
+
+// And appends more string values to a Parameter.
+func (p Parameter) And(vv ...string) Parameter {
+	return Parameter{p.Key, p.Value, append(p.Others, vv...)}
 }
 
 func either(key string, predicate bool, yes, no string) Parameter {
