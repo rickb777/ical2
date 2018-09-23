@@ -1,4 +1,5 @@
 // Package cutype enumerates calendar user types.
+// https://tools.ietf.org/html/rfc5545#section-3.2.3
 package cutype
 
 import "github.com/rickb777/ical2/parameter"

@@ -12,7 +12,7 @@ func TestTextConstructors(t *testing.T) {
 		v   ics.Valuer
 		exp string
 	}{
-		{Text("abc").With(value.Type(value.TEXT)), ";VALUE=TEXT:abc\n"},
+		{Text("abc").With(value.Text()), ";VALUE=TEXT:abc\n"},
 		{Text("a,b,c"), ":a\\,b\\,c\n"},
 		{CalAddress("j@x.org"), ":mailto:j@x.org\n"},
 		{List("APPOINTMENT", "EDUCATION"), ":APPOINTMENT,EDUCATION\n"},

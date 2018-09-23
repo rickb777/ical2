@@ -97,7 +97,7 @@ type RecurrenceValue struct {
 // Recurrence returns a new RecurrenceValue. It has VALUE=INTEGER.
 func Recurrence(freq string) RecurrenceValue {
 	return RecurrenceValue{
-		Parameters: parameter.Parameters{value.Type(value.RECUR)},
+		Parameters: parameter.Parameters{value.Recur()},
 		Freq:       freq,
 	}
 }

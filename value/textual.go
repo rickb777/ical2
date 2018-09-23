@@ -45,7 +45,7 @@ var _ Attachable = URIValue{}
 // URI returns a new URIValue.
 func URI(uri string) URIValue {
 	return URIValue{baseValue{
-		Parameters: parameter.Parameters{value.Type(value.URI)},
+		Parameters: parameter.Parameters{value.URI()},
 		Value:      uri,
 		escape:     noOp,
 	}}

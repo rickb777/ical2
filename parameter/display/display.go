@@ -1,4 +1,5 @@
 // Package display enumerates values for the display parameter.
+// https://tools.ietf.org/html/rfc7986#section-6.1
 package display
 
 import "github.com/rickb777/ical2/parameter"

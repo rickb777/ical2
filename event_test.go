@@ -23,13 +23,14 @@ func ExampleVEvent_recurrence() {
 	rv.ByDay = []value.WeekDayNum{value.MO, value.WE, value.FR}
 
 	event := &ical2.VEvent{
-		UID:            value.Text("123"),
-		URL:            value.URI("http://example.com/a/b/123"),
-		DTStamp:        value.TStamp(dt),
-		Start:          value.DateTime(ds),
-		End:            value.DateTime(de),
-		Organizer:      value.CalAddress("ht@throne.com").With(parameter.CommonName("H.Tudwr")),
-		Attendee:       []value.URIValue{value.CalAddress("ann.blin@example.com").With(role.ReqParticipant(), parameter.CommonName("Ann Blin"))},
+		UID:       value.Text("123"),
+		URL:       value.URI("http://example.com/a/b/123"),
+		DTStamp:   value.TStamp(dt),
+		Start:     value.DateTime(ds),
+		End:       value.DateTime(de),
+		Organizer: value.CalAddress("ht@throne.com").With(parameter.CommonName("H.Tudwr")),
+		Attendee: []value.URIValue{value.CalAddress("ann.blin@example.com").
+			With(role.ReqParticipant(), parameter.CommonName("Ann Blin"))},
 		Summary:        value.Text("Event summary"),
 		Description:    value.Text("This describes the event."),
 		Transparency:   value.Opaque(),
@@ -73,13 +74,15 @@ func ExampleVEvent_timezone() {
 	de := ds.Add(5 * time.Hour)
 
 	event := &ical2.VEvent{
-		UID:          value.Text("123"),
-		DTStamp:      value.TStamp(dt),
-		Start:        value.DateTime(ds).With(parameter.TZid(tz)),
-		End:          value.DateTime(de).With(parameter.TZid(tz)),
-		Organizer:    value.CalAddress("ht@throne.com").With(parameter.CommonName("H.Tudwr")),
-		Attendee:     []value.URIValue{value.CalAddress("ann.blin@example.com").With(role.ReqParticipant(), parameter.CommonName("Ann Blin"))},
-		Conference:   []value.URIValue{value.URI("https://chat.example.com/audio?id=123456").With(feature.Feature(feature.AUDIO, feature.VIDEO)).With(parameter.Label("Attendee dial-in"))},
+		UID:       value.Text("123"),
+		DTStamp:   value.TStamp(dt),
+		Start:     value.DateTime(ds).With(parameter.TZid(tz)),
+		End:       value.DateTime(de).With(parameter.TZid(tz)),
+		Organizer: value.CalAddress("ht@throne.com").With(parameter.CommonName("H.Tudwr")),
+		Attendee: []value.URIValue{value.CalAddress("ann.blin@example.com").
+			With(role.ReqParticipant(), parameter.CommonName("Ann Blin"))},
+		Conference: []value.URIValue{value.URI("https://chat.example.com/audio?id=123456").
+			With(feature.Feature(feature.AUDIO, feature.VIDEO)).With(parameter.Label("Attendee dial-in"))},
 		Contact:      value.Texts("T.Moore, Esq."),
 		Summary:      value.Text("Event summary"),
 		Description:  value.Text("This describes the event."),
