@@ -90,9 +90,15 @@ func Member(v ...string) Parameter {
 	return Multiple(MEMBER, v...)
 }
 
-/// TODO RANGE ; Recurrence identifier range
-/// TODO RELATED ; Alarm trigger relationship
-/// TODO RELTYPE ; Relationship type
+const RANGE = "RANGE"
+
+// RangeThisandfuture specifies the effective range of recurrence instances from
+// the instance specified by the recurrence identifier specified by
+// the property. The only allowed value is "THISANDFUTURE".
+// https://tools.ietf.org/html/rfc5545#section-3.2.13
+func RangeThisandfuture() Parameter {
+	return Single(RANGE, "THISANDFUTURE")
+}
 
 // RSVP is the key for a RSVP parameter.
 const RSVP = "RSVP"
