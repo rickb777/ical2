@@ -23,15 +23,42 @@ type VEvent struct {
 	// https://tools.ietf.org/html/rfc5545#section-3.8.2.5
 	Duration value.DurationValue
 
+	// Created specifies the date and time that the calendar information was
+	// created by the calendar user agent in the calendar store. This is
+	// analogous to the creation date and time for a file in the file system.
 	// https://tools.ietf.org/html/rfc5545#section-3.8.7.1
 	Created value.DateTimeValue
+
+	// DTStamp: in the case of an iCalendar object that specifies a
+	// "METHOD" property, this property specifies the date and time that
+	// the instance of the iCalendar object was created.  In the case of
+	// an iCalendar object that doesn't specify a "METHOD" property, this
+	// property specifies the date and time that the information
+	// associated with the calendar component was last revised in the
+	// calendar store.
 	// https://tools.ietf.org/html/rfc5545#section-3.8.7.2
 	DTStamp value.DateTimeValue
+
+	// LastModified specifies the date and time that the information associated
+	// with the calendar component was last revised in the calendar store.
+	// This is analogous to the modification date and time for a file in the
+	// file system.
 	// https://tools.ietf.org/html/rfc5545#section-3.8.7.3
 	LastModified value.DateTimeValue
 
-	ExceptionDate  []value.DateTimeValue
+	// ExceptionDate defines the list of DATE-TIME exceptions for recurring events,
+	// to-dos, journal entries, or time zone definitions.
+	// https://tools.ietf.org/html/rfc5545#section-3.8.5.1
+	ExceptionDate []value.DateTimeValue
+
+	// RecurrenceDate defines the list of DATE-TIME values for recurring events,
+	// to-dos, journal entries, or time zone definitions.
+	// https://tools.ietf.org/html/rfc5545#section-3.8.5.2
 	RecurrenceDate []value.Temporal // DateTime or Period
+
+	// RecurrenceRule defines a rule or repeating pattern for recurring events,
+	// to-dos, journal entries, or time zone definitions.
+	// https://tools.ietf.org/html/rfc5545#section-3.8.5.3
 	RecurrenceRule value.RecurrenceValue
 
 	// Conference specifies information for accessing a conferencing system.
@@ -136,6 +163,7 @@ type VEvent struct {
 	// https://tools.ietf.org/html/rfc7986#section-5.10
 	Image []value.Attachable
 
+	// Alarm attaches as many alarms to the event as are required.
 	Alarm []VAlarm
 
 	// TODO (RFC5545) RECURRENCE-ID
