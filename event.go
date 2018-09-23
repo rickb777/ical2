@@ -61,6 +61,14 @@ type VEvent struct {
 	// https://tools.ietf.org/html/rfc5545#section-3.8.5.3
 	RecurrenceRule value.RecurrenceValue
 
+	// RecurrenceId is used in conjunction with the "UID" and
+	// "SEQUENCE" properties to identify a specific instance of a
+	// recurring "VEVENT", "VTODO", or "VJOURNAL" calendar component.
+	// The property value is the original value of the "DTSTART" property
+	// of the recurrence instance.
+	// https://tools.ietf.org/html/rfc5545#section-3.8.4.4
+	RecurrenceId value.DateTimeValue
+
 	// Conference specifies information for accessing a conferencing system.
 	// https://tools.ietf.org/html/rfc7986#section-5.11
 	Conference []value.URIValue
@@ -165,8 +173,6 @@ type VEvent struct {
 
 	// Alarm attaches as many alarms to the event as are required.
 	Alarm []VAlarm
-
-	// TODO (RFC5545) RECURRENCE-ID
 }
 
 // AllDay changes the start and end to represent dates without time.
@@ -231,6 +237,7 @@ func (e *VEvent) EncodeIcal(b *ics.Buffer, method value.TextValue) error {
 		b.WriteValuerLine(true, "RDATE", date)
 	}
 	b.WriteValuerLine(ics.IsDefined(e.RecurrenceRule), "RRULE", e.RecurrenceRule)
+	b.WriteValuerLine(ics.IsDefined(e.RecurrenceId), "RECURRENCE-ID", e.RecurrenceId)
 	b.WriteValuerLine(ics.IsDefined(e.RelatedTo), "RELATED-TO", e.RelatedTo)
 	for _, cat := range e.Categories {
 		b.WriteValuerLine(true, "CATEGORIES", cat)
