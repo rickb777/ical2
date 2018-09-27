@@ -39,8 +39,8 @@ func TestEncode(t *testing.T) {
 	}
 
 	expect := `BEGIN:VCALENDAR
-VERSION:2.0
 PRODID:prodid
+VERSION:2.0
 CALSCALE:GREGORIAN
 X-WR-CALNAME:name
 X-WR-CALDESC:desc
@@ -94,8 +94,8 @@ func TestEncodeAllDayTrue(t *testing.T) {
 	}
 
 	expect := `BEGIN:VCALENDAR
-VERSION:2.0
 PRODID:prodid
+VERSION:2.0
 CALSCALE:GREGORIAN
 X-WR-CALNAME:name
 X-WR-CALDESC:desc
@@ -136,8 +136,8 @@ func TestEncodeDraftProperties(t *testing.T) {
 	}
 
 	expect := `BEGIN:VCALENDAR
-VERSION:2.0
 PRODID:prodid
+VERSION:2.0
 CALSCALE:GREGORIAN
 METHOD:PUBLISH
 NAME:name
@@ -182,8 +182,8 @@ func TestEncodeUtcTzid(t *testing.T) {
 	}
 
 	expect := `BEGIN:VCALENDAR
-VERSION:2.0
 PRODID:prodid
+VERSION:2.0
 CALSCALE:GREGORIAN
 X-WR-CALNAME:name
 X-WR-CALDESC:desc
@@ -223,8 +223,8 @@ func TestEncodeNoTzidAllDay(t *testing.T) {
 	}
 
 	expect := `BEGIN:VCALENDAR
-VERSION:2.0
 PRODID:prodid
+VERSION:2.0
 CALSCALE:GREGORIAN
 X-WR-CALNAME:name
 X-WR-CALDESC:desc
@@ -264,8 +264,8 @@ func TestEncodeUtcTzidAllDay(t *testing.T) {
 	}
 
 	expect := `BEGIN:VCALENDAR
-VERSION:2.0
 PRODID:prodid
+VERSION:2.0
 CALSCALE:GREGORIAN
 X-WR-CALNAME:name
 X-WR-CALDESC:desc

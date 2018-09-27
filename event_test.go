@@ -47,8 +47,8 @@ func ExampleVEvent_recurrence() {
 
 	// Output:
 	// BEGIN:VCALENDAR
-	// VERSION:2.0
 	// PRODID:-//My App//Event Calendar//EN
+	// VERSION:2.0
 	// CALSCALE:GREGORIAN
 	// BEGIN:VEVENT
 	// DTSTART;VALUE=DATE-TIME:20140101T080000Z
@@ -105,8 +105,8 @@ func ExampleVEvent_timezone() {
 
 	// Output:
 	// BEGIN:VCALENDAR
-	// VERSION:2.0
 	// PRODID:-//My App//Event Calendar//EN
+	// VERSION:2.0
 	// CALSCALE:GREGORIAN
 	// BEGIN:VEVENT
 	// DTSTART;VALUE=DATE-TIME;TZID=Europe/London:20140101T080000
@@ -194,8 +194,8 @@ func ExampleVEvent_meeting() {
 
 	// Output:
 	// BEGIN:VCALENDAR
-	// VERSION:2.0
 	// PRODID:-//My App//Event Calendar//EN
+	// VERSION:2.0
 	// CALSCALE:GREGORIAN
 	// METHOD:REQUEST
 	// BEGIN:VEVENT

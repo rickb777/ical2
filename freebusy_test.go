@@ -35,8 +35,8 @@ func ExampleVFreeBusy_request() {
 
 	// Output:
 	// BEGIN:VCALENDAR
-	// VERSION:2.0
 	// PRODID:-//My App//Event Calendar//EN
+	// VERSION:2.0
 	// CALSCALE:GREGORIAN
 	// METHOD:REQUEST
 	// BEGIN:VFREEBUSY
@@ -86,8 +86,8 @@ func ExampleVFreeBusy_publish() {
 
 	// Output:
 	// BEGIN:VCALENDAR
-	// VERSION:2.0
 	// PRODID:-//My App//Event Calendar//EN
+	// VERSION:2.0
 	// CALSCALE:GREGORIAN
 	// METHOD:PUBLISH
 	// BEGIN:VFREEBUSY

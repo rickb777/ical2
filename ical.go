@@ -98,8 +98,8 @@ func (c *VCalendar) doEncode(w io.Writer, lineEnding string) error {
 
 	b.WriteLine("BEGIN:VCALENDAR")
 
-	b.WriteValuerLine(true, "VERSION", c.Version)
 	b.WriteValuerLine(true, "PRODID", c.ProdId)
+	b.WriteValuerLine(true, "VERSION", c.Version)
 	b.WriteValuerLine(ics.IsDefined(c.CalScale), "CALSCALE", c.CalScale)
 	b.WriteValuerLine(ics.IsDefined(c.Method), "METHOD", c.Method)
 	b.WriteValuerLine(ics.IsDefined(c.Name), "NAME", c.Name)

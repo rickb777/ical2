@@ -40,8 +40,8 @@ func ExampleVAlarm_audio() {
 
 	// Output:
 	// BEGIN:VCALENDAR
-	// VERSION:2.0
 	// PRODID:-//My App//Event Calendar//EN
+	// VERSION:2.0
 	// CALSCALE:GREGORIAN
 	// BEGIN:VEVENT
 	// DTSTART;VALUE=DATE-TIME;TZID=Europe/Paris:20140101T080000
@@ -86,8 +86,8 @@ func ExampleVAlarm_display() {
 
 	// Output:
 	// BEGIN:VCALENDAR
-	// VERSION:2.0
 	// PRODID:-//My App//Event Calendar//EN
+	// VERSION:2.0
 	// CALSCALE:GREGORIAN
 	// BEGIN:VEVENT
 	// DTSTART;VALUE=DATE-TIME:20140101T080000Z
@@ -133,8 +133,8 @@ func ExampleVAlarm_email() {
 
 	// Output:
 	// BEGIN:VCALENDAR
-	// VERSION:2.0
 	// PRODID:-//My App//Event Calendar//EN
+	// VERSION:2.0
 	// CALSCALE:GREGORIAN
 	// BEGIN:VEVENT
 	// DTSTART;VALUE=DATE-TIME;TZID=Europe/Paris:20140101T080000
