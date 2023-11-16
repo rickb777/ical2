@@ -2,7 +2,7 @@ package ical2_test
 
 import (
 	"fmt"
-	"github.com/rickb777/date/timespan"
+	"github.com/rickb777/date/v2/timespan"
 	"github.com/rickb777/ical2"
 	"github.com/rickb777/ical2/parameter/freebusy"
 	"github.com/rickb777/ical2/value"

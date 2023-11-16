@@ -2,7 +2,7 @@ package value
 
 import (
 	"encoding/base64"
-	"github.com/rickb777/date/timespan"
+	"github.com/rickb777/date/v2/timespan"
 	"github.com/rickb777/ical2/ics"
 	"github.com/rickb777/ical2/parameter"
 	"github.com/rickb777/ical2/parameter/value"
@@ -198,7 +198,7 @@ func (v PeriodValue) IsTemporal() {}
 
 // DurationValue holds a time duration. This should be in ISO-8601 form
 // (https://en.wikipedia.org/wiki/ISO_8601#Durations);
-// see github.com/rickb777/date/period for a compatible duration API.
+// see github.com/rickb777/period for a compatible duration API.
 type DurationValue struct {
 	baseValue
 }
