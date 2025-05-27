@@ -36,7 +36,7 @@ func ExampleVAlarm_audio() {
 	// usually you'd Encode to some io.Writer
 	//c.Encode(w)
 	// but for this example, we'll just stringify
-	fmt.Printf(c.String())
+	fmt.Println(c.String())
 
 	// Output:
 	// BEGIN:VCALENDAR
@@ -82,7 +82,7 @@ func ExampleVAlarm_display() {
 	// usually you'd Encode to some io.Writer
 	//c.Encode(w)
 	// but for this example, we'll just stringify
-	fmt.Printf(c.String())
+	fmt.Println(c.String())
 
 	// Output:
 	// BEGIN:VCALENDAR
@@ -129,7 +129,7 @@ func ExampleVAlarm_email() {
 	// usually you'd Encode to some io.Writer
 	//c.Encode(w)
 	// but for this example, we'll just stringify
-	fmt.Printf(c.String())
+	fmt.Println(c.String())
 
 	// Output:
 	// BEGIN:VCALENDAR
