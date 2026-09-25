@@ -1,10 +1,10 @@
 module github.com/rickb777/ical2
 
-go 1.25.0
+go 1.26.0
 
 require (
 	github.com/magefile/mage v1.17.2
-	github.com/rickb777/date/v2 v2.4.0
+	github.com/rickb777/date/v2 v2.4.1
 )
 
 require (
